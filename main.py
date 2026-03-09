@@ -1,4 +1,5 @@
-from Autores import scrapAuthor
+from Categoria import scrapCategory
+
 
 if __name__ == "__main__":
-    scrapAuthor.buscarAutores()
+    scrapCategory.searchCategories()

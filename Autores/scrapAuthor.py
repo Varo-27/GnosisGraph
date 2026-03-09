@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .save import save_author
+from .saveAuthor import save_author
 
 def autor(url: str):
     resp = requests.get(url)

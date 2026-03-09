@@ -1,5 +1,5 @@
 from sqlmodel import Session
-from .database import engine
+from database import engine
 from .Author import Author
 
 def save_author(name, url, bio):

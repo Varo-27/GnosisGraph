@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from .database import engine
+from database import engine
 from .Author import Author
 
 def get_all_authors():
