@@ -1,5 +1,5 @@
-from Categoria import scrapCategory
+from Tags import scrapTag
 
 
 if __name__ == "__main__":
-    scrapCategory.searchCategories()
+    scrapTag.searchTags()
