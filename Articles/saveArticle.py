@@ -47,25 +47,38 @@ def save_article(data: dict, session: Session = None):
         )
         local_session.add(new_article)
         local_session.flush()
-
-        # Relaciones
+# --- Relaciones con Feedback en Consola ---
+        # Autores
         for name in data.get("authors", []):
             auth = get_tolerant(local_session, Author, "name", name, data["url"])
-            if auth: local_session.add(ArticleAuthor(article_id=new_article.id, author_id=auth.id))
+            if auth: 
+                local_session.add(ArticleAuthor(article_id=new_article.id, author_id=auth.id))
+            else:
+                print(f"      ❓ Autor no encontrado: {name}")
 
+        # Categorías
         for slug in data.get("categories", []):
             if slug.lower() in BLACKLIST: continue
             cat = get_tolerant(local_session, Category, "slug", slug, data["url"])
-            if cat: local_session.add(ArticleCategory(article_id=new_article.id, category_id=cat.id))
+            if cat: 
+                local_session.add(ArticleCategory(article_id=new_article.id, category_id=cat.id))
 
+        # Lugares
         for slug in data.get("places", []):
             place = get_tolerant(local_session, Place, "slug", slug, data["url"])
-            if place: local_session.add(ArticlePlace(article_id=new_article.id, place_id=place.id))
+            if place: 
+                local_session.add(ArticlePlace(article_id=new_article.id, place_id=place.id))
+            else:
+                print(f"      ❓ Lugar no encontrado: {slug}")
 
+        # Tags
         for slug in data.get("tags", []):
             if slug.lower() in BLACKLIST: continue
             tag = get_tolerant(local_session, Tag, "slug", slug, data["url"])
-            if tag: local_session.add(ArticleTag(article_id=new_article.id, tag_id=tag.id))
+            if tag: 
+                local_session.add(ArticleTag(article_id=new_article.id, tag_id=tag.id))
+            else:
+                print(f"      ❓ Tag no encontrado: {slug}")
 
         local_session.commit()
         return new_article

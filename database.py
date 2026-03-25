@@ -1,9 +1,9 @@
 from sqlmodel import SQLModel, create_engine
 
-DATABASE_URL = "postgresql://admin:renaido@localhost:5432/EOM"
+DATABASE_URL = "postgresql://admin:renaido@localhost:5432/EOMai"
 
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 
 def init_db():
     # Importar todos los modelos para que SQLModel los registre antes de crear tablas

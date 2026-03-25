@@ -1,0 +1,53 @@
+[33mcommit f61321c92bd326864f86f154137c69612bf0cc12[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Wed Mar 25 17:37:00 2026 +0100
+
+    Ajuste, coordinacion completa de los scrappers
+
+[33mcommit 4e045851839c4c1b421f2cd9cdf1686b960d961b[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Tue Mar 24 23:29:30 2026 +0100
+
+    Embeddings listos
+
+[33mcommit 3f941e111c6bb553fa26b2e5a350cd311c468115[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Fri Mar 20 23:51:47 2026 +0100
+
+    Articulos listos
+
+[33mcommit 410890d8caa91897464e32d80fa6a34d2584c023[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Mon Mar 9 23:12:26 2026 +0100
+
+    Inicio de Articles
+
+[33mcommit 66b59f99c5bc5c972c567182052cc8a8bd485c17[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Mon Mar 9 22:56:34 2026 +0100
+
+    Lugares listos
+
+[33mcommit 0ac07d8b108e62231efab497e8079c422196c655[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Mon Mar 9 21:24:06 2026 +0100
+
+    Tags listos
+
+[33mcommit 3400aa75360d1bbf87fb02a618a46aa9b25bd0b3[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Mon Mar 9 20:46:28 2026 +0100
+
+    Categorias listas
+
+[33mcommit 71c6b8d121bb92898a36326bce8cee818d34a4f3[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Mon Mar 9 20:45:08 2026 +0100
+
+    Ajuste Autores
+
+[33mcommit 8e88689c676f039b08110962459a90465f64cd15[m
+Author: Alvaro EP <alvaroestevezpazos@gmail.com>
+Date:   Sun Mar 8 02:24:09 2026 +0100
+
+    autores añadidos a la base de datos

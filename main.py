@@ -1,36 +1,38 @@
 import time
 import random
 from stats import mostrar_estadisticas_finales
-from Articles.saveArticle import save_article
+
+# Importamos los entrypoints de cada scraper
+from Authors.scrapAuthor import buscarAutores
+from Tags.scrapTag import searchTags
+from Categories.scrapCategory import searchCategories
 from Articles.scrapArticle import searchArticles
+from Articles.saveArticle import save_article
 
-def main():
-    print("🔍 Escaneando Sitemap 1 (1000 artículos)...")
-    articulos_capturados = searchArticles(limit=1000) 
-    
-    if not articulos_capturados:
-        print("No se encontraron artículos nuevos en el scraper.")
-        return # Sale de main, pero el script sigue abajo
+from Embeddings.process_articles import process_all_articles
 
-    total = len(articulos_capturados)
-    print(f"🚀 Iniciando volcado de {total} artículos...")
-    print("🛡️ Modo 'Anti-Ban' activado (espera aleatoria entre peticiones).")
+
+def run_scrapers():
+    print("🔵 1. Iniciando scraper de Autores...")
+    buscarAutores()
     
-    for i, art_data in enumerate(articulos_capturados, 1):
-        # Guardamos el artículo
-        save_article(art_data)
-        
-        # 2. MARGEN DE SEGURIDAD:
-        # Esperamos entre 1.5 y 3.5 segundos entre cada artículo
-        # Esto hace que el tráfico parezca más "humano" y no un bot a toda velocidad
-        espera = random.uniform(1.5, 3.5)
-        
-        if i < total: # No esperar después del último
-            print(f"⏳ [{i}/{total}] Esperando {espera:.2f}s para el siguiente...")
-            time.sleep(espera)
+    print("\n🔵 2. Iniciando scraper de Tags...")
+    searchTags()
+    
+    print("\n🔵 3. Iniciando scraper de Categorías...")
+    searchCategories()
+    
+    print("\n🔵 4. Iniciando scraper de Artículos (limit=1000)...")
+    searchArticles(limit=1000) 
+    
+    print("✅ Todos los scrapers han finalizado.")
 
 if __name__ == "__main__":
-    main()
+    # Ejecuta la secuencia de scrapers
+    run_scrapers()
 
-    # Al terminar, mostramos el reporte que configuramos antes
+    print("\n🔵 5. Generando embeddings de artículos...")
+    process_all_articles()
+
+    # Al terminar, mostramos el reporte
     mostrar_estadisticas_finales()
