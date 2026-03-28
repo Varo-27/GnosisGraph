@@ -1,4 +1,5 @@
 import logging
+import os
 
 def get_scraper_logger(name="scraper"):
     logger = logging.getLogger(name)
@@ -12,8 +13,12 @@ def get_scraper_logger(name="scraper"):
         c_handler.setLevel(logging.INFO)
         c_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
 
+        # Ruta absoluta para asegurar que el log se guarde en scrapper/
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        log_path = os.path.join(base_dir, "critical_errors.log")
+
         # Controlador de archivo para errores
-        f_handler = logging.FileHandler("critical_errors.log", encoding='utf-8')
+        f_handler = logging.FileHandler(log_path, encoding='utf-8')
         f_handler.setLevel(logging.WARNING)
         f_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 

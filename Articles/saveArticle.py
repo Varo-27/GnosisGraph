@@ -12,9 +12,10 @@ from Authors.Author import Author
 from Categories.Category import Category
 from Tags.Tag import Tag
 from Places.Place import Place
+from utils import get_scraper_logger
 
 # Usamos el logger configurado en el otro archivo
-logger = logging.getLogger("scraper")
+logger = get_scraper_logger("scraper")
 
 def get_tolerant(session: Session, model, field: str, value: str, article_url: str):
     val_clean = value.strip() if value else ""

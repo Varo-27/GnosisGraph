@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
-from utils import get_headers
+from utils import get_headers, get_scraper_logger
 from datetime import datetime
 import time
 import random
@@ -18,19 +18,7 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 from .saveArticle import save_article
 
 # --- CONFIGURACIÓN DE LOGS ---
-logger = logging.getLogger("scraper")
-logger.setLevel(logging.DEBUG)
-
-c_handler = logging.StreamHandler()
-c_handler.setLevel(logging.INFO)
-c_handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-
-f_handler = logging.FileHandler("critical_errors.log", encoding='utf-8')
-f_handler.setLevel(logging.WARNING)
-f_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-logger.addHandler(c_handler)
-logger.addHandler(f_handler)
+logger = get_scraper_logger("scraper")
 
 logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -130,41 +118,40 @@ def article_scraper(url: str):
         logger.error(f"❌ Error en scraper para {url}: {str(e)}")
         return None
 
-def searchArticles(limit=1000):
-    sitemap_url = "https://elordenmundial.com/post-sitemap.xml"
+def searchArticles():
+    URLS = ["https://elordenmundial.com/post-sitemap.xml", "https://elordenmundial.com/post-sitemap2.xml", "https://elordenmundial.com/post-sitemap3.xml", "https://elordenmundial.com/post-sitemap4.xml"]
     print(f"\n🚀 --- INICIANDO SCRAPER MASIVO ---")
-    
-    try:
-        resp = requests.get(sitemap_url, headers=get_headers())
-        soup = BeautifulSoup(resp.text, 'xml')
-        raw_urls = [loc.text for loc in soup.find_all("loc")]
-        
-        extensiones_basura = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.pdf', '.xml', '.svgz')
-        urls = [u for u in raw_urls if not u.lower().endswith(extensiones_basura)]
-        
-        total_validas = len(urls)
-        print(f"🎯 URLs válidas: {total_validas}\n")
-        
-        count = 0
-        with Session(engine) as session:
-            for i, url in enumerate(urls):
-                if count >= limit: break
-                
-                existing = session.exec(select(Article).where(Article.url == url)).first()
-                if existing:
-                    if i % 10 == 0: print(f"[{i+1}/{total_validas}] ⏩ Saltando existentes...")
-                    continue 
-                
-                print(f"[{i+1}/{total_validas}] 🔍 Scrapeando: {url}")
-                
-                data = article_scraper(url)
-                if data:
-                    saved = save_article(data, session=session)
-                    if saved:
-                        count += 1
-                        print(f"   ✅ GUARDADO: {saved.title[:60]}...")
-                    time.sleep(random.uniform(1.5, 2.5))
-        
-        print(f"\n✨ TERMINADO: {count} nuevos.")
-    except Exception as e:
-        print(f"💥 ERROR: {e}")
+    for sitemap_url in URLS:
+        try:
+            resp = requests.get(sitemap_url, headers=get_headers())
+            soup = BeautifulSoup(resp.text, 'xml')
+            raw_urls = [loc.text for loc in soup.find_all("loc")]
+            
+            extensiones_basura = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.pdf', '.xml', '.svgz')
+            urls = [u for u in raw_urls if not u.lower().endswith(extensiones_basura)]
+            
+            total_validas = len(urls)
+            print(f"🎯 URLs válidas: {total_validas}\n")
+            
+            count = 0
+            with Session(engine) as session:
+                for i, url in enumerate(urls):
+
+                    existing = session.exec(select(Article).where(Article.url == url)).first()
+                    if existing:
+                        if i % 10 == 0: print(f"[{i+1}/{total_validas}] ⏩ Saltando existentes...")
+                        continue 
+                    
+                    print(f"[{i+1}/{total_validas}] 🔍 Scrapeando: {url}")
+                    
+                    data = article_scraper(url)
+                    if data:
+                        saved = save_article(data, session=session)
+                        if saved:
+                            count += 1
+                            print(f"   ✅ GUARDADO: {saved.title[:60]}...")
+                        time.sleep(random.uniform(1.5, 2.5))
+            
+            print(f"\n✨ TERMINADO: {count} nuevos.")
+        except Exception as e:
+            print(f"💥 ERROR: {e}")

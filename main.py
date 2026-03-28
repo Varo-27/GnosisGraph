@@ -23,7 +23,7 @@ def run_scrapers():
     searchCategories()
     
     print("\n🔵 4. Iniciando scraper de Artículos (limit=1000)...")
-    searchArticles(limit=1000) 
+    searchArticles() 
     
     print("✅ Todos los scrapers han finalizado.")
 
