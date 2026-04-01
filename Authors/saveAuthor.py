@@ -1,6 +1,6 @@
 from sqlmodel import Session
 from database import engine
-from .Author import Author
+from models import Author
 
 def save_author(name, url, bio):
     author = Author(name=name, profile_url=url, bio=bio)

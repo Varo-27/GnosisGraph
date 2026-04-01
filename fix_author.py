@@ -1,8 +1,8 @@
 from database import engine
 from sqlmodel import Session, select
-from Articles.Article import Article
-from Authors.Author import Author
-from Articles.ArticleAuthor import ArticleAuthor
+from models.Article import Article
+from models.Author import Author
+from models.ArticleAuthor import ArticleAuthor
 
 url_art = "https://elordenmundial.com/serbia-en-2015-bailando-con-la-ue-y-rusia-en-el-salon-de-la-osce/"
 

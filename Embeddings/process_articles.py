@@ -4,7 +4,7 @@ from sqlmodel import Session
 from sqlalchemy import text
 from Embeddings.local_embedding_client import get_embedding_local
 from database import engine
-from Embeddings.embedding import Embedding
+from models import Embedding
 
 def process_all_articles():
     print("🔵 Generando embeddings de artículos...")

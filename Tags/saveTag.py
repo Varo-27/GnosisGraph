@@ -1,6 +1,6 @@
 from sqlmodel import Session
 from database import engine
-from .Tag import Tag
+from models import Tag
 
 def save_tags_bulk(tags: list[dict]):
     objects = [Tag(name=t["name"], slug=t["slug"], url=t["url"]) for t in tags]

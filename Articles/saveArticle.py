@@ -3,15 +3,15 @@ from sqlmodel import Session, select, col
 from database import engine
 
 # Importación de modelos
-from .Article import Article
-from .ArticleAuthor import ArticleAuthor
-from .ArticleCategory import ArticleCategory
-from .ArticleTag import ArticleTag
-from .ArticlePlace import ArticlePlace
-from Authors.Author import Author
-from Categories.Category import Category
-from Tags.Tag import Tag
-from Places.Place import Place
+from models import Article
+from models import ArticleAuthor
+from models import ArticleCategory
+from models import ArticleTag
+from models import ArticlePlace
+from models.Author import Author
+from models.Category import Category
+from models.Tag import Tag
+from models.Place import Place
 from utils import get_scraper_logger
 
 # Usamos el logger configurado en el otro archivo

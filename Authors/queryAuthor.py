@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from database import engine
-from .Author import Author
+from models import Author
 
 def get_all_authors():
     with Session(engine) as session:

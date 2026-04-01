@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from database import engine
-from Articles.Article import Article
-from Articles.ArticleAuthor import ArticleAuthor # Importa tu tabla intermedia
+from models.Article import Article
+from models.ArticleAuthor import ArticleAuthor # Importa tu tabla intermedia
 
 def check_orphans():
     with Session(engine) as session:

@@ -7,10 +7,10 @@ from Authors.scrapAuthor import buscarAutores
 from Tags.scrapTag import searchTags
 from Categories.scrapCategory import searchCategories
 from Articles.scrapArticle import searchArticles
-from Articles.saveArticle import save_article
-
 from Embeddings.process_articles import process_all_articles
-
+from Topics import generate_topics
+from sqlmodel import Session
+from database import engine, check_db_connection
 
 def run_scrapers():
     print("🔵 1. Iniciando scraper de Autores...")
@@ -28,11 +28,18 @@ def run_scrapers():
     print("✅ Todos los scrapers han finalizado.")
 
 if __name__ == "__main__":
+    # Verificamos la base de datos antes de hacer nada
+    check_db_connection()
+
     # Ejecuta la secuencia de scrapers
     run_scrapers()
 
     print("\n🔵 5. Generando embeddings de artículos...")
     process_all_articles()
+
+    print("\n🔵 6. Generando topics de artículos...")
+    with Session(engine) as session:
+        generate_topics(session)
 
     # Al terminar, mostramos el reporte
     mostrar_estadisticas_finales()

@@ -9,7 +9,7 @@ import logging
 import warnings
 from sqlmodel import Session, select
 from database import engine
-from Articles.Article import Article
+from models.Article import Article
 
 # --- SILENCIAR ADVERTENCIAS DE BS4 ---
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)

@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from database import engine
-from .Tag import Tag
+from models import Tag
 
 def get_all_tags():
     with Session(engine) as session:

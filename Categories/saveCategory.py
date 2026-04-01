@@ -1,6 +1,6 @@
 from sqlmodel import Session
 from database import engine
-from .Category import Category
+from models import Category
 
 def save_category(name, slug, url, type):
     category = Category(name=name, slug=slug, url=url, type=type)
