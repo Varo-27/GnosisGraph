@@ -3,7 +3,7 @@ from sqlalchemy.exc import OperationalError
 import psycopg2
 import sys
 
-DATABASE_URL = "postgresql://admin:renaido@localhost:5432/EOMai"
+DATABASE_URL = "postgresql://admin:changethis@localhost:5432/EOMai"
 
 engine = create_engine(DATABASE_URL, echo=False)
 
