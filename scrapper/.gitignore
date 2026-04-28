@@ -1,11 +1,5 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
+# Packaging artifacts specific to the scrapper project
 build/
 dist/
 wheels/
 *.egg-info
-
-.env
-# Virtual environments
-.venv

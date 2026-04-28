@@ -1,0 +1,59 @@
+# IDE / editor files
+/.vscode/
+*.code-workspace
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+__pypackages__/
+
+# Python bytecode and caches
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/.mypy_cache/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.coverage
+htmlcov/
+**/.cache/
+
+# Python packaging / build artifacts
+build/
+dist/
+wheels/
+pip-wheel-metadata/
+*.egg-info/
+*.manifest
+*.spec
+
+# Node / frontend artifacts
+**/node_modules/
+**/bun_modules/
+**/.vite/
+**/.parcel-cache/
+**/.pnp/
+**/.pnp.js
+**/.eslintcache
+
+# Local environment files
+**/.env
+**/.env.local
+**/.env.*.local
+**/.python-version
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+*.log
+*.tmp
+*.swp
+*.swo

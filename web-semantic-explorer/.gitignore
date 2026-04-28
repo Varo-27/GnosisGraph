@@ -1,6 +1,7 @@
 .vscode/*
 !.vscode/extensions.json
-node_modules/
+
+# Project-specific generated folders
 /test-results/
 /playwright-report/
 /blob-report/
