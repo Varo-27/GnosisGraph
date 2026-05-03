@@ -63,7 +63,7 @@ docker compose stop frontend
 And then start the local frontend development server:
 
 ```bash
-bun run dev
+pnpm --filter frontend dev
 ```
 
 Or you could stop the `backend` Docker Compose service:

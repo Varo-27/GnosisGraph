@@ -35,6 +35,7 @@ pip-wheel-metadata/
 # Node / frontend artifacts
 **/node_modules/
 **/bun_modules/
+**/bun.lock
 **/.vite/
 **/.parcel-cache/
 **/.pnp/
@@ -46,6 +47,11 @@ pip-wheel-metadata/
 **/.env.local
 **/.env.*.local
 **/.python-version
+
+# npm artifacts when using pnpm
+package-lock.json
+npm-shrinkwrap.json
+pnpm-debug.log
 
 # OS files
 .DS_Store

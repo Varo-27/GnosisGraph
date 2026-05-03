@@ -5,16 +5,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:$PATH"
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 
-COPY package.json bun.lock /app/
-
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml /app/
 COPY frontend/package.json /app/frontend/
 
-WORKDIR /app/frontend
-
-RUN bun install
+WORKDIR /app
+RUN pnpm install --frozen-lockfile
 
 COPY ./frontend /app/frontend
 

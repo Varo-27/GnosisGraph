@@ -1,13 +1,12 @@
 {
   "name": "fastapi-full-stack-template",
   "private": true,
-  "workspaces": [
-    "frontend"
-  ],
+  "packageManager": "pnpm@10.32.1",
   "scripts": {
-    "dev": "bun run --filter frontend dev",
-    "lint": "bun run --filter frontend lint",
-    "test": "bun run --filter frontend test",
-    "test:ui": "bun run --filter frontend test:ui"
+    "preinstall": "node -e \"const ua=process.env.npm_config_user_agent||''; if(ua.startsWith('npm/')){ console.error('npm install is disabled for this repository. Use pnpm install instead.'); process.exit(1); }\"",
+    "dev": "pnpm --filter frontend dev",
+    "lint": "pnpm --filter frontend lint",
+    "test": "pnpm --filter frontend test",
+    "test:ui": "pnpm --filter frontend test:ui"
   }
 }

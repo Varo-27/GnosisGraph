@@ -1,20 +1,19 @@
-# Stage 0, "build-stage", based on Bun, to build and compile the frontend
-FROM oven/bun:1 AS build-stage
+# Stage 0, "build-stage", based on Node, to build and compile the frontend
+FROM node:20-bullseye-slim AS build-stage
 
 WORKDIR /app
 
-COPY package.json bun.lock /app/
-
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml /app/
 COPY frontend/package.json /app/frontend/
 
-WORKDIR /app/frontend
-
-RUN bun install
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
+RUN pnpm install --frozen-lockfile
 
 COPY ./frontend /app/frontend
 ARG VITE_API_URL
 
-RUN bun run build
+WORKDIR /app/frontend
+RUN pnpm run build
 
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
