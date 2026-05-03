@@ -5,6 +5,9 @@ from sqlmodel import Session, select
 from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
 
 from app.core.db import engine
+from sqlmodel import SQLModel
+# Import all models so SQLModel knows about them before create_all
+from app import models
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,7 +35,10 @@ def init(db_engine: Engine) -> None:
 def main() -> None:
     logger.info("Initializing service")
     init(engine)
-    logger.info("Service finished initializing")
+    logger.info("Service finished initializing DB check")
+    logger.info("Creating DB tables if not exist")
+    SQLModel.metadata.create_all(engine)
+    logger.info("Tables created or verified")
 
 
 if __name__ == "__main__":

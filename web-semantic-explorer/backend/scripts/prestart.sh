@@ -3,11 +3,8 @@
 set -e
 set -x
 
-# Let the DB start
+# Let the DB start and create tables if they don't exist
 python app/backend_pre_start.py
 
-# Run migrations
-alembic upgrade head
-
-# Create initial data in DB
+# Create initial data in DB (like admin user)
 python app/initial_data.py
