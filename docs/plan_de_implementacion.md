@@ -44,85 +44,84 @@ Este documento contiene el plan estructurado en fases para el desarrollo de la i
 ---
 
 ## 📍 Fase 2: Explorador Gráfico Orgánico (Frontend)
-*Objetivo: Construir el lienzo principal donde el usuario introduce una búsqueda y expande conocimiento a través de los nodos.*
+*Objetivo: Construir el lienzo principal donde el usuario introduce una búsqueda y expande conocimiento a través de los nodos. El entorno usa TanStack Router (enrutamiento) y Zustand (estado).*
 
-*   **Fase 2a: Layout Inicial y Buscador**
-    *   Configurar contenedor principal con lienzo `React Flow`.
-    *   Crear una barra flotante superpuesta para introducción de búsqueda de texto libre.
-*   **Fase 2b: Semilla de Búsqueda (Grafo Inicial)**
-    *   Al recibir usar el buscador, hacer llamada a `/api/search`.
-    *   Generar un nodo central ficticio ("Búsqueda: [texto]") y 5 nodos alrededor que representen los resultados encontrados.
-    *   Configurar físicas (ej: d3-force o spring layouter) mediante utilidades de React Flow (como elk.js o custom logic) para que los nodos no se amontonen.
-*   **Fase 2c: Navegación y Expansión Dinámica**
-    *   Configurar evento `onNodeClick` en React Flow.
-    *   Inyectar loader al nodo pulsado, recoger todos los IDs renderizados actualmente y enviarlos a `/api/graph/expand`.
-    *   Actualizar estado de nodos y aristas con la respuesta recibida, causando el "despliegue" orgánico del grafo con las aristas cruzadas para representar conexiones laterales.
+*   **Fase 2a: Setup Interfaz y Estado Global**
+    *   Generar los clientes API actualizados (`openapi-ts`) para conectar React con FastAPI.
+    *   Configurar Store de Zustand (`useGraphStore`) para gestionar `nodes`, `edges`, estado de carga y `nodoSeleccionado`.
+    *   Implementar el layout base con TanStack Router.
+*   **Fase 2b: Buscador Flotante y Semilla de Búsqueda**
+    *   Crear componente de Input Flotante para búsquedas en texto libre.
+    *   Al usar el buscador, invocar a `/api/search` o un nuevo endpoint adaptado para inicializar la semilla.
+    *   Renderizar un nodo central ("Búsqueda: [texto]") y 5 nodos alrededor que representen los resultados encontrados.
+*   **Fase 2c: Motor de Físicas y Renderizado (React Flow + d3-force)**
+    *   Integrar layout automático (ej. `d3-force` en modo headless o un layout de DAG) para que los nodos no se solapen y mantengan distancias orgánicas.
+    *   Crear Custom Nodes (Nodos Personalizados) en React Flow para mostrar imágenes, titulares y metadatos de los artículos.
+*   **Fase 2d: Navegación y Expansión Dinámica**
+    *   Configurar evento `onNodeClick` o un botón "+" en cada nodo dentro de React Flow.
+    *   Mostrar spinner de carga, recoger IDs renderizados enviarlos a `/api/graph/expand`.
+    *   Recibir los nodos/aristas y fusionarlos con el Store, dejando que el motor de físicas reacomode el lienzo visualmente.
+*   **Fase 2e: Panel de Detalles (Sidebar / Drawer)**
+    *   Al seleccionar o hacer click en un nodo (artículo), abrir un panel lateral (Sidebar/Drawer).
+    *   El panel debe mostrar título, resumen, autores, fecha, y un enlace para leer el artículo completo.
 
 ---
 
 ## 📍 Fase 3: Visión Geoespacial (Mapa de Calor)
-*Objetivo: Vista alternativa basada en metadatos geográficos (ArticlePlace/Places) para pintar el globo terráqueo.*
+*Objetivo: Vista alternativa basada en metadatos geográficos (ArticlePlace/Places) para pintar un mapa.*
 
-*   **Fase 3a: Agregador de Estadísticas (Backend)**
-    *   Endpoint `/api/stats/heatmap/` que devuelva agrupación `(Country Code / Place) -> (Número de artículos)`.
-*   **Fase 3b: Visor del Mapa (Frontend)**
-    *   Integrar `react-simple-maps`.
-    *   Aplicar rampa de color a los polígonos de los países basados en los datos del backend.
-    *   Permitir click en país para enviar al usuario de vuelta al backend/grafo ("buscar artículos de...").
+*   **Fase 3a: Endpoint Agregador (Backend)**
+    *   Endpoint `/api/stats/heatmap/` que devuelva métricas agrupadas: `(Country Code / Place) -> (Número de artículos)`.
+*   **Fase 3b: Visor del Mapa interactivo (Frontend)**
+    *   Integrar librería geopolítica como `react-simple-maps`.
+    *   Aplicar un código de color (rampa) a los países/regiones según el volumen devuelto por la API.
+    *   Permitir seleccionar en país/lugar para navegar al explorador web (Grafo) pre-filtrando los resultados.
 
 ---
 
-## 📍 Fase 4: Filtros Duros en Búsqueda y Grafo
-*Objetivo: Añadir filtros estrictos a la búsqueda semántica y expansión del grafo.*
+## 📍 Fase 4: Filtros Estrictos en Búsqueda y Grafo
+*Objetivo: Combinar búsqueda semántica (vectorial) con metadatos exactos (SQL).*
 
-*   **Fase 4a: Contratos y DTOs de Filtros (Backend)**
-    * Añadir `SearchFilters` y `GraphFilters` con campos opcionales: `year`, `year_range`, `region`, `category`, `author`, `place`.
-    * Asegurar que los filtros sean "duros": si un filtro existe, la consulta debe respetarlo al 100%.
-*   **Fase 4b: Búsqueda Semántica con Filtros (Backend)**
-    * `/api/search` acepta filtros y combina SQL tradicional con `pgvector`.
-    * Reglas de desempate: distancia vectorial primero, luego fecha.
-*   **Fase 4c: Expansión del Grafo con Filtros (Backend)**
-    * `/api/graph/expand` acepta los mismos filtros y los aplica a la extracción y a las aristas cruzadas.
-*   **Fase 4d: UI de Filtros (Frontend)**
-    * Panel de filtros persistente en el buscador y en el sidebar del grafo.
-    * Estado de filtros en Zustand y serialización en la URL.
+*   **Fase 4a: Contratos y Filtros (Backend)**
+    *   Creación de esquemas Pydantic `SearchFilters` y `GraphFilters`: `year_range`, `category`, `author`, `place`.
+    *   Actualizar `/api/search` y `/api/graph/expand` para inyectar cláusulas `WHERE` tradicionales antes del ordenamiento vectorial.
+*   **Fase 4b: UI de Filtros (Frontend)**
+    *   Añadir un componente persistente de filtros en el buscador y el sidebar.
+    *   Sincronización del estado de filtros en Zustand y en los Query Params de la URL usando hooks de TanStack Router.
+
+---
 
 ## 📍 Fase 5: Memoria de Usuario y Señales Sociales
-*Objetivo: Dotar a la app de memoria por usuario y señales de valor.*
+*Objetivo: Dotar a la aplicación de personalización y métricas de valor. (Nota: los modelos base en `SQLModel` como `Favorite`, `Rating`, `Comment` ya están implementados).*
 
-*   **Fase 5a: Favoritos**
-    * Modelo `Favorite` por usuario-articulo.
-    * Endpoints: `POST /api/favorites`, `DELETE /api/favorites/{id}`, `GET /api/favorites`.
-*   **Fase 5b: Valoraciones (1-5)**
-    * Modelo `Rating` con restriccion unica por usuario-articulo.
-    * Endpoints: `POST /api/ratings`, `GET /api/ratings` (promedio + mi voto).
-*   **Fase 5c: Comentarios, Reportes y Moderacion Basica**
-    * Modelo `Comment` con estado (`active`, `flagged`, `hidden`).
-    * Modelo `Report` con motivo, usuario y referencia al comentario.
-    * Endpoints: crear comentario, reportar, listar por articulo, moderar (solo admin).
-*   **Fase 5d: Notas Privadas por Usuario**
-    * Modelo `Note` (usuario-articulo, texto libre, timestamps).
-    * Endpoint simple CRUD privado.
-*   **Fase 5e: Seguimiento de Temas, Autores o Lugares**
-    * Modelo `Follow` con tipo (`topic`, `author`, `place`).
-    * Endpoint para seguir/dejar de seguir y feed basico.
+*   **Fase 5a: API de Interacción (Backend)**
+    *   Implementar URls para Favoritos (`POST/DELETE /api/favorites`).
+    *   Implementar URLs para Valoraciones (`POST /api/ratings`, `GET /api/ratings/average`).
+    *   Implementar CRUD básico para Comentarios.
+*   **Fase 5b: Integración de Acciones Sociales en Grafo/Panel (Frontend)**
+    *   Botón de favorito (estrella/corazón) en los Nodos y Panel de Detalles.
+    *   Sistema de reviews (5 estrellas) y seccion de comentarios dentro del artículo que se carga en el sidebar.
+*   **Fase 5c: Seguimiento y Notas Privadas (Próximos pasos)**
+    *   Modelos de Base de Datos y Endpoints para "Notas Privadas por Usuario" (anotación en markdown por artículo).
+    *   Sistema básico de seguimiento (Follow) a temas puntuales.
+
+---
 
 ## 📍 Fase 6: Mapa de Calor con Filtros Temporales
-*Objetivo: Mejorar la vista geoespacial con dimensiones de tiempo.*
+*Objetivo: Mejorar la vista geoespacial cruzándola con la dimensión del tiempo.*
 
-*   **Fase 6a: Backend**
-    * `/api/stats/heatmap` acepta `year` o `year_range`.
-    * Agregacion por pais y rango temporal.
-*   **Fase 6b: Frontend**
-    * Slider de tiempo y presets (ultimo ano, ultimos 5 anos).
-    * Sincronizacion con filtros globales.
+*   **Fase 6a: Filtros Temporales (Backend)**
+    *   Hacer que `/api/stats/heatmap/` acepte rangos dinámicos en los query params (ej. `year_start`, `year_end`).
+*   **Fase 6b: Control del Tiempo (Frontend)**
+    *   Slider interactivo de rango de años superpuesto sobre el Mapa.
+    *   Animación (play/pause) para ver la evolución del foco mediático y la cobertura a través de los años.
 
-## 📍 Fase 7 (Opcional): Historial de Navegacion
-*Objetivo: Guardar las rutas del usuario sin complicar la arquitectura.*
+---
 
-*   **Fase 7a: Historial Ligero**
-    * Registrar solo acciones clave (busqueda, nodo abierto, articulo visitado).
-    * Loteo y limpieza automatica (ej. max 500 entradas).
-*   **Fase 7b: UI de Historial**
-    * Lista cronologica con filtros basicos.
-    * Boton "Reabrir grafo" y "Repetir busqueda".
+## 📍 Fase 7 (Opcional): Historial de Navegación
+*Objetivo: Guardar el recorrido interactivo por el grafo.*
+
+*   **Fase 7a: Historial Ligero (Backend/Frontend)**
+    *   Guardar en BD (o localStorage temporalmente) los pasos que el usuario va dando ("Búsqueda X" -> "Expande nodo Y" -> "Abre artículo Z").
+*   **Fase 7b: Trazabilidad UI**
+    *   Rastro de migas de pan ("Breadcrumbs") o listado lateral para permitir deshacer expansiones del grafo o regresar a un hilo de investigación anterior.
