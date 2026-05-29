@@ -6,15 +6,28 @@ import { defineConfig } from "vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  test: {
+    environment: "node",
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ["d3-geo", "d3-geo-projection", "topojson-client"],
+  },
   plugins: [
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
+      codeSplittingOptions: {
+        splitBehavior: ({ routeId }) => {
+          if (routeId === "/_layout/map") {
+            return []
+          }
+        },
+      },
     }),
     react(),
     tailwindcss(),
