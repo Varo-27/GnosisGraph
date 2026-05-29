@@ -1,16 +1,10 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
-import { Footer } from "@/components/Common/Footer"
-import AppSidebar from "@/components/Sidebar/AppSidebar"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { DashboardLayout } from "@/components/Layout/DashboardLayout"
 import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
-  component: Layout,
+  component: DashboardLayout,
   beforeLoad: async () => {
     if (!isLoggedIn()) {
       throw redirect({
@@ -19,22 +13,3 @@ export const Route = createFileRoute("/_layout")({
     }
   },
 })
-
-function Layout() {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background">
-          <SidebarTrigger className="-ml-1 text-muted-foreground" />
-        </header>
-        <main className="flex-1 flex flex-col relative w-full h-[calc(100vh-4rem)]">
-          <Outlet />
-        </main>
-        <Footer />
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}
-
-export default Layout
