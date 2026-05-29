@@ -39,75 +39,115 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-map-ocean: var(--map-ocean);
+  --color-map-panel: var(--map-panel);
+  --color-map-stroke: var(--map-stroke);
+  --color-map-region-hover: var(--map-region-hover);
+  --color-map-region-selected: var(--map-region-selected);
 }
 
 :root {
+  /*
+   * Paleta EOM (El Orden Mundial) — elordenmundial.com
+   * Tokens de marca consumidos por shadcn/ui (--primary, --accent, --chart-*…).
+   *
+   * --eom-green        Verde corporativo principal; botones, anillos de foco, sidebar.
+   * --eom-green-light  Variante clara; primary y acentos en modo oscuro.
+   * --eom-green-dark   Verde profundo; texto sobre fondos accent en modo claro.
+   * --eom-green-pale   Fondo accent suave; hover de títulos en nodos del grafo.
+   * --eom-gray         Texto secundario / muted-foreground.
+   * --eom-border       Bordes de tarjetas, inputs y sidebar.
+   * --eom-surface      Fondos secundarios (secondary, muted, sidebar-accent).
+   * --eom-ink          Texto principal sobre fondo claro.
+   * --eom-warning      Ámbar de alerta; también hover/selección en mapa (--map-region-*).
+   */
+  --eom-green: #497d0b;
+  --eom-green-light: #5c9e0e;
+  --eom-green-dark: #264106;
+  --eom-green-pale: #ebf2e3;
+  --eom-gray: #6c757d;
+  --eom-border: #dee2e6;
+  --eom-surface: #f8f9fa;
+  --eom-ink: #212529;
+  --eom-warning: #ffc107;
+
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.5982 0.10687 182.4689);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.5982 0.10687 182.4689);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #ffffff;
+  --foreground: var(--eom-ink);
+  --card: #ffffff;
+  --card-foreground: var(--eom-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--eom-ink);
+  --primary: var(--eom-green);
+  --primary-foreground: #ffffff;
+  --secondary: var(--eom-surface);
+  --secondary-foreground: #343a40;
+  --muted: var(--eom-surface);
+  --muted-foreground: var(--eom-gray);
+  --accent: var(--eom-green-pale);
+  --accent-foreground: var(--eom-green-dark);
+  --destructive: #dc3545;
+  --border: var(--eom-border);
+  --input: #e9ecef;
+  --ring: var(--eom-green);
+  --chart-1: var(--eom-green);
+  --chart-2: var(--eom-green-light);
+  --chart-3: #345a08;
+  --chart-4: var(--eom-warning);
+  --chart-5: var(--eom-gray);
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--eom-ink);
+  --sidebar-primary: var(--eom-green);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--eom-surface);
+  --sidebar-accent-foreground: #343a40;
+  --sidebar-border: var(--eom-border);
+  --sidebar-ring: var(--eom-green);
+  --map-ocean: #e9ecef;
+  --map-panel: var(--background);
+  --map-stroke: rgb(108 117 125 / 0.35);
+  /* Ámbar: contrasta con el verde del heatmap y el hover de país */
+  --map-region-hover: #ffc107;
+  --map-region-selected: #d39e00;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.10687 182.4689);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.10687 182.4689);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1b1e21;
+  --foreground: #f8f9fa;
+  --card: #2c2f34;
+  --card-foreground: #f8f9fa;
+  --popover: #2c2f34;
+  --popover-foreground: #f8f9fa;
+  --primary: var(--eom-green-light);
+  --primary-foreground: #ffffff;
+  --secondary: #343a40;
+  --secondary-foreground: #f8f9fa;
+  --muted: #343a40;
+  --muted-foreground: #adb5bd;
+  --accent: #264106;
+  --accent-foreground: #ebf2e3;
+  --destructive: #f1b0b7;
+  --border: rgb(255 255 255 / 12%);
+  --input: rgb(255 255 255 / 15%);
+  --ring: var(--eom-green-light);
+  --chart-1: #7aab52;
+  --chart-2: var(--eom-green-light);
+  --chart-3: #bfd2aa;
+  --chart-4: #ffe8a1;
+  --chart-5: #adb5bd;
+  --sidebar: #2c2f34;
+  --sidebar-foreground: #f8f9fa;
+  --sidebar-primary: var(--eom-green-light);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #343a40;
+  --sidebar-accent-foreground: #f8f9fa;
+  --sidebar-border: rgb(255 255 255 / 12%);
+  --sidebar-ring: var(--eom-green-light);
+  --map-ocean: #343a40;
+  --map-panel: var(--card);
+  --map-stroke: rgb(255 255 255 / 18%);
+  --map-region-hover: #ffe08a;
+  --map-region-selected: #ffc107;
 }
 
 @layer base {
@@ -152,15 +192,21 @@
   border-color: var(--color-primary);
 }
 
-.graph-node-active img,
-.graph-node-card.graph-node-active:hover img {
-  filter: grayscale(0);
+/* Subrayado tipo EOM: franja verde en la mitad inferior del título (hover / activo) */
+.eom-title-highlight {
+  display: inline;
+  text-decoration: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-.graph-node-active h3,
-.graph-node-card.graph-node-active:hover h3 {
-  text-decoration: underline;
-  text-decoration-color: var(--color-primary);
+.graph-node-card:hover .eom-title-highlight,
+.graph-node-card.graph-node-active .eom-title-highlight {
+  background: linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--eom-green) 16%, transparent) 50%,
+    transparent 50%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
