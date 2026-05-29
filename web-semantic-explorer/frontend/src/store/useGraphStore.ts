@@ -18,6 +18,7 @@ export type AppNodeData = {
   category_name?: string
   url?: string
   imageUrl?: string
+  appearDelay?: number
   [key: string]: any
 }
 
@@ -27,7 +28,10 @@ interface GraphState {
   nodes: AppNode[]
   edges: Edge[]
   isLoading: boolean
+  activeNodeId: string | null
   selectedNode: AppNode | null
+  modalOpen: boolean
+  expandSimilar: ((nodeId: string) => void) | null
 
   // Actions
   onNodesChange: (changes: NodeChange[]) => void
@@ -38,7 +42,10 @@ interface GraphState {
   addNodes: (nodes: AppNode[]) => void
   addEdges: (edges: Edge[]) => void
   setLoading: (loading: boolean) => void
+  setActiveNodeId: (nodeId: string | null) => void
   setSelectedNode: (node: AppNode | null) => void
+  setModalOpen: (open: boolean) => void
+  setExpandSimilar: (handler: ((nodeId: string) => void) | null) => void
   clearGraph: () => void
 }
 
@@ -46,7 +53,10 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   nodes: [],
   edges: [],
   isLoading: false,
+  activeNodeId: null,
   selectedNode: null,
+  modalOpen: false,
+  expandSimilar: null,
 
   onNodesChange: (changes) => {
     set({
@@ -73,7 +83,17 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   addEdges: (newEdges) => set({ edges: [...get().edges, ...newEdges] }),
 
   setLoading: (isLoading) => set({ isLoading }),
+  setActiveNodeId: (activeNodeId) => set({ activeNodeId }),
   setSelectedNode: (selectedNode) => set({ selectedNode }),
+  setModalOpen: (modalOpen) => set({ modalOpen }),
+  setExpandSimilar: (expandSimilar) => set({ expandSimilar }),
 
-  clearGraph: () => set({ nodes: [], edges: [], selectedNode: null }),
+  clearGraph: () =>
+    set({
+      nodes: [],
+      edges: [],
+      activeNodeId: null,
+      selectedNode: null,
+      modalOpen: false,
+    }),
 }))
