@@ -1,0 +1,325 @@
+/**
+ * Resolución de lugares EOM → ISO (espejo del backend para mock y enriquecimiento).
+ * Mantener alineado con backend/app/place_geo.py y place_geo_regions.py
+ */
+
+import type { HeatmapEntry } from "@/api/stats"
+import { registerPlaceSlugLabels } from "@/lib/countrySearchLabels"
+
+const PLACE_TO_ISO: Record<string, string> = {
+  espana: "ESP",
+  "estados-unidos": "USA",
+  eeuu: "USA",
+  "reino-unido": "GBR",
+  francia: "FRA",
+  alemania: "DEU",
+  italia: "ITA",
+  ucrania: "UKR",
+  rusia: "RUS",
+  china: "CHN",
+  japon: "JPN",
+  india: "IND",
+  brasil: "BRA",
+  mexico: "MEX",
+  argentina: "ARG",
+  chile: "CHL",
+  colombia: "COL",
+  peru: "PER",
+  venezuela: "VEN",
+  canada: "CAN",
+  australia: "AUS",
+  turquia: "TUR",
+  iran: "IRN",
+  irak: "IRQ",
+  israel: "ISR",
+  palestina: "PSE",
+  "arabia-saudi": "SAU",
+  egipto: "EGY",
+  sudafrica: "ZAF",
+  nigeria: "NGA",
+  polonia: "POL",
+  suecia: "SWE",
+  noruega: "NOR",
+  finlandia: "FIN",
+  dinamarca: "DNK",
+  belgica: "BEL",
+  holanda: "NLD",
+  "paises-bajos": "NLD",
+  portugal: "PRT",
+  grecia: "GRC",
+  austria: "AUT",
+  suiza: "CHE",
+  "corea-del-sur": "KOR",
+  "corea-del-norte": "PRK",
+  taiwan: "TWN",
+  pakistan: "PAK",
+  afganistan: "AFG",
+  indonesia: "IDN",
+  filipinas: "PHL",
+  vietnam: "VNM",
+  tailandia: "THA",
+  "nueva-zelanda": "NZL",
+  irlanda: "IRL",
+  chequia: "CZE",
+  "republica-checa": "CZE",
+  hungria: "HUN",
+  rumania: "ROU",
+  bulgaria: "BGR",
+  serbia: "SRB",
+  croacia: "HRV",
+  lituania: "LTU",
+  letonia: "LVA",
+  estonia: "EST",
+  belarus: "BLR",
+  bielorrusia: "BLR",
+  kazajistan: "KAZ",
+  kazajstan: "KAZ",
+  kazajstán: "KAZ",
+  kazakhstan: "KAZ",
+  uzbekistan: "UZB",
+  georgia: "GEO",
+  armenia: "ARM",
+  azerbaiyan: "AZE",
+  libia: "LBY",
+  argelia: "DZA",
+  marruecos: "MAR",
+  tunez: "TUN",
+  etiopia: "ETH",
+  kenia: "KEN",
+  cuba: "CUB",
+  nicaragua: "NIC",
+  guatemala: "GTM",
+  honduras: "HND",
+  "el-salvador": "SLV",
+  panama: "PAN",
+  ecuador: "ECU",
+  bolivia: "BOL",
+  paraguay: "PRY",
+  uruguay: "URY",
+  siria: "SYR",
+  libano: "LBN",
+  jordania: "JOR",
+  yemen: "YEM",
+  oman: "OMN",
+  "emiratos-arabes-unidos": "ARE",
+  qatar: "QAT",
+  catar: "QAT",
+  kuwait: "KWT",
+  "bosnia-y-herzegovina": "BIH",
+  kosovo: "XKX",
+  sudan: "SDN",
+  "ciudad-del-vaticano": "VAT",
+  albania: "ALB",
+  montenegro: "MNE",
+  myanmar: "MMR",
+  "republica-democratica-del-congo": "COD",
+  moldavia: "MDA",
+  ruanda: "RWA",
+  haiti: "HTI",
+  macedonia: "MKD",
+  "republica-dominicana": "DOM",
+  "costa-rica": "CRI",
+  eslovenia: "SVN",
+  malasia: "MYS",
+  guyana: "GUY",
+  mali: "MLI",
+  turkmenistan: "TKM",
+  banglades: "BGD",
+  camerun: "CMR",
+  niger: "NER",
+  eslovaquia: "SVK",
+  chad: "TCD",
+  "hong-kong": "HKG",
+  barein: "BHR",
+  "sudan-del-sur": "SSD",
+  "burkina-faso": "BFA",
+  tayikistan: "TJK",
+  camboya: "KHM",
+  "guinea-ecuatorial": "GNQ",
+  "republica-arabe-saharaui-democratica": "ESH",
+  "sahara-occidental": "ESH",
+  kirguistan: "KGZ",
+  groenlandia: "GRL",
+  somalia: "SOM",
+  somaliland: "SOM",
+  somalilandia: "SOM",
+  mozambique: "MOZ",
+  luxemburgo: "LUX",
+  chipre: "CYP",
+  "puerto-rico": "PRI",
+  senegal: "SEN",
+  uganda: "UGA",
+  jamaica: "JAM",
+  "guinea-bissau": "GNB",
+  belice: "BLZ",
+  gabon: "GAB",
+  mauritania: "MRT",
+  ghana: "GHA",
+  "costa-de-marfil": "CIV",
+  surinam: "SUR",
+  zambia: "ZMB",
+  islandia: "ISL",
+  burundi: "BDI",
+  malta: "MLT",
+  laos: "LAO",
+  nepal: "NPL",
+  "cabo-verde": "CPV",
+  angola: "AGO",
+  botsuana: "BWA",
+  fiyi: "FJI",
+  andorra: "AND",
+  eritrea: "ERI",
+  liberia: "LBR",
+  "trinidad-y-tobago": "TTO",
+  singapur: "SGP",
+  barbados: "BRB",
+  yibuti: "DJI",
+  brunei: "BRN",
+  kiribati: "KIR",
+  "sri-lanka": "LKA",
+  "republica-del-congo": "COG",
+  namibia: "NAM",
+  "republica-centroafricana": "CAF",
+  nauru: "NRU",
+  comoras: "COM",
+  "islas-marshall": "MHL",
+  togo: "TGO",
+  mongolia: "MNG",
+  tuvalu: "TUV",
+  "sierra-leona": "SLE",
+  seychelles: "SYC",
+  benin: "BEN",
+  gambia: "GMB",
+  liechtenstein: "LIE",
+  "nueva-caledonia": "NCL",
+  tanzania: "TZA",
+  guinea: "GIN",
+  vanuatu: "VUT",
+  dominica: "DMA",
+  bermudas: "BMU",
+  bahamas: "BHS",
+  samoa: "WSM",
+  tonga: "TON",
+  "guayana-francesa": "GUF",
+  granada: "GRD",
+  micronesia: "FSM",
+  "san-marino": "SMR",
+  gibraltar: "GIB",
+  "timor-oriental": "TLS",
+  maldivas: "MDV",
+  "islas-palaos": "PLW",
+  "santa-elena": "SHN",
+  kurdistan: "IRQ",
+  kurdistán: "IRQ",
+  "islas-solomon": "SLB",
+  malaui: "MWI",
+  madagascar: "MDG",
+  "antigua-y-barbuda": "ATG",
+  antartida: "ATA",
+  zimbabue: "ZWE",
+  zimbabwe: "ZWE",
+  butan: "BTN",
+  bhutan: "BTN",
+}
+
+registerPlaceSlugLabels(PLACE_TO_ISO)
+
+const REGION_TO_ISO: Record<string, string[]> = {
+  europa: [
+    "ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE",
+    "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA",
+    "XKX", "LVA", "LIE", "LTU", "LUX", "MLT", "MDA", "MNE", "NLD", "MKD",
+    "NOR", "POL", "PRT", "ROU", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE",
+    "CHE", "UKR", "GBR", "VAT", "GIB",
+  ],
+  "america-latina": [
+    "ARG", "BOL", "BRA", "CHL", "COL", "CRI", "CUB", "DOM", "ECU", "SLV",
+    "GTM", "GUY", "HTI", "HND", "MEX", "NIC", "PAN", "PRY", "PER", "SUR",
+    "URY", "VEN", "BLZ", "JAM", "TTO", "BRB", "BHS", "GRD", "DMA", "ATG",
+    "GUF", "PRI",
+  ],
+  "america-del-norte": ["USA", "CAN", "MEX", "GRL", "BMU"],
+  "africa-subsahariana": [
+    "AGO", "BEN", "BWA", "BFA", "BDI", "CPV", "CMR", "CAF", "TCD", "COM",
+    "COG", "COD", "CIV", "DJI", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA",
+    "GIN", "GNB", "KEN", "LSO", "LBR", "MDG", "MWI", "MLI", "MRT", "MOZ",
+    "NAM", "NER", "NGA", "RWA", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD",
+    "SDN", "TZA", "TGO", "UGA", "ZMB", "ZWE", "ESH",
+  ],
+  "oriente-medio-y-norte-de-africa": [
+    "DZA", "BHR", "EGY", "IRN", "IRQ", "ISR", "JOR", "KWT", "LBN", "LBY",
+    "MAR", "OMN", "PSE", "QAT", "SAU", "SYR", "TUN", "TUR", "ARE", "YEM",
+  ],
+  "oriente-proximo-y-magreb": [
+    "DZA", "EGY", "LBY", "MAR", "MRT", "TUN", "ESH", "ISR", "JOR", "LBN",
+    "PSE", "SYR", "TUR", "IRQ", "IRN",
+  ],
+  "asia-pacifico": [
+    "AFG", "ARM", "AZE", "BGD", "BRN", "KHM", "CHN", "GEO", "HKG", "IND",
+    "IDN", "JPN", "KAZ", "PRK", "KOR", "KGZ", "LAO", "MYS", "MDV", "MNG",
+    "MMR", "NPL", "NZL", "PAK", "PHL", "SGP", "LKA", "TWN", "TJK", "THA",
+    "TLS", "TKM", "UZB", "VNM", "AUS", "FJI", "SLB", "VUT", "WSM", "TON",
+    "KIR", "MHL", "FSM", "PLW", "NRU", "TUV", "NCL",
+  ],
+  "asia-central": ["KAZ", "UZB", "TKM", "TJK", "KGZ", "AFG", "MNG"],
+}
+
+const NON_MAP = new Set(["mundo", "artico", "arctico", "polos"])
+
+function normalizeKey(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+}
+
+function candidateKeys(name: string, slug: string | null) {
+  const keys: string[] = []
+  if (slug) keys.push(normalizeKey(slug))
+  keys.push(normalizeKey(name))
+  return keys
+}
+
+export function resolveMapCountryCodes(
+  name: string,
+  slug: string | null,
+): string[] {
+  for (const key of candidateKeys(name, slug)) {
+    const iso = PLACE_TO_ISO[key]
+    if (iso) return [iso]
+  }
+  for (const key of candidateKeys(name, slug)) {
+    if (NON_MAP.has(key)) return []
+    const region = REGION_TO_ISO[key]
+    if (region) return [...region]
+  }
+  return []
+}
+
+export function enrichHeatmapEntry(entry: HeatmapEntry): HeatmapEntry {
+  const mapCodes =
+    entry.map_country_codes?.length > 0
+      ? entry.map_country_codes
+      : resolveMapCountryCodes(entry.name, entry.slug)
+
+  return {
+    ...entry,
+    country_code:
+      entry.country_code ?? (mapCodes.length === 1 ? mapCodes[0] : null),
+    map_country_codes: mapCodes,
+  }
+}
+
+export { getCountrySearchLabel } from "@/lib/countrySearchLabels"
+
+export function enrichHeatmapResponse<T extends { entries: HeatmapEntry[] }>(
+  data: T,
+): T {
+  return {
+    ...data,
+    entries: data.entries.map(enrichHeatmapEntry),
+  }
+}
