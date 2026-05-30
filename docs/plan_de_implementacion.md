@@ -1,128 +1,266 @@
 # Plan de Implementación: Web Semantic Explorer
 
-Este documento contiene el plan estructurado en fases para el desarrollo de la interfaz de exploración semántica y grafos para la base de datos de artículos geopolíticos (El Orden Mundial).
+Plan de producto para la exploración semántica y grafos sobre el corpus geopolítico (El Orden Mundial). Las **fases ya entregadas en frontend** están recogidas en [Capacidades del frontend](#capacidades-del-frontend); el resto del documento describe arquitectura, modelo de tubería y **trabajo pendiente**.
 
-## Arquitectura Base
+---
+
+## Arquitectura base
+
 *   **Base de datos:** PostgreSQL con extensión `pgvector` y esquemas poblados por el scrapper.
 *   **Backend:** FastAPI (Python), SQLModel, SentenceTransformers (modelo local `mixedbread-ai/mxbai-embed-large-v1`).
-*   **Frontend:** React, React Flow (grafos), React Simple Maps (geolocalización).
-
-## Selecciones Técnicas y Patrones
-1. **Gestor de Estado (Frontend):** **Zustand**. Permitirá que la Barra de Búsqueda, el Lienzo del Grafo y el Panel Lateral lean y escriban datos comunes (ej. `nodos`, `aristas`, `nodoSeleccionado`) con mínimo código puente sin penalizar el rendimiento por repintados masivos de React.
-2. **Motor Físico del Grafo (Progresivo):** Comenzaremos situando los nodos con matemáticas simples (ej. posicionamiento radial) para comprender los límites de React Flow puros. Posteriormente, introduciremos **d3-force (en modo "Headless")** para simulaciones físicas orgánicas: `d3-force` sólo calculará la matemática invisible (x, y) en memoria, y React Flow se encargará exclusivamente de pintar el DOM con seguridad.
-3. **Arquitectura de Búsqueda IA (Python + pgvector):** Usaremos el evento `lifespan` de FastAPI para mantener residente en la memoria RAM (solo 1 carga) el pesado modelo de `SentenceTransformer`. Python será un rápido "traductor" que convierte el texto en vectores al vuelo. Una vez codificado el vector, la delegación de búsqueda y la comparativa la realiza PostgreSQL usando directamente distancias con `pgvector`.
-4. **Contratos Interfaz y Coherencia:** Tipado estricto con **Pydantic / SQLModel**. Se mantendrá la regla estricta de seguir la arquitectura de la plantilla de FastAPI separando responsabilidades:
-    *   Ficheros de BBDD (`table=True`) no se devuelven nunca directamente.
-    *   Se crearán siempre Schemas "Public" o "Response" (ej. `GraphResponse`, `GraphNode`) para proveer la estructura exacta (`{ id, data: {...} }`) que React Flow requiere.
-5. **Optimizaciones de Infraestructura e IA:**
-    *   **Caché en Memoria:** Uso nativo de `@lru_cache` de Python para peticiones repetidas al `SentenceTransformer`, logrando tiempos de respuesta de 0ms en búsquedas cacheadas.
-    *   **Persistencia en Disco Secundario:** Configuración vía *Bind Mount* en `compose.yml` para mapear los 2GB+ de pesos del modelo de HuggingFace directamente a un segundo disco duro (ej. `/mnt/d/cache_ia`), evitando saturar el almacenamiento principal del sistema (C:).
-    *   **Índices HNSW:** Creación de índice *Hierarchical Navigable Small World* en `pgvector` para reducir la latencia de las consultas de similitud (búsqueda y cruce de aristas) a niveles ultra-rápidos (O(log N)).
-
+*   **Frontend:** React, TanStack Router, React Flow (grafos), React Simple Maps (mapa), Zustand.
 
 ---
 
-## 📍 Fase 1: El Motor Semántico (API Backend) ✅
-*Objetivo: Exponer los datos del scrapper y la lógica vectorial mediante endpoints limpios para el frontend, incluyendo la lógica de grafos.*
-*Estado: Implementado.*
+## Selecciones técnicas y patrones
 
-*   **Fase 1a: Modelos y Cliente Embedding**
-    *   Migrar/Compartir los modelos de `SQLModel` / `SQLAlchemy` (Article, Embedding, Topic, Author, etc.) desde el scrapper al directorio de backend (`web-semantic-explorer/backend/app/models.py`).
-    *   Integrar un cliente o servicio encapsulado para generar embeddings al vuelo usando `SentenceTransformer` dentro de la API FastAPI.
-*   **Fase 1b: Endpoints de Búsqueda Inicial (Seed)**
-    *   Crear endpoint `/api/search` que recibe texto libre de búsqueda.
-    *   Convierte el texto en vector y hace la consulta por coseno (`ORDER BY embedding <=> query_embedding`) devolviendo los metadatos de los Top N artículos.
-*   **Fase 1c: Endpoint de Expansión Expansiva (5N+ Interconectados)**
-    *   Crear endpoint `/api/graph/expand`.
-    *   **Entrada:** `source_article_id` (el artículo a expandir) y `existing_node_ids` (lista de artículos visibles en React Flow).
-    *   **Proceso (2 pasos clave):**
-        1. **Extracción (Garantizar 5 nuevos):** Buscar los Top 5 artículos más similares al `source_article_id`, excluyendo explícitamente mediante SQL (`NOT IN`) los `existing_node_ids`. Esto garantiza que el grafo siempre crezca sin frustrar al usuario.
-        2. **Interconexión (Cruce de aristas):** Una vez extraídos, calcular matemáticamente la similitud entre estos 5 NUEVOS nodos y TODOS los nodos pasados en `existing_node_ids`. Si la afinidad supera un umbral (ej. > 85%), se genera una arista cruzada de conexión.
-        3. Formar aristas directas correspondientes (padre original -> nuevos nodos).
-    *   **Salida:** JSON con lista de `{new_nodes: [...], new_edges: [...]}` listos para renderizar en UI.
+1. **Gestor de estado (frontend):** **Zustand** en dos capas: `useGraphStore` (lienzo en vivo: nodos, aristas, modal, carga) y `useWorkspaceStore` (áreas de trabajo persistidas). El grafo es la fuente de verdad del lienzo; la sesión vive en el workspace, no en la URL del grafo.
+2. **Motor físico del grafo:** Posicionamiento manual + colocación radial al buscar/expandir. **d3-force headless** queda en backlog (ver [Pendiente](#pendiente-y-backlog)).
+3. **Búsqueda IA:** `lifespan` FastAPI + `SentenceTransformer` en RAM; ranking vectorial en PostgreSQL (`pgvector`).
+4. **Contratos:** Pydantic/SQLModel; respuestas públicas (`GraphResponse`, `GraphNode`) adaptadas a React Flow.
+5. **Infra:** `@lru_cache`, bind mount de modelos, índices HNSW en embeddings.
 
 ---
 
-## 📍 Fase 2: Explorador Gráfico Orgánico (Frontend)
-*Objetivo: Construir el lienzo principal donde el usuario introduce una búsqueda y expande conocimiento a través de los nodos. El entorno usa TanStack Router (enrutamiento) y Zustand (estado).*
+## Estado del proyecto (resumen)
 
-*   **Fase 2a: Setup Interfaz y Estado Global**
-    *   Generar los clientes API actualizados (`openapi-ts`) para conectar React con FastAPI.
-    *   Configurar Store de Zustand (`useGraphStore`) para gestionar `nodes`, `edges`, estado de carga y `nodoSeleccionado`.
-    *   Implementar el layout base con TanStack Router.
-*   **Fase 2b: Buscador Flotante y Semilla de Búsqueda**
-    *   Crear componente de Input Flotante para búsquedas en texto libre.
-    *   Al usar el buscador, invocar a `/api/search` o un nuevo endpoint adaptado para inicializar la semilla.
-    *   Renderizar un nodo central ("Búsqueda: [texto]") y 5 nodos alrededor que representen los resultados encontrados.
-*   **Fase 2c: Motor de Físicas y Renderizado (React Flow + d3-force)**
-    *   Integrar layout automático (ej. `d3-force` en modo headless o un layout de DAG) para que los nodos no se solapen y mantengan distancias orgánicas.
-    *   Crear Custom Nodes (Nodos Personalizados) en React Flow para mostrar imágenes, titulares y metadatos de los artículos.
-*   **Fase 2d: Navegación y Expansión Dinámica**
-    *   Configurar evento `onNodeClick` o un botón "+" en cada nodo dentro de React Flow.
-    *   Mostrar spinner de carga, recoger IDs renderizados enviarlos a `/api/graph/expand`.
-    *   Recibir los nodos/aristas y fusionarlos con el Store, dejando que el motor de físicas reacomode el lienzo visualmente.
-*   **Fase 2e: Panel de Detalles (Sidebar / Drawer)**
-    *   Al seleccionar o hacer click en un nodo (artículo), abrir un panel lateral (Sidebar/Drawer).
-    *   El panel debe mostrar título, resumen, autores, fecha, y un enlace para leer el artículo completo.
+| Ámbito | Estado |
+|--------|--------|
+| **Fase 1 — API semántica** (`/api/search`, `/api/graph/expand`) | ✅ |
+| **Fase 3 — Mapa de calor** (API + visor) | ✅ |
+| **Fase 4 — Filtros en API** | ✅ |
+| **Fase 5a–5b — API social + UI en grafo/modal** | ✅ |
+| **Fase 6 — Grafo con input/filtro/workspaces** | ✅ Frontend MVP (detalle en capacidades) |
+| **Fase 5c, 6d servidor, 6e, 6f toolbar, 7, 8** | ⏳ Pendiente |
 
 ---
 
-## 📍 Fase 3: Visión Geoespacial (Mapa de Calor)
-*Objetivo: Vista alternativa basada en metadatos geográficos (ArticlePlace/Places) para pintar un mapa.*
+## Modelo de tubería (upstream → downstream)
 
-*   **Fase 3a: Endpoint Agregador (Backend)**
-    *   Endpoint `/api/stats/heatmap/` que devuelva métricas agrupadas: `(Country Code / Place) -> (Número de artículos)`.
-*   **Fase 3b: Visor del Mapa interactivo (Frontend)**
-    *   Integrar librería geopolítica como `react-simple-maps`.
-    *   Aplicar un código de color (rampa) a los países/regiones según el volumen devuelto por la API.
-    *   Permitir seleccionar en país/lugar para navegar al explorador web (Grafo) pre-filtrando los resultados.
+El grafo define **cadenas de contexto** dirigidas. Todo lo downstream hereda lo definido upstream.
 
----
+```text
+[input] → [filtro₁] → [filtro₂] → (búsqueda / expand) → [artículos…]
+```
 
-## 📍 Fase 4: Filtros Estrictos en Búsqueda y Grafo
-*Objetivo: Combinar búsqueda semántica (vectorial) con metadatos exactos (SQL).*
+| Dirección | Significado |
+|-----------|-------------|
+| **Upstream** (hacia el `input`) | Consultas de inputs ancestros + filtros acumulados en la cadena |
+| **Downstream** (hacia artículos) | Resultados de `/api/search` y ramas de `/api/graph/expand` |
 
-*   **Fase 4a: Contratos y Filtros (Backend)**
-    *   Creación de esquemas Pydantic `SearchFilters` y `GraphFilters`: `year_range`, `category`, `author`, `place`.
-    *   Actualizar `/api/search` y `/api/graph/expand` para inyectar cláusulas `WHERE` tradicionales antes del ordenamiento vectorial.
-*   **Fase 4b: UI de Filtros (Frontend)**
-    *   Añadir un componente persistente de filtros en el buscador y el sidebar.
-    *   Sincronización del estado de filtros en Zustand y en los Query Params de la URL usando hooks de TanStack Router.
+Principios vigentes:
 
----
+1. **Entrada = nodo `input`:** uno por defecto al crear un área; la paleta añade más con drag and drop.
+2. **Re-buscar no mueve el lienzo:** solo sustituye artículos downstream del `input` activo en esa tubería.
+3. **Filtros en cadena:** nodos `filter:*` conectados entre `input` y artículos; se envían en el body de search/expand (AND).
+4. **Expansión con contexto:** «Ver más» usa `seed_queries` y artículos ancestros si hay tubería cableada.
+5. **Varias investigaciones:** varios `input` sin arista entre ellos = islas en el mismo área.
+6. **Un artículo = un nodo:** mismo `article_id` no se duplica; nuevas aristas desde quien lo descubrió.
+7. **Persistencia = área de trabajo** en `localStorage` (MVP); contrato API listo para sync servidor.
 
-## 📍 Fase 5: Memoria de Usuario y Señales Sociales
-*Objetivo: Dotar a la aplicación de personalización y métricas de valor. (Nota: los modelos base en `SQLModel` como `Favorite`, `Rating`, `Comment` ya están implementados).*
-
-*   **Fase 5a: API de Interacción (Backend)** ✅
-    *   `GET /api/v1/articles/{id}` — detalle con taxonomía, comentarios, rating y favorito del usuario.
-    *   Favoritos: `POST/DELETE /api/v1/favorites/{article_id}` y toggle en `/articles/{id}/favorite`.
-    *   Valoraciones: `POST /api/v1/ratings?article_id=…`, `GET /api/v1/ratings/average`, `POST /articles/{id}/rating`.
-    *   Comentarios: listado/creación por artículo; `PATCH/DELETE /api/v1/comments/{id}`.
-*   **Fase 5b: Integración de Acciones Sociales en Grafo/Panel (Frontend)** ✅
-    *   Cliente `@/api/articles` + modal y nodo con favorito real (sin mock).
-    *   Valoración interactiva (5 estrellas) y CRUD de comentarios propios en el panel.
-*   **Fase 5c: Seguimiento y Notas Privadas (Próximos pasos)**
-    *   Modelos de Base de Datos y Endpoints para "Notas Privadas por Usuario" (anotación en markdown por artículo).
-    *   Sistema básico de seguimiento (Follow) a temas puntuales.
+El tipo legado `searchCenter` se **migra a `input`** al cargar snapshots antiguos; el componente `SearchNode` solo renderiza datos legacy no migrados.
 
 ---
 
-## 📍 Fase 6: Mapa de Calor con Filtros Temporales
-*Objetivo: Mejorar la vista geoespacial cruzándola con la dimensión del tiempo.*
+## Capacidades del frontend
 
-*   **Fase 6a: Filtros Temporales (Backend)**
-    *   Hacer que `/api/stats/heatmap/` acepte rangos dinámicos en los query params (ej. `year_start`, `year_end`).
-*   **Fase 6b: Control del Tiempo (Frontend)**
-    *   Slider interactivo de rango de años superpuesto sobre el Mapa.
-    *   Animación (play/pause) para ver la evolución del foco mediático y la cobertura a través de los años.
+Inventario de lo que el usuario puede hacer hoy en la interfaz. Sirve como base para documentar casos de uso.
+
+> **Rutas principales:** `/` (explorador de grafo), `/map` (mapa de cobertura), `/settings`, `/login`, `/signup`, `/admin` (superusuario).
+
+### Shell, navegación y apariencia
+
+- Ver barra superior con logo, enlaces **Grafo** y **Mapa** (y **Admin** si es superusuario).
+- Cambiar tema **Claro / Oscuro / Sistema** desde el menú de apariencia en la barra.
+- Abrir **Ajustes** de cuenta desde el menú de usuario (perfil, contraseña, borrar cuenta).
+- Cerrar sesión.
+- Pantalla de carga «Cargando área de trabajo…» hasta hidratar workspaces desde el navegador.
+- Mensajes de error/toast (Sonner) en fallos de búsqueda, expansión o acciones sociales.
+
+### Áreas de trabajo (workspaces)
+
+- Tener **varias áreas** guardadas en este navegador (`localStorage`, clave `wse-workspaces-v1`).
+- **Elegir** el área activa desde un desplegable en la barra lateral.
+- **Renombrar** el área activa (campo de texto; guardar con Enter o al salir del campo).
+- **Crear** un área nueva (botón «Nueva»); incluye un nodo `input` por defecto centrado en el lienzo.
+- **Eliminar** un área (icono papelera); deshabilitado si solo queda una.
+- Ver indicador **Guardada** / **Sin guardar** según cambios pendientes.
+- **Autoguardado** ~800 ms tras cambios en nodos, aristas o cámara (pan/zoom).
+- **Restaurar** al cambiar de área: nodos, aristas y viewport (`x`, `y`, `zoom`) del snapshot.
+- **Guardar viewport** al mover la cámara (`onMoveEnd`) y al desmontar el explorador.
+- Al primer arranque sin datos: crear payload por defecto con un área y un `input`.
+- **Migración automática** de snapshots antiguos (`searchCenter` → `input`).
+- Export interno `workspaceToApiBody()` preparado para futura sincronización con servidor (aún sin UI de sync).
+
+### Paleta lateral («Añadir nodos»)
+
+- Leer hint: arrastrar al lienzo y conectar filtros entre input y artículos.
+- **Arrastrar y soltar** un **Nodo input** en cualquier punto del lienzo (posición = coordenadas del drop en espacio React Flow).
+- **Arrastrar y soltar** cada tipo de **Nodo filtro**: Autor, Categoría, Lugar, Desde (año), Hasta (año).
+- Ver la paleta **deshabilitada** (sin drag) mientras hay una búsqueda o expansión en curso (`isLoading`).
+- Feedback visual en el lienzo: clase `graph-explorer__canvas--drag-over` al arrastrar un ítem de paleta válido sobre el canvas.
+
+### Lienzo del grafo (React Flow)
+
+- **Pan** (arrastrar fondo) y **zoom** con rueda o gestos (límites configurados `GRAPH_MIN_ZOOM` / `GRAPH_MAX_ZOOM`).
+- Usar controles integrados de React Flow (**Controls**).
+- Ver **minimapa** coloreada: nodo activo en color primario, resto en muted.
+- Ver **rejilla** de fondo (líneas, estilo EOM).
+- **Mover nodos** arrastrándolos; posición persistida en el workspace.
+- **Seleccionar** nodos y aristas (comportamiento estándar React Flow).
+- Modo de color del grafo acorde al tema claro/oscuro.
+- Renderizado solo de elementos visibles (`onlyRenderVisibleElements`).
+- **No** se aplica layout global automático (d3-force) al buscar o expandir; los artículos nuevos aparecen en posiciones relativas calculadas (radial / offset).
+
+### Aristas (conexiones)
+
+- **Crear** una arista arrastrando desde un handle de salida (abajo) a un handle de entrada (arriba) de otro nodo.
+- **Eliminar** una o varias aristas seleccionadas y pulsar **Supr** o **Retroceso** (`deleteKeyCode`).
+- Al eliminar aristas, recalcular flags de contexto enlazado en nodos artículo (`hasLinkedDownstreamContext`).
+- Al conectar/desconectar, actualizar esos mismos flags en el store.
+
+### Nodo `input` (consulta semántica)
+
+- Ver etiquetas «Consulta semántica» / «Escribe y pulsa Explorar» y borde primario fijo (estilo input).
+- Escribir texto en el campo (clase `nodrag nopan` para no mover el lienzo al interactuar).
+- Pulsar **Explorar** o Enter en el formulario para lanzar búsqueda.
+- Ver botón deshabilitado si la consulta está vacía o hay carga global.
+- Ver estado **Buscando…** en el botón durante la petición.
+- **Eliminar** el nodo (icono papelera → menú «¿Eliminar este nodo?» → Sí / Cancelar); quita el nodo y sus aristas, sin re-cablear otros nodos.
+- Handles: entrada arriba, salida abajo (para encadenar filtros o enlazar a artículos vía tubería manual).
+- Múltiples `input` en el mismo área = **islas** de investigación independientes.
+
+### Nodos `filter` (metadatos)
+
+- Tipos en paleta: **Autor**, **Categoría**, **Lugar**, **Desde (año)**, **Hasta (año)**.
+- Editar valor en campo de texto (debounce ~400 ms) o confirmar con Enter / blur.
+- **Autor:** combobox con búsqueda de autores (`AuthorFilterCombobox`) en lugar de texto libre.
+- Años: input numérico.
+- Título del nodo actualizado como `{Dimensión}: {valor}`.
+- **Eliminar** filtro con el mismo flujo de confirmación que otros nodos.
+- Handles arriba/abajo para encadenar `input → filtro → filtro → …` hacia artículos.
+- Los filtros **conectados downstream** del `input` (siguiendo aristas salientes) se envían como `ArticleMetadataFilters` en búsqueda y expansión.
+
+### Nodos `article` (artículos)
+
+- Ver categoría, autor (truncado), imagen, titular, extracto.
+- Ver nodo **activo** resaltado (`graph-node-active`) cuando coincide con `activeNodeId`.
+- Animación de aparición escalonada (`appearDelay`) al llegar de búsqueda/expansión.
+- **Favorito** (corazón) en el nodo si hay sesión iniciada; toggle contra API con toast.
+- **Ver más** / **Ver más (contexto enlazado)** según exista tubería `input`/`filter` cableada bajo el artículo (`hasLinkedDownstreamContext`).
+- **Abrir detalle** → abre modal sin depender del clic en el lienzo.
+- **Eliminar** artículo con confirmación; al borrar, **reconecta** automáticamente nodos entrantes con salientes (patrón «delete middle node»).
+- **Clic en el nodo** en el lienzo abre el modal de detalle (excepto `input` y `filter`, que ignoran el clic).
+- Handles arriba (target) y abajo (source) para aristas entre artículos y con la tubería.
+- Estilo brutalista: bloque fijo detrás (`::before`), tarjeta con hover lento; bloque pasa a verde primario en hover; handles siempre por encima.
+
+### Búsqueda desde `input`
+
+- Llamada a `/api/search` con texto, límite de resultados y filtros de la tubería.
+- Envío de `seed_queries` y `context_article_ids` derivados de la cadena upstream (ranking enriquecido).
+- **Sustituir** solo artículos **downstream** de ese `input` (no el resto del lienzo ni otros inputs).
+- Quitar aristas que tocaban artículos eliminados de esa rama.
+- Actualizar el texto guardado en `data.query` del `input`.
+- Cerrar modal y limpiar nodo activo al iniciar búsqueda.
+- Fusionar resultados: **un nodo por `article_id`**; conservar aristas si el artículo ya existía.
+- Colocar artículos nuevos en disposición **radial** alrededor del `input`.
+- Toast si la búsqueda falla.
+
+### Expansión («Ver más») desde artículo
+
+- Llamada a `/api/graph/expand` con `source_article_id`, `existing_node_ids`, filtros upstream, `seed_queries`, `context_article_ids`.
+- Añadir hasta N artículos nuevos (umbral y límite configurados) y aristas devueltas por la API.
+- Posicionar nodos nuevos con offset respecto al artículo origen.
+- Fusionar sin duplicar nodos-artículo.
+- Etiqueta del botón distingue expansión con o sin contexto enlazado.
+- Toast «Sin artículos nuevos» con sugerencias si la API no devuelve nodos.
+- Toast de error si falla la expansión.
+- Deshabilitar interacciones pesadas vía `isLoading` global durante la petición.
+
+### Modal de detalle del artículo
+
+- Abrir/cerrar diálogo (clic en nodo artículo o «Abrir detalle»).
+- Cargar detalle desde API (`GET` artículo) con spinner y mensaje de error.
+- Mostrar imagen, título, autores, fecha, extracto, categorías, lugares.
+- Enlace **Leer artículo completo** (URL externa) si existe.
+- **Valoración media** (estrellas + media + recuento).
+- **Tu valoración** (5 estrellas interactivas) si hay sesión.
+- **Favorito** en modal (misma API que en el nodo).
+- Sección **Comentarios** (plegable): listar, publicar, **editar** y **eliminar** comentarios propios.
+- Acciones sociales deshabilitadas o limitadas sin login (favorito/valoración/comentarios).
+
+### Mapa de cobertura (`/map`)
+
+- Ver mapa coroplético mundial con intensidad por volumen de artículos (`/api/stats/heatmap/`).
+- Cambiar **proyección** del mapa desde selector en cabecera.
+- **Zoom** con rueda y **pan** arrastrando el mapa.
+- **Hover** en países: resaltar y tooltip en mapa.
+- **Clic en país** (incluso sin datos en EOM): navegar a `/` con query `place` y `q` (preparado para búsqueda; ver limitaciones).
+- Panel lateral: leyenda de color, listas de lugares por país, regiones, lugares sin mapear a ISO.
+- Clic en lugar del listado o región seleccionada: misma navegación al grafo con parámetros de lugar.
+- Resaltar códigos de países al pasar por regiones transnacionales.
+
+### Autenticación y cuenta (template FastAPI)
+
+- **Login**, **registro**, **recuperar** y **restablecer** contraseña.
+- Sesión con token; rutas protegidas según plantilla.
+- **Ajustes:** ver/editar información de usuario, cambiar contraseña, eliminar cuenta.
+- **Admin** (superusuario): gestión de usuarios (tabla, alta, edición, borrado).
+
+### Persistencia y datos locales
+
+- Grafo + viewport por área en `localStorage`.
+- Schema versionado en payload de workspaces.
+- Hidratar grafo al cargar y aplicar `syncLinkedContextFlags` tras migración.
+- Al salir de la app, capturar último viewport del área activa.
+
+### Comportamientos que el frontend aún no ofrece
+
+Útil para no confundir con casos de uso futuros:
+
+| Tema | Estado |
+|------|--------|
+| Sync de áreas en servidor / multi-dispositivo | ⏳ |
+| Validación estricta de tipos de arista (`input→filter→article`) | ⏳ |
+| Filtro derivado automáticamente desde un artículo | ⏳ |
+| Atajo «crear rama filtro + input» desde artículo | ⏳ |
+| Marcar artículos visitados en el lienzo | ⏳ |
+| Toolbar para inyectar favoritos al grafo | ⏳ |
+| Layout físico d3-force / DAG global | ⏳ |
+| Consumir `?place=` / `?q=` al llegar desde el mapa | ⏳ (navega pero el grafo no auto-busca) |
+| Notas privadas y follow (Fase 5c) | ⏳ |
+| Historial de pasos / deshacer (Fase 8) | ⏳ |
+| Slider temporal en mapa (Fase 7) | ⏳ |
 
 ---
 
-## 📍 Fase 7 (Opcional): Historial de Navegación
-*Objetivo: Guardar el recorrido interactivo por el grafo.*
+## Pendiente y backlog
 
-*   **Fase 7a: Historial Ligero (Backend/Frontend)**
-    *   Guardar en BD (o localStorage temporalmente) los pasos que el usuario va dando ("Búsqueda X" -> "Expande nodo Y" -> "Abre artículo Z").
-*   **Fase 7b: Trazabilidad UI**
-    *   Rastro de migas de pan ("Breadcrumbs") o listado lateral para permitir deshacer expansiones del grafo o regresar a un hilo de investigación anterior.
+### Backend y producto
+
+- **Fase 5c:** Notas privadas por artículo, seguimiento (Follow); exponer endpoints.
+- **Fase 6d (servidor):** Modelo `Workspace`, CRUD por usuario, `serverRevision`, sync multi-dispositivo.
+- **Fase 6e:** Estado visitado en nodos-artículo persistido en workspace.
+- **Fase 6f:** Toolbar de favoritos para inyectar artículos al lienzo; fusión explícita de contexto entre inputs (backlog).
+- **Fase 6c (resto):** Validación de conexiones en API o frontend; filtro desde artículo; atajos de rama.
+- **Fase 7 (opcional):** Heatmap con rango temporal + slider en mapa (depende de cobertura `Place` en scrapper).
+- **Fase 8 (opcional):** Log de pasos de exploración, breadcrumbs, deshacer expansiones.
+
+### Frontend (mejoras planificadas)
+
+- Cablear llegada desde **mapa** (`/?place=…&q=…`) a búsqueda automática en un `input` o filtro lugar.
+- Centrar nodo en el cursor al soltar desde paleta (hoy la esquina superior coincide con el drop).
+- Renombrar tipo `input` → `query` para evitar colisión CSS con `.react-flow__node-input`.
+- Refactor FSD y limpieza de código muerto: ver [frontend-refactor-plan.md](./frontend-refactor-plan.md).
+
+### Motor físico (diseño original Fase 2c)
+
+- Integrar **d3-force headless** (o layout DAG) para separación orgánica automática; hoy el usuario organiza el lienzo manualmente.
+
+---
+
+## Referencias
+
+- [Informe diagramas y casos de uso](./informe_diagramas_clases_casos_uso.md)
+- [Contrato filtros Fase 4](./phase-4-filters-contract.md)
+- [Plan refactor frontend](./frontend-refactor-plan.md)
