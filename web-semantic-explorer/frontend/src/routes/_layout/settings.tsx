@@ -1,23 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
 import ChangePassword from "@/components/UserSettings/ChangePassword"
 import DeleteAccount from "@/components/UserSettings/DeleteAccount"
 import UserInformation from "@/components/UserSettings/UserInformation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import useAuth from "@/hooks/useAuth"
+import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 
 const tabsConfig = [
-  { value: "my-profile", title: "My profile", component: UserInformation },
-  { value: "password", title: "Password", component: ChangePassword },
-  { value: "danger-zone", title: "Danger zone", component: DeleteAccount },
+  { value: "my-profile", title: "Mi perfil", component: UserInformation },
+  { value: "password", title: "Contraseña", component: ChangePassword },
+  { value: "danger-zone", title: "Zona de peligro", component: DeleteAccount },
 ]
 
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
+  beforeLoad: async () => {
+    if (!isLoggedIn()) {
+      throw redirect({ to: "/login" })
+    }
+  },
   head: () => ({
     meta: [
       {
-        title: "Settings - FastAPI Cloud",
+        title: "Ajustes - Semantic Explorer",
       },
     ],
   }),
@@ -36,9 +41,9 @@ function UserSettings() {
   return (
     <div className="flex flex-col gap-6 p-6 md:p-8 max-w-7xl mx-auto w-full">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">User Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Ajustes de cuenta</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences
+          Edita tu perfil, contraseña y preferencias de la cuenta.
         </p>
       </div>
 

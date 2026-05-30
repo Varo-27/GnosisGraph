@@ -8,6 +8,7 @@ import {
   type UserRegister,
   UsersService,
 } from "@/client"
+import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
 import { handleError } from "@/utils"
 import useCustomToast from "./useCustomToast"
 
@@ -47,7 +48,9 @@ const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+      useWorkspaceStore.getState().hydrateForCurrentUser()
       navigate({ to: "/" })
     },
     onError: handleError.bind(showErrorToast),
@@ -55,7 +58,9 @@ const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("access_token")
-    navigate({ to: "/login" })
+    queryClient.removeQueries({ queryKey: ["currentUser"] })
+    useWorkspaceStore.getState().hydrateForCurrentUser()
+    navigate({ to: "/" })
   }
 
   return {

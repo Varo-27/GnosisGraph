@@ -1,5 +1,5 @@
-import { Globe, Home, Users } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { Globe, Home, Users } from "lucide-react"
 
 export type NavItem = {
   icon: LucideIcon
