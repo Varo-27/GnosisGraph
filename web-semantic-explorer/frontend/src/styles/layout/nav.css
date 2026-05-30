@@ -1,0 +1,60 @@
+@layer components {
+  .eom-nav-link {
+    @apply inline-flex items-center gap-2 border-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-all;
+  }
+
+  .eom-nav-link--active {
+    @apply -translate-x-0.5 -translate-y-0.5 border-foreground bg-background text-foreground;
+    box-shadow: 3px 3px 0 0 var(--color-foreground);
+  }
+
+  .eom-nav-link--idle {
+    @apply border-transparent text-muted-foreground hover:border-foreground hover:bg-muted/60 hover:text-foreground;
+  }
+
+  .eom-nav-icon-btn {
+    @apply inline-flex size-9 items-center justify-center border-2 border-foreground bg-background text-muted-foreground transition-all;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  .eom-nav-icon-btn:hover {
+    @apply -translate-x-px -translate-y-px;
+    box-shadow: 3px 3px 0 0 var(--color-foreground);
+  }
+
+  .eom-nav-bar {
+    @apply flex h-14 shrink-0 items-center justify-between gap-4 border-b-2 border-foreground bg-background px-4;
+  }
+
+  .eom-nav-cluster {
+    @apply flex items-center gap-2;
+  }
+
+  .eom-nav-header {
+    @apply z-20 flex h-14 shrink-0 items-center gap-3 border-b-2 border-foreground bg-background px-4 sm:gap-4 sm:px-6;
+    box-shadow: 0 4px 0 0 var(--color-foreground);
+  }
+
+  .eom-nav-menu {
+    @apply flex min-w-0 flex-1 items-center gap-1 overflow-x-auto;
+  }
+
+  .eom-dropdown-brutal {
+    @apply min-w-40 rounded-none border-2 border-foreground;
+    box-shadow: 4px 4px 0 0 var(--color-foreground);
+  }
+
+  .eom-dropdown-item {
+    @apply rounded-none text-xs uppercase tracking-widest;
+  }
+
+  .eom-nav-user-trigger {
+    @apply inline-flex max-w-[200px] items-center gap-2 border-2 border-foreground bg-background px-2 py-1 transition-all;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  .eom-nav-user-trigger:hover {
+    @apply -translate-x-px -translate-y-px;
+    box-shadow: 3px 3px 0 0 var(--color-foreground);
+  }
+}

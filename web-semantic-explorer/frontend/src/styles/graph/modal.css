@@ -1,0 +1,50 @@
+@layer components {
+  .graph-article-modal {
+    @apply max-h-[min(90vh,820px)] overflow-y-auto rounded-none border-2 border-foreground p-0 sm:max-w-2xl;
+    box-shadow: 6px 6px 0 0 var(--color-foreground);
+  }
+
+  .graph-article-modal__loading {
+    @apply flex items-center justify-center gap-2 px-6 py-16 text-sm text-muted-foreground;
+  }
+
+  .graph-article-modal__error {
+    @apply px-6 py-16 text-center text-sm text-muted-foreground;
+  }
+
+  .graph-article-modal__hero {
+    @apply h-48 w-full overflow-hidden border-b-2 border-foreground;
+  }
+
+  .graph-article-modal__hero img {
+    @apply h-full w-full object-cover;
+  }
+
+  .graph-article-modal__body {
+    @apply space-y-5 px-6 py-5;
+  }
+
+  .graph-article-modal__kicker {
+    @apply font-mono text-[10px] font-bold uppercase tracking-widest text-primary;
+  }
+
+  .graph-article-modal__title {
+    @apply font-serif text-2xl font-bold leading-tight text-pretty;
+  }
+
+  .graph-article-modal__byline {
+    @apply text-[11px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .graph-article-modal__excerpt {
+    @apply border-l-2 border-primary/40 pl-3 text-sm leading-relaxed text-muted-foreground;
+  }
+
+  .graph-article-modal__section-label {
+    @apply flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .graph-article-modal__badge {
+    @apply rounded-none border-foreground text-[10px] uppercase tracking-wider;
+  }
+}

@@ -1,0 +1,35 @@
+/** Sombras y bordes «brutalistas» reutilizables (EOM). */
+@layer components {
+  .eom-brutal-border {
+    @apply border-2 border-foreground;
+  }
+
+  .eom-brutal-border-primary {
+    @apply border-2 border-primary;
+  }
+
+  .eom-brutal-border-soft {
+    @apply border border-foreground/30;
+  }
+
+  .eom-shadow-xs {
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  .eom-shadow-sm {
+    box-shadow: 4px 4px 0 0 var(--color-foreground);
+  }
+
+  .eom-shadow-md {
+    box-shadow: 6px 6px 0 0 var(--color-primary);
+  }
+
+  .eom-surface-flat {
+    @apply rounded-none;
+  }
+
+  .eom-lift-active {
+    @apply -translate-x-0.5 -translate-y-0.5 border-foreground bg-background text-foreground;
+    box-shadow: 3px 3px 0 0 var(--color-foreground);
+  }
+}

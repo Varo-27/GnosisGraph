@@ -1,0 +1,45 @@
+@layer components {
+  .eom-heading-section {
+    @apply font-mono text-xs font-bold uppercase tracking-widest text-foreground;
+  }
+
+  .eom-label {
+    @apply font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .eom-label-primary {
+    @apply font-mono text-[10px] font-bold uppercase tracking-widest text-primary;
+  }
+
+  .eom-label-status {
+    @apply font-mono text-[10px] uppercase tracking-wider text-muted-foreground;
+  }
+
+  .eom-caption {
+    @apply font-mono text-[9px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .eom-lead-serif {
+    @apply font-serif text-sm text-muted-foreground;
+  }
+
+  .eom-title-serif {
+    @apply font-serif text-lg font-bold leading-snug text-pretty text-foreground;
+  }
+
+  .eom-title-highlight {
+    display: inline;
+    text-decoration: none;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .graph-node:hover .eom-title-highlight,
+  .graph-node.graph-node-active .eom-title-highlight {
+    background: linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--eom-green) 16%, transparent) 50%,
+      transparent 50%
+    );
+  }
+}
