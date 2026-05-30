@@ -1,22 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Handle, type NodeProps, Position } from "@xyflow/react"
 import { Heart, Sparkles } from "lucide-react"
+import { memo } from "react"
 
 import {
+  type ArticleDetail,
   articleDetailQueryKey,
   fetchArticleDetail,
   toggleArticleFavorite,
-  type ArticleDetail,
 } from "@/api/articles"
-import useCustomToast from "@/hooks/useCustomToast"
 import { isLoggedIn } from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
 import { cn } from "@/lib/utils"
 import type { AppNode } from "@/store/useGraphStore"
 import { useGraphStore } from "@/store/useGraphStore"
 
-export function ArticleNode({ id, data }: NodeProps<AppNode>) {
+import { NodeDeleteButton } from "./NodeDeleteButton"
+
+function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
   const activeNodeId = useGraphStore((state) => state.activeNodeId)
   const expandSimilar = useGraphStore((state) => state.expandSimilar)
+  const setSelectedNode = useGraphStore((state) => state.setSelectedNode)
+  const setModalOpen = useGraphStore((state) => state.setModalOpen)
+  const setActiveNodeId = useGraphStore((state) => state.setActiveNodeId)
+  const usesLinkedContext = data.hasLinkedDownstreamContext === true
   const isActive = activeNodeId === id
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -35,9 +42,7 @@ export function ArticleNode({ id, data }: NodeProps<AppNode>) {
     mutationFn: () => toggleArticleFavorite(articleId),
     onSuccess: (response) => {
       queryClient.setQueryData<ArticleDetail>(detailKey, (current) =>
-        current
-          ? { ...current, is_favorited: response.is_favorited }
-          : current,
+        current ? { ...current, is_favorited: response.is_favorited } : current,
       )
       showSuccessToast(
         response.is_favorited ? "Añadido a favoritos" : "Quitado de favoritos",
@@ -51,24 +56,22 @@ export function ArticleNode({ id, data }: NodeProps<AppNode>) {
   return (
     <div
       className={cn(
-        "graph-node-enter graph-node-card group relative w-[300px] border-2 border-foreground bg-background shadow-[4px_4px_0_0_var(--color-foreground)] transition-all duration-300 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_var(--color-primary)]",
+        "graph-node graph-node--article",
         isActive && "graph-node-active",
       )}
+      data-enter-animate={data.appearDelay ? true : undefined}
       style={{
         animationDelay: data.appearDelay ? `${data.appearDelay}ms` : undefined,
       }}
     >
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!w-2.5 !h-2.5 !bg-background !border-2 !border-foreground"
-      />
-      <div className="flex flex-col bg-card">
-        <div className="flex items-center justify-between gap-2 border-b-2 border-foreground bg-muted px-3 py-2">
-          <span className="truncate text-[10px] font-mono font-bold uppercase tracking-widest text-primary">
+      <Handle type="target" position={Position.Top} className="rf-handle" />
+      <div className="graph-node__surface">
+        <div className="graph-node__header">
+          <span className="eom-label-primary truncate">
             {data.category_name || "Artículo"}
           </span>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex shrink-0 items-center gap-1.5">
+            <NodeDeleteButton nodeId={id} ariaLabel="Eliminar artículo" />
             {loggedIn && (
               <button
                 type="button"
@@ -78,8 +81,8 @@ export function ArticleNode({ id, data }: NodeProps<AppNode>) {
                 aria-pressed={isFavorited}
                 disabled={favoriteMutation.isPending}
                 className={cn(
-                  "nodrag nopan inline-flex items-center justify-center border border-foreground/30 p-1 transition-colors hover:border-foreground",
-                  isFavorited && "bg-primary text-primary-foreground",
+                  "graph-node__icon-btn nodrag nopan",
+                  isFavorited && "graph-node__icon-btn--favorited",
                 )}
                 onClick={(event) => {
                   event.stopPropagation()
@@ -89,14 +92,14 @@ export function ArticleNode({ id, data }: NodeProps<AppNode>) {
               >
                 <Heart
                   className={cn(
-                    "h-3.5 w-3.5",
+                    "graph-node__icon",
                     isFavorited && "fill-current",
                   )}
                 />
               </button>
             )}
             {data.author_name && (
-              <span className="max-w-[120px] truncate text-right text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+              <span className="eom-caption max-w-[120px] truncate text-right">
                 {data.author_name}
               </span>
             )}
@@ -104,47 +107,58 @@ export function ArticleNode({ id, data }: NodeProps<AppNode>) {
         </div>
 
         {data.imageUrl && (
-          <div className="h-28 overflow-hidden border-b-2 border-foreground">
-            <img
-              src={data.imageUrl}
-              alt={data.title}
-              className="h-full w-full object-cover"
-            />
+          <div className="graph-node__image">
+            <img src={data.imageUrl} alt={data.title} />
           </div>
         )}
 
-        <div className="flex flex-col gap-2 p-3">
-          <h3 className="font-serif text-lg font-bold leading-snug text-pretty text-foreground">
+        <div className="graph-node__body">
+          <h3 className="eom-title-serif">
             <span className="eom-title-highlight">{data.title}</span>
           </h3>
           {data.excerpt && (
-            <p className="line-clamp-2 pl-2 text-xs leading-relaxed text-muted-foreground before:absolute relative before:left-0 before:top-0.5 before:bottom-0.5 before:w-0.5 before:bg-primary/25">
-              {data.excerpt}
-            </p>
+            <p className="graph-node__excerpt">{data.excerpt}</p>
           )}
         </div>
 
-        <div className="border-t-2 border-foreground bg-muted/50 px-3 py-2">
+        <div className="graph-node__footer">
           <button
             type="button"
-            className="nodrag nopan inline-flex w-full items-center justify-center gap-1.5 border border-foreground/30 bg-background px-3 py-1.5 text-[10px] uppercase tracking-widest text-foreground transition-colors hover:border-foreground hover:bg-primary hover:text-primary-foreground"
+            className="graph-node__btn-primary nodrag nopan"
             onClick={(event) => {
               event.stopPropagation()
               expandSimilar?.(id)
             }}
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            Más como este
+            <Sparkles className="graph-node__icon" />
+            {usesLinkedContext ? "Ver más (contexto enlazado)" : "Ver más"}
+          </button>
+          <button
+            type="button"
+            className="graph-node__btn-link nodrag nopan"
+            onClick={(event) => {
+              event.stopPropagation()
+              const node = useGraphStore
+                .getState()
+                .nodes.find((candidate) => candidate.id === id)
+              if (!node) {
+                return
+              }
+              setActiveNodeId(id)
+              setSelectedNode(node)
+              setModalOpen(true)
+            }}
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            Abrir detalle
           </button>
         </div>
       </div>
 
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="!w-2.5 !h-2.5 !bg-background !border-2 !border-foreground"
-      />
+      <Handle type="source" position={Position.Bottom} className="rf-handle" />
     </div>
   )
 }
+
+export const ArticleNode = memo(ArticleNodeComponent)
