@@ -2,7 +2,6 @@ from fastapi import APIRouter, Query
 from sqlmodel import select
 
 from app.api.deps import SessionDep
-from app.core.embeddings import embedding_client
 from app.models.article import Article
 from app.models.embedding import Embedding
 from app.models.relations import ArticleAuthor
@@ -10,6 +9,7 @@ from app.models.taxonomy import Author
 from app.schemas.filters import ArticleMetadataFilters
 from app.schemas.search import ArticleSearchResult, SearchResponse
 from app.services.filter_service import apply_metadata_filters
+from app.services.ranking_vector import build_search_ranking_vector
 
 router = APIRouter(prefix="/search", tags=["search"])
 
@@ -23,6 +23,14 @@ def search_articles(
     author: str | None = Query(None, description="Filtra por nombre de Author"),
     year_start: int | None = Query(None, description="Año mínimo de publicación (inclusive)"),
     year_end: int | None = Query(None, description="Año máximo de publicación (inclusive)"),
+    seed_queries: list[str] | None = Query(
+        None,
+        description="Consultas de nodos input upstream (repetir param para varias)",
+    ),
+    context_article_ids: list[int] | None = Query(
+        None,
+        description="Ids de artículos ancestros del input para mezclar contexto",
+    ),
 ):
     """
     Busca artículos semánticamente similares a la frase proporcionada mediante búsqueda vectorial (pgvector).
@@ -35,8 +43,13 @@ def search_articles(
         year_end=year_end,
     )
 
-    # 1. Convertir la frase del usuario a vector usando el Singleton en memoria (caché automático si se repite)
-    query_vector = embedding_client.embed_text(q)
+    # 1. Vector de consulta mezclado con semillas y artículos upstream del grafo
+    query_vector = build_search_ranking_vector(
+        session=session,
+        query=q,
+        seed_queries=seed_queries,
+        context_article_ids=context_article_ids,
+    )
     
     # 2. Consultar PostgreSQL usando distancia del coseno (<=>)
     statement = (
