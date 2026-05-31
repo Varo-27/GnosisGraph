@@ -15,11 +15,14 @@
   }
 
   .react-flow__node.dragging .graph-node::before,
-  .react-flow__node.dragging .graph-node__surface {
+  .react-flow__node.dragging .graph-node__surface,
+  .react-flow__pane.dragging .graph-node::before,
+  .react-flow__pane.dragging .graph-node__surface {
     transition: none;
   }
 
-  .react-flow__node.dragging .graph-node:hover .graph-node__surface {
+  .react-flow__node.dragging .graph-node:hover .graph-node__surface,
+  .react-flow__pane.dragging .graph-node:hover .graph-node__surface {
     transform: none;
   }
 

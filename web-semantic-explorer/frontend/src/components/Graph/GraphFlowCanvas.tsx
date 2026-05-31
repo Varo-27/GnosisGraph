@@ -51,6 +51,7 @@ function GraphFlowCanvasComponent({
   const fitViewDoneRef = useRef(false)
   const isDraggingRef = useRef(false)
   const flowNodesRef = useRef<AppNode[]>([])
+  const [isViewportMoving, setIsViewportMoving] = useState(false)
 
   const storeNodes = useGraphStore((state) => state.nodes)
   const edges = useGraphStore((state) => state.edges)
@@ -122,7 +123,13 @@ function GraphFlowCanvasComponent({
     isDraggingRef.current = false
   }, [])
 
+  const handleMoveStart = useCallback(() => {
+    setIsViewportMoving(true)
+  }, [])
+
   const handleMoveEnd = useCallback(() => {
+    setIsViewportMoving(false)
+
     const viewport = reactFlowRef.current?.getViewport()
     onMoveEnd(
       viewport
@@ -153,15 +160,17 @@ function GraphFlowCanvasComponent({
       deleteKeyCode={["Backspace", "Delete"]}
       onInit={handleFlowInit}
       onNodeDragStop={handleNodeDragStop}
+      onMoveStart={handleMoveStart}
       onMoveEnd={handleMoveEnd}
       onNodeClick={onNodeClick}
       colorMode={colorMode}
       minZoom={GRAPH_MIN_ZOOM}
       maxZoom={GRAPH_MAX_ZOOM}
-      onlyRenderVisibleElements
     >
       <Controls />
-      <MiniMap nodeColor={miniMapNodeColor} zoomable pannable />
+      {!isViewportMoving && (
+        <MiniMap nodeColor={miniMapNodeColor} zoomable pannable />
+      )}
       <Background
         variant={BackgroundVariant.Lines}
         gap={GRAPH_BACKGROUND_PROPS.gap}

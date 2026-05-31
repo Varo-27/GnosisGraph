@@ -96,8 +96,9 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         nodes.map((node) => [node.id, node.position] as const),
       )
 
-      set((state) => ({
-        nodes: state.nodes.map((node) => {
+      set((state) => {
+        let changed = false
+        const nextNodes = state.nodes.map((node) => {
           const position = positionsById.get(node.id)
           if (!position) {
             return node
@@ -108,10 +109,19 @@ export const useGraphStore = create<GraphState>((set, get) => ({
           ) {
             return node
           }
+          changed = true
           return { ...node, position }
-        }),
-        graphRevision: nextRevision(state),
-      }))
+        })
+
+        if (!changed) {
+          return state
+        }
+
+        return {
+          nodes: nextNodes,
+          graphRevision: nextRevision(state),
+        }
+      })
       return
     }
 
