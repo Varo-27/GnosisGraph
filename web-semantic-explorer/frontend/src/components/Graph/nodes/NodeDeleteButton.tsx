@@ -1,10 +1,9 @@
-import { Trash2 } from "lucide-react"
-import { useState } from "react"
+import { Trash2, X } from "lucide-react"
+import { useState, type MouseEvent } from "react"
 
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
@@ -15,12 +14,18 @@ type NodeDeleteButtonProps = {
   ariaLabel?: string
 }
 
+function stopGraphPointer(event: MouseEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+}
+
 export function NodeDeleteButton({
   nodeId,
   ariaLabel = "Eliminar nodo",
 }: NodeDeleteButtonProps) {
   const removeNode = useGraphStore((state) => state.removeNode)
   const [open, setOpen] = useState(false)
+  const promptId = `delete-prompt-${nodeId}`
 
   const handleConfirm = () => {
     setOpen(false)
@@ -28,17 +33,18 @@ export function NodeDeleteButton({
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
           aria-label={ariaLabel}
+          aria-expanded={open}
           className={cn(
             "graph-node__icon-btn nodrag nopan",
             open && "graph-node__icon-btn--armed",
           )}
-          onClick={(event) => event.stopPropagation()}
-          onMouseDown={(event) => event.stopPropagation()}
+          onClick={stopGraphPointer}
+          onMouseDown={stopGraphPointer}
         >
           <Trash2 className="graph-node__icon" />
         </button>
@@ -46,30 +52,47 @@ export function NodeDeleteButton({
       <DropdownMenuContent
         align="end"
         side="top"
-        className="graph-node__delete-menu"
+        className={cn(
+          "graph-node__delete-menu",
+          "eom-brutal-border eom-shadow-xs eom-surface-flat",
+          "rounded-none border-foreground bg-background p-2 shadow-none",
+        )}
+        onClick={stopGraphPointer}
+        onMouseDown={stopGraphPointer}
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
-        <p className="graph-node__delete-prompt">¿Eliminar este nodo?</p>
-        <div className="mt-2 flex flex-col gap-1">
-          <DropdownMenuItem
-            className="graph-node__delete-confirm"
-            onSelect={(event) => {
-              event.preventDefault()
-              handleConfirm()
-            }}
+        <div className="flex items-start gap-2">
+          <p
+            className="graph-node__delete-prompt flex-1"
+            id={promptId}
           >
-            Sí, eliminar
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="graph-node__delete-cancel"
-            onSelect={(event) => {
-              event.preventDefault()
+            ¿Eliminar este nodo?
+          </p>
+          <button
+            type="button"
+            aria-label="Cerrar"
+            className="graph-node__delete-close nodrag nopan"
+            onClick={(event) => {
+              stopGraphPointer(event)
               setOpen(false)
             }}
+            onMouseDown={stopGraphPointer}
           >
-            Cancelar
-          </DropdownMenuItem>
+            <X className="graph-node__icon" />
+          </button>
         </div>
+        <button
+          type="button"
+          className="graph-node__delete-confirm nodrag nopan"
+          aria-describedby={promptId}
+          onClick={(event) => {
+            stopGraphPointer(event)
+            handleConfirm()
+          }}
+          onMouseDown={stopGraphPointer}
+        >
+          Borrar
+        </button>
       </DropdownMenuContent>
     </DropdownMenu>
   )

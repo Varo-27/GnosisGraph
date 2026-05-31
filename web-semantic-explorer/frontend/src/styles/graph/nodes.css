@@ -168,19 +168,18 @@
   }
 
   .graph-node__delete-menu {
-    @apply w-52 rounded-none border-2 border-foreground p-2;
-    box-shadow: 2px 2px 0 0 var(--color-foreground);
+    @apply w-52 min-w-0;
   }
 
   .graph-node__delete-prompt {
-    @apply px-2 py-1 text-xs leading-snug text-foreground;
+    @apply py-0.5 font-mono text-[10px] leading-snug uppercase tracking-widest text-foreground;
+  }
+
+  .graph-node__delete-close {
+    @apply inline-flex shrink-0 items-center justify-center border border-foreground/30 p-0.5 text-muted-foreground transition-colors hover:border-foreground hover:text-foreground;
   }
 
   .graph-node__delete-confirm {
-    @apply rounded-none font-mono text-[10px] uppercase tracking-widest text-destructive focus:bg-destructive/15 focus:text-destructive;
-  }
-
-  .graph-node__delete-cancel {
-    @apply rounded-none font-mono text-[10px] uppercase tracking-widest;
+    @apply mt-2 inline-flex w-full items-center justify-center border-2 border-destructive bg-destructive/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-destructive transition-colors hover:bg-destructive hover:text-white focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none;
   }
 }
