@@ -8,7 +8,7 @@ export type NavItem = {
 }
 
 export const BASE_NAV_ITEMS: NavItem[] = [
-  { icon: Home, title: "Grafo", path: "/" },
+  { icon: Home, title: "Buscador", path: "/" },
   { icon: Globe, title: "Mapa", path: "/map" },
 ]
 
