@@ -4,6 +4,7 @@ import { memo, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import type { AppNode } from "@/store/useGraphStore"
 import { useGraphStore } from "@/store/useGraphStore"
 
@@ -11,6 +12,8 @@ import { NodeDeleteButton } from "./NodeDeleteButton"
 
 function InputNodeComponent({ id, data }: NodeProps<AppNode>) {
   const isLoading = useGraphStore((state) => state.isLoading)
+  const activeNodeId = useGraphStore((state) => state.activeNodeId)
+  const isActive = activeNodeId === id
 
   const initialQuery =
     typeof data.query === "string" ? data.query : readQueryFromTitle(data.title)
@@ -32,7 +35,9 @@ function InputNodeComponent({ id, data }: NodeProps<AppNode>) {
   }
 
   return (
-    <div className="graph-node graph-node--input">
+    <div
+      className={cn("graph-node graph-node--input", isActive && "graph-node-active")}
+    >
       <Handle type="target" position={Position.Top} className="rf-handle" />
       <div className="graph-node__surface">
         <div className="graph-node__header-row">

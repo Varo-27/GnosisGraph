@@ -1,0 +1,38 @@
+@layer components {
+  .graph-edge .react-flow__edge-path {
+    transition:
+      stroke 200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      stroke-width 200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .graph-edge--highlight .react-flow__edge-path {
+    stroke: var(--eom-green);
+    stroke-width: 2.5;
+    opacity: 0.45;
+  }
+
+  .graph-edge__flow {
+    stroke: var(--eom-green-light);
+    stroke-dasharray: 6 10;
+    animation: graph-edge-flow 0.75s linear infinite;
+  }
+}
+
+@keyframes graph-edge-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graph-edge__flow {
+    animation: none;
+    stroke-dasharray: none;
+    opacity: 0.9;
+  }
+}

@@ -3,6 +3,7 @@ import { Filter } from "lucide-react"
 import { memo, useEffect, useState } from "react"
 
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import { type ArticleMetadataFilters, FILTER_LABELS } from "@/lib/filters"
 import type { AppNode } from "@/store/useGraphStore"
 import { useGraphStore } from "@/store/useGraphStore"
@@ -21,6 +22,8 @@ function updateNodeData(nodeId: string, patch: Partial<AppNode["data"]>) {
 }
 
 function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
+  const activeNodeId = useGraphStore((state) => state.activeNodeId)
+  const isActive = activeNodeId === id
   const filterKey = data.filterKey as FilterNodeKind | undefined
   const dimensionLabel =
     filterKey && filterKey in FILTER_NODE_DIMENSIONS
@@ -61,7 +64,9 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
   const isYearField = filterKey === "year_start" || filterKey === "year_end"
 
   return (
-    <div className="graph-node graph-node--filter">
+    <div
+      className={cn("graph-node graph-node--filter", isActive && "graph-node-active")}
+    >
       <Handle type="target" position={Position.Top} className="rf-handle" />
       <div className="graph-node__surface">
         <div className="graph-node__filter-header">

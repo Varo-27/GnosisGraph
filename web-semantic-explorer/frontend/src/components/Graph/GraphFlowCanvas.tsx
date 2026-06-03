@@ -3,6 +3,7 @@ import {
   BackgroundVariant,
   Controls,
   type Edge,
+  type EdgeTypes,
   type NodeMouseHandler,
   type NodeTypes,
   ReactFlow,
@@ -10,8 +11,10 @@ import {
   applyNodeChanges,
   type NodeChange,
 } from "@xyflow/react"
-import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
+import { decorateEdgesForFocus } from "@/components/Graph/edges/decorateEdgesForFocus"
+import { GraphFlowEdge } from "@/components/Graph/edges/GraphFlowEdge"
 import { type AppNode, useGraphStore } from "@/store/useGraphStore"
 import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
 import type { WorkspaceViewport } from "@/store/workspace/types"
@@ -24,6 +27,12 @@ import {
   GRAPH_MIN_ZOOM,
 } from "./graphConstants"
 import { isActiveNodeDrag } from "./graphFlowDrag"
+
+const edgeTypes: EdgeTypes = {
+  graphFlow: GraphFlowEdge,
+}
+
+const defaultEdgeOptions = { type: "graphFlow" as const }
 
 type GraphFlowCanvasProps = {
   nodeTypes: NodeTypes
@@ -51,7 +60,15 @@ function GraphFlowCanvasComponent({
 
   const storeNodes = useGraphStore((state) => state.nodes)
   const edges = useGraphStore((state) => state.edges)
+  const activeNodeId = useGraphStore((state) => state.activeNodeId)
   const onEdgesChange = useGraphStore((state) => state.onEdgesChange)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
+
+  const focusNodeId = hoveredNodeId ?? activeNodeId
+  const displayEdges = useMemo(
+    () => decorateEdgesForFocus(edges, focusNodeId),
+    [edges, focusNodeId],
+  )
   const onConnect = useGraphStore((state) => state.onConnect)
   const commitNodes = useGraphStore((state) => state.commitNodes)
 
@@ -128,13 +145,26 @@ function GraphFlowCanvasComponent({
     )
   }, [onMoveEnd])
 
+  const handleNodeMouseEnter: NodeMouseHandler<AppNode> = useCallback(
+    (_event, node) => {
+      setHoveredNodeId(node.id)
+    },
+    [],
+  )
+
+  const handleNodeMouseLeave: NodeMouseHandler<AppNode> = useCallback(() => {
+    setHoveredNodeId(null)
+  }, [])
+
   return (
     <ReactFlow
       className="h-full w-full"
       style={{ width: "100%", height: "100%" }}
       nodes={flowNodes}
-      edges={edges}
+      edges={displayEdges}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      defaultEdgeOptions={defaultEdgeOptions}
       onNodesChange={handleNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
@@ -144,6 +174,8 @@ function GraphFlowCanvasComponent({
       onNodeDragStop={handleNodeDragStop}
       onMoveEnd={handleMoveEnd}
       onNodeClick={onNodeClick}
+      onNodeMouseEnter={handleNodeMouseEnter}
+      onNodeMouseLeave={handleNodeMouseLeave}
       colorMode={colorMode}
       minZoom={GRAPH_MIN_ZOOM}
       maxZoom={GRAPH_MAX_ZOOM}

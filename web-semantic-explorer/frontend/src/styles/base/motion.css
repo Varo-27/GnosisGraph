@@ -15,7 +15,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .graph-node,
-  .graph-node[data-enter-animate] {
+  .graph-node[data-enter-animate],
+  .graph-edge__flow {
     transition: none;
     animation: none;
   }
