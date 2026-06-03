@@ -459,9 +459,17 @@ function normalizeKey(value: string) {
     .replace(/^-|-$/g, "")
 }
 
+function slugLookupKeys(slug: string) {
+  const keys = [normalizeKey(slug)]
+  if (slug.includes("/")) {
+    keys.push(normalizeKey(slug.split("/").pop() ?? slug))
+  }
+  return keys
+}
+
 function candidateKeys(name: string, slug: string | null) {
   const keys: string[] = []
-  if (slug) keys.push(normalizeKey(slug))
+  if (slug) keys.push(...slugLookupKeys(slug))
   keys.push(normalizeKey(name))
   return keys
 }

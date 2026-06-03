@@ -279,9 +279,17 @@ def resolve_map_country_codes(name: str, slug: str | None = None) -> list[str]:
     return resolve_region_country_codes(name, slug)
 
 
+def _slug_lookup_keys(slug: str) -> list[str]:
+    """Slugs EOM: ``lugar/guayana-francesa`` → también ``guayana-francesa``."""
+    keys = [_normalize_key(slug)]
+    if "/" in slug:
+        keys.append(_normalize_key(slug.rsplit("/", 1)[-1]))
+    return keys
+
+
 def _candidate_keys(name: str, slug: str | None = None) -> list[str]:
     keys: list[str] = []
     if slug:
-        keys.append(_normalize_key(slug))
+        keys.extend(_slug_lookup_keys(slug))
     keys.append(_normalize_key(name))
     return keys
