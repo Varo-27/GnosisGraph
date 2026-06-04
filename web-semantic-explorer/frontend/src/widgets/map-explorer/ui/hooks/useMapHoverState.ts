@@ -2,8 +2,8 @@ import { useNavigate } from "@tanstack/react-router"
 import { useCallback, useState } from "react"
 
 import type { HeatmapEntry } from "@/shared/api/stats"
-import { getCountrySearchLabel } from "@/lib/countrySearchLabels"
-import { resolveCountryClickSearch } from "@/lib/heatmapColors"
+import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
+import { resolveCountryClickSearch } from "@/widgets/map-explorer/lib/heatmapColors"
 
 import type { MapHoverState } from "../types"
 

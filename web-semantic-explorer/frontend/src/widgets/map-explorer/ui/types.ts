@@ -1,11 +1,11 @@
 import type { HeatmapEntry } from "@/shared/api/stats"
-import type { MapProjectionId } from "@/lib/mapProjections"
+import type { MapProjectionId } from "@/widgets/map-explorer/lib/mapProjections"
 
 export type {
   ChoroplethScene,
   ChoroplethViewBox,
   RenderCountry,
-} from "@/lib/choroplethScene"
+} from "@/widgets/map-explorer/lib/choroplethScene"
 
 export type MapHoverState = {
   hoveredCode: string | null

@@ -2,7 +2,7 @@ import { select } from "d3-selection"
 import { type ZoomTransform, zoom, zoomIdentity } from "d3-zoom"
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import type { MapProjectionId } from "@/lib/mapProjections"
+import type { MapProjectionId } from "@/widgets/map-explorer/lib/mapProjections"
 
 export function useChoroplethZoom(
   countriesLoaded: boolean,

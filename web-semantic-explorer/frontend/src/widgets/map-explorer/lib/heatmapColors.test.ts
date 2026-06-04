@@ -5,7 +5,7 @@ import {
   clipFranceMetropolitan,
   getMaxCount,
   isOverseasFrancePolygon,
-} from "@/lib/heatmapColors"
+} from "@/widgets/map-explorer/lib/heatmapColors"
 
 describe("isOverseasFrancePolygon", () => {
   it("detecta la Guayana Francesa (longitud oeste)", () => {

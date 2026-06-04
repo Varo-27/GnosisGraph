@@ -12,7 +12,7 @@ import {
   DEFAULT_PROJECTION_ID,
   MAP_PROJECTIONS,
   type MapProjectionId,
-} from "@/lib/mapProjections"
+} from "@/widgets/map-explorer/lib/mapProjections"
 
 import { GeoHeatmapMapTooltip } from "./GeoHeatmapMapTooltip"
 import { GeoHeatmapSidebar } from "./GeoHeatmapSidebar"

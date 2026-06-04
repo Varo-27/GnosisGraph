@@ -1,9 +1,9 @@
 import { geoPath } from "d3-geo"
 import type { FeatureCollection } from "geojson"
 
-import { getCountrySearchLabel } from "@/lib/countrySearchLabels"
-import { getGeoIsoCode } from "@/lib/heatmapColors"
-import { getProjectionOption, type MapProjectionId } from "@/lib/mapProjections"
+import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
+import { getGeoIsoCode } from "@/widgets/map-explorer/lib/heatmapColors"
+import { getProjectionOption, type MapProjectionId } from "@/widgets/map-explorer/lib/mapProjections"
 
 export type RenderCountry = {
   key: string

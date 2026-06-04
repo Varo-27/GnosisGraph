@@ -6,7 +6,7 @@ import {
   EOM_GREEN,
   EOM_GREEN_LEGEND_STEPS,
   getHeatmapColorForCount,
-} from "@/lib/heatmapColors"
+} from "@/widgets/map-explorer/lib/heatmapColors"
 
 import type { HeatmapPlaceGroups, MapHoverState } from "./types"
 

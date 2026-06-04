@@ -4,7 +4,7 @@
  */
 
 import type { HeatmapEntry } from "@/shared/api/stats"
-import { registerPlaceSlugLabels } from "@/lib/countrySearchLabels"
+import { registerPlaceSlugLabels } from "@/widgets/map-explorer/lib/countrySearchLabels"
 
 const PLACE_TO_ISO: Record<string, string> = {
   espana: "ESP",
@@ -504,7 +504,7 @@ export function enrichHeatmapEntry(entry: HeatmapEntry): HeatmapEntry {
   }
 }
 
-export { getCountrySearchLabel } from "@/lib/countrySearchLabels"
+export { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
 
 export function enrichHeatmapResponse<T extends { entries: HeatmapEntry[] }>(
   data: T,

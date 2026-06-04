@@ -4,15 +4,15 @@ import {
   buildChoroplethScene,
   CHOROPLETH_OCEAN_RECT,
   type RenderCountry,
-} from "@/lib/choroplethScene"
+} from "@/widgets/map-explorer/lib/choroplethScene"
 import {
   getCountryBaseFill,
   getCountryFill,
   HEATMAP_SEA_FILL,
   isCountryEmphasized,
   loadWorldCountriesGeoJson,
-} from "@/lib/heatmapColors"
-import { DEFAULT_PROJECTION_ID } from "@/lib/mapProjections"
+} from "@/widgets/map-explorer/lib/heatmapColors"
+import { DEFAULT_PROJECTION_ID } from "@/widgets/map-explorer/lib/mapProjections"
 
 import { useChoroplethZoom } from "./hooks/useChoroplethZoom"
 import type { WorldChoroplethProps } from "./types"

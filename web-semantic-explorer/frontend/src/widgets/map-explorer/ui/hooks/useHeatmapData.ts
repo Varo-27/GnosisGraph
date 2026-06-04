@@ -8,8 +8,8 @@ import {
   findRegionEntriesForCountry,
   getMaxCount,
   isRegionEntry,
-} from "@/lib/heatmapColors"
-import { enrichHeatmapResponse } from "@/lib/placeGeoResolve"
+} from "@/widgets/map-explorer/lib/heatmapColors"
+import { enrichHeatmapResponse } from "@/widgets/map-explorer/lib/placeGeoResolve"
 import { fetchHeatmapMock } from "@/mocks/heatmap.mock"
 
 import type { HeatmapPlaceGroups } from "../types"

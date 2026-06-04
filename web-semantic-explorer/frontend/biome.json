@@ -45,7 +45,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/components/Map/WorldChoropleth.tsx"],
+      "includes": ["src/widgets/map-explorer/ui/WorldChoropleth.tsx"],
       "linter": {
         "rules": {
           "a11y": {

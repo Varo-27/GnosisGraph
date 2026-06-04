@@ -1,5 +1,5 @@
 import { PageShell } from "@/components/Layout/PageShell"
-import { GeoHeatmap } from "@/components/Map/GeoHeatmap"
+import { GeoHeatmap } from "@/widgets/map-explorer"
 
 export function MapPage() {
   return (
