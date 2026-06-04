@@ -1,10 +1,16 @@
 from fastapi import APIRouter
 
 from app.api.deps import CurrentUser, SessionDep
-from app.schemas.engagement import FavoriteStatusPublic
+from app.schemas.engagement import FavoritesListPublic, FavoriteStatusPublic
 from app.services import engagement_service
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
+
+
+@router.get("", response_model=FavoritesListPublic)
+def list_favorites(session: SessionDep, current_user: CurrentUser) -> FavoritesListPublic:
+    data = engagement_service.list_favorites(session, current_user)
+    return FavoritesListPublic(data=data, count=len(data))
 
 
 @router.post("/{article_id}", response_model=FavoriteStatusPublic)
