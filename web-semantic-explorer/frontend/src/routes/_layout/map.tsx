@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { PageShell } from "@/components/Layout/PageShell"
-import { GeoHeatmap } from "@/components/Map/GeoHeatmap"
+
+import { MapPage } from "@/pages/map"
 
 export const Route = createFileRoute("/_layout/map")({
   component: MapPage,
@@ -8,11 +8,3 @@ export const Route = createFileRoute("/_layout/map")({
     meta: [{ title: "Mapa de cobertura · Semantic Explorer" }],
   }),
 })
-
-function MapPage() {
-  return (
-    <PageShell>
-      <GeoHeatmap />
-    </PageShell>
-  )
-}
