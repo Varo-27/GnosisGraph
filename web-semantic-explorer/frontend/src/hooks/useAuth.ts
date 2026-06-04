@@ -8,7 +8,7 @@ import {
   type UserRegister,
   UsersService,
 } from "@/client"
-import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
+import { useWorkspaceStore } from "@/entities/workspace"
 import { handleError } from "@/utils"
 import useCustomToast from "./useCustomToast"
 

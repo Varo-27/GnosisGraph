@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
+import { useWorkspaceStore } from "@/entities/workspace"
 
 export function WorkspaceBar() {
   const workspaces = useWorkspaceStore((state) => state.workspaces)

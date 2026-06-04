@@ -9,7 +9,7 @@ import {
   createQueryNodeAtPosition,
   GRAPH_NODE_TYPE,
 } from "@/entities/graph"
-import { useGraphStore } from "@/store/useGraphStore"
+import { useGraphStore } from "@/entities/graph"
 
 type UseMapSearchBootstrapOptions = {
   searchParams: GraphSearchParams

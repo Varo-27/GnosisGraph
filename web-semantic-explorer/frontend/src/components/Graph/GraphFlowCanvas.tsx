@@ -17,9 +17,9 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { decorateEdgesForFocus } from "@/components/Graph/edges/decorateEdgesForFocus"
 import { GraphFlowEdge } from "@/components/Graph/edges/GraphFlowEdge"
-import { type AppNode, useGraphStore } from "@/store/useGraphStore"
-import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
-import type { WorkspaceViewport } from "@/store/workspace/types"
+import { type AppNode, useGraphStore } from "@/entities/graph"
+import { useWorkspaceStore } from "@/entities/workspace"
+import type { WorkspaceViewport } from "@/entities/workspace"
 
 import {
   GRAPH_BACKGROUND_GRID_COLOR,

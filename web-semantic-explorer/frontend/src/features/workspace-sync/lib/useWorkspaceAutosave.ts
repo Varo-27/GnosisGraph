@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react"
 
-import { useGraphStore } from "@/store/useGraphStore"
+import { useGraphStore } from "@/entities/graph"
 import type { WorkspaceViewport } from "@/entities/workspace"
-import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
+import { useWorkspaceStore } from "@/entities/workspace"
 
 const AUTOSAVE_MS = 800
 

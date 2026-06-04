@@ -5,8 +5,8 @@ import { memo, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import type { AppNode } from "@/store/useGraphStore"
-import { useGraphStore } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
+import { useGraphStore } from "@/entities/graph"
 
 import { NodeDeleteButton } from "./NodeDeleteButton"
 

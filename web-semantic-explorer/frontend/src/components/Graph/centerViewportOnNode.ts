@@ -1,7 +1,7 @@
 import type { Edge, ReactFlowInstance } from "@xyflow/react"
 
-import type { AppNode } from "@/store/useGraphStore"
-import { useGraphStore } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
+import { useGraphStore } from "@/entities/graph"
 
 import { GRAPH_LAYOUT_TREE } from "./graphConstants"
 

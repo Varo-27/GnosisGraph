@@ -1,4 +1,5 @@
 export type { AppNode, AppNodeData, GraphState } from "./model/types"
+export { useGraphStore } from "./model/useGraphStore"
 export {
   GRAPH_NODE_TYPE,
   FILTER_NODE_DIMENSIONS,

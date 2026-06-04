@@ -25,8 +25,8 @@ import {
   GRAPH_MIN_ZOOM,
   isActiveNodeDrag,
 } from "@/entities/graph"
-import { type AppNode, useGraphStore } from "@/store/useGraphStore"
-import { useWorkspaceStore } from "@/store/workspace/useWorkspaceStore"
+import { type AppNode, useGraphStore } from "@/entities/graph"
+import { useWorkspaceStore } from "@/entities/workspace"
 import type { WorkspaceViewport } from "@/entities/workspace"
 
 const edgeTypes: EdgeTypes = {

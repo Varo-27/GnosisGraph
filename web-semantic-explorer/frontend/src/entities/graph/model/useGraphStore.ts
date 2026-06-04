@@ -7,15 +7,15 @@ import {
 } from "@xyflow/react"
 import { create } from "zustand"
 
-import { syncLinkedContextFlags } from "@/entities/graph"
-import { deleteGraphNode } from "@/entities/graph"
+import { syncLinkedContextFlags } from "../lib/context/syncLinkedContextFlags"
+import { deleteGraphNode } from "../lib/graph/deleteGraphNode"
 import {
   getInvalidConnectionMessage,
   isValidGraphConnection,
-} from "@/entities/graph"
-import { isPositionOnlyChange } from "@/entities/graph/lib/graph/graphFlowDrag"
+} from "../lib/edges/isValidGraphConnection"
+import { isPositionOnlyChange } from "../lib/graph/graphFlowDrag"
 
-import type { AppNode, GraphState } from "./graph/types"
+import type { AppNode, GraphState } from "./types"
 
 function isPositionChangeWhileDragging(changes: NodeChange[]): boolean {
   return (
@@ -29,7 +29,7 @@ function isPositionChangeWhileDragging(changes: NodeChange[]): boolean {
   )
 }
 
-export type { AppNode, AppNodeData, GraphState } from "./graph/types"
+export type { AppNode, AppNodeData, GraphState } from "./types"
 
 function nextRevision(state: GraphState): number {
   return state.graphRevision + 1

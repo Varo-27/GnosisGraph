@@ -7,7 +7,7 @@ import {
   fetchArticleDetail,
 } from "@/entities/article"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import type { AppNode } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
 
 import { ArticleModalContent } from "./ArticleModalContent"
 

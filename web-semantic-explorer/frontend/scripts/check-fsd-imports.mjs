@@ -10,20 +10,16 @@ const ROOT = join(process.cwd(), "src")
 
 const RULES = [
   {
-    name: "store-no-components",
-    roots: ["store"],
-    forbidden: ["@/components/", "@/widgets/"],
-  },
-  {
-    name: "entities-api-no-store",
+    name: "entities-model-no-upper-layers",
     roots: ["entities"],
-    forbidden: ["@/store/"],
-    pathIncludes: "/api/",
+    forbidden: ["@/widgets/", "@/features/", "@/pages/", "@/app/"],
+    pathIncludes: "/model/",
   },
   {
     name: "entities-no-upper-layers",
     roots: ["entities"],
     forbidden: ["@/widgets/", "@/features/", "@/pages/"],
+    pathExcludes: ["/model/"],
   },
   {
     name: "features-no-widgets",
@@ -44,15 +40,9 @@ const RULES = [
       "@/features/",
       "@/widgets/",
       "@/pages/",
-      "@/store/",
       "@/components/",
     ],
-    pathExcludes: ["shared/api/"], 
-  },
-  {
-    name: "shared-api-no-store",
-    roots: ["shared/api"],
-    forbidden: ["@/store/"],
+    pathExcludes: ["shared/api/"],
   },
 ]
 

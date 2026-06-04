@@ -6,7 +6,7 @@ import { fetchFavorites, type FavoriteArticle } from "@/shared/api/workspaces"
 import { Button } from "@/components/ui/button"
 import { isLoggedIn } from "@/hooks/useAuth"
 import { cn } from "@/lib/utils"
-import { useGraphStore } from "@/store/useGraphStore"
+import { useGraphStore } from "@/entities/graph"
 
 import { favoriteArticleToGraphNode } from "@/entities/graph"
 import { mergeGraphArticles } from "../mergeGraphArticles"

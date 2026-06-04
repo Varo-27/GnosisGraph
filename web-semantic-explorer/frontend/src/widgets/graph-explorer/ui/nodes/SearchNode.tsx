@@ -1,6 +1,6 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react"
 import { Search } from "lucide-react"
-import type { AppNode } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
 
 const SEARCH_TITLE_PREFIX = "Búsqueda: "
 

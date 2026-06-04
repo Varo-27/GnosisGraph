@@ -14,8 +14,8 @@ import {
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { cn } from "@/lib/utils"
-import type { AppNode } from "@/store/useGraphStore"
-import { useGraphStore } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
+import { useGraphStore } from "@/entities/graph"
 
 import {
   articleDetailToMetadata,

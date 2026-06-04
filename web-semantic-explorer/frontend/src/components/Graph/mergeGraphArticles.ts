@@ -1,6 +1,6 @@
 import type { Edge } from "@xyflow/react"
 
-import type { AppNode } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
 
 import { dedupeEdgesById } from "@/entities/graph/lib/mappers/dedupeEdges"
 

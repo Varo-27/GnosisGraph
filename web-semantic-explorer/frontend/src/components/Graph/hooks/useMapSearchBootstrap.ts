@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 
 import type { GraphSearchParams } from "@/lib/filters"
 import { searchParamsToFilters } from "@/lib/filters"
-import { useGraphStore } from "@/store/useGraphStore"
+import { useGraphStore } from "@/entities/graph"
 
 import {
   buildEdge,

@@ -9,7 +9,7 @@ import { FavoriteButton } from "@/features/article-favorite"
 import { FollowTargetsList } from "@/features/article-follow"
 import { PrivateNoteSection } from "@/features/article-notes"
 import { RatingPanel } from "@/features/article-rating"
-import type { AppNode } from "@/store/useGraphStore"
+import type { AppNode } from "@/entities/graph"
 
 type ArticleModalContentProps = {
   node: AppNode
