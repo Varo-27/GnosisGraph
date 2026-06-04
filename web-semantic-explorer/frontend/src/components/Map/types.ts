@@ -1,4 +1,4 @@
-import type { HeatmapEntry } from "@/api/stats"
+import type { HeatmapEntry } from "@/shared/api/stats"
 import type { MapProjectionId } from "@/lib/mapProjections"
 
 export type {

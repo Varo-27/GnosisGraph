@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Check, Loader2 } from "lucide-react"
 import { memo, useEffect, useMemo, useRef, useState } from "react"
 
-import { listAuthors } from "@/api/taxonomy"
+import { listAuthors } from "@/shared/api/taxonomy"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 

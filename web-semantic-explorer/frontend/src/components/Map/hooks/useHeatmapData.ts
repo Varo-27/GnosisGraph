@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
-import { StatsApi } from "@/api/stats"
+import { StatsApi } from "@/shared/api/stats"
 import {
   buildCountryCounts,
   findDirectEntryForCountry,

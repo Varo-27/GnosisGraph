@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { toast } from "sonner"
 
-import { expandGraphWithFilters } from "@/api/searchWithFilters"
+import { expandGraphWithFilters } from "@/shared/api/searchWithFilters"
 import {
   applyTreeLayout,
   EXPAND_SIMILAR_LIMIT,

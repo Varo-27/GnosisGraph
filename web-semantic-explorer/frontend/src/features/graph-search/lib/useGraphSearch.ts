@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { toast } from "sonner"
 
-import { searchArticlesWithFilters } from "@/api/searchWithFilters"
+import { searchArticlesWithFilters } from "@/shared/api/searchWithFilters"
 import {
   collectDownstreamArticleIds,
   createSearchEdges,

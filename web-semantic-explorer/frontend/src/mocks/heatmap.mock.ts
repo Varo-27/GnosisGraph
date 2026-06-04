@@ -1,4 +1,4 @@
-import type { HeatmapResponse } from "@/api/stats"
+import type { HeatmapResponse } from "@/shared/api/stats"
 
 export const HEATMAP_MOCK: HeatmapResponse = {
   total_articles: 428,

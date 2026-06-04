@@ -3,7 +3,7 @@
  * Mantener alineado con backend/app/place_geo.py y place_geo_regions.py
  */
 
-import type { HeatmapEntry } from "@/api/stats"
+import type { HeatmapEntry } from "@/shared/api/stats"
 import { registerPlaceSlugLabels } from "@/lib/countrySearchLabels"
 
 const PLACE_TO_ISO: Record<string, string> = {

@@ -1,6 +1,6 @@
 import { Globe2, MapPin } from "lucide-react"
 
-import type { HeatmapEntry } from "@/api/stats"
+import type { HeatmapEntry } from "@/shared/api/stats"
 import { Badge } from "@/components/ui/badge"
 import {
   EOM_GREEN,

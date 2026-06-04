@@ -47,10 +47,11 @@ const RULES = [
       "@/store/",
       "@/components/",
     ],
+    pathExcludes: ["shared/api/"], 
   },
   {
-    name: "api-no-store",
-    roots: ["api"],
+    name: "shared-api-no-store",
+    roots: ["shared/api"],
     forbidden: ["@/store/"],
   },
 ]

@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { Star } from "lucide-react"
 import { toast } from "sonner"
 
-import { fetchFavorites, type FavoriteArticle } from "@/api/workspaces"
+import { fetchFavorites, type FavoriteArticle } from "@/shared/api/workspaces"
 import { Button } from "@/components/ui/button"
 import { isLoggedIn } from "@/hooks/useAuth"
 import { cn } from "@/lib/utils"

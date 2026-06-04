@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import {
   expandGraphWithFilters,
   searchArticlesWithFilters,
-} from "@/api/searchWithFilters"
+} from "@/shared/api/searchWithFilters"
 import {
   collectDownstreamArticleIds,
   dedupeEdgesById,

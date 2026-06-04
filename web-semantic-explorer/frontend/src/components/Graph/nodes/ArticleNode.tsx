@@ -10,7 +10,7 @@ import {
   articleDetailQueryKey,
   fetchArticleDetail,
   toggleArticleFavorite,
-} from "@/api/articles"
+} from "@/shared/api/articles"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
 import { cn } from "@/lib/utils"

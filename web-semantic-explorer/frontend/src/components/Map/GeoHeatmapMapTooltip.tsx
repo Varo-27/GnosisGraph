@@ -1,4 +1,4 @@
-import type { HeatmapEntry } from "@/api/stats"
+import type { HeatmapEntry } from "@/shared/api/stats"
 import { getCountrySearchLabel } from "@/lib/countrySearchLabels"
 
 import type { MapHoverState } from "./types"
