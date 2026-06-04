@@ -5,8 +5,11 @@ from fastapi import HTTPException
 from sqlmodel import Session, select
 
 from app.models.article import Article
-from app.models.engagement import Comment, Favorite, Rating
+from app.models.engagement import Comment, Favorite, Follow, Note, Rating
+from app.models.relations import ArticleAuthor, ArticleCategory
+from app.models.taxonomy import Author, Category
 from app.services import engagement_service
+from app.schemas.engagement import FollowCreate
 from tests.utils.user import create_random_user
 
 
@@ -94,3 +97,54 @@ def test_comments_crud(db: Session, sample_article: Article) -> None:
     comment = db.get(Comment, created.id)
     assert comment is not None
     assert comment.status == "deleted"
+
+
+def test_note_and_follow(db: Session, sample_article: Article) -> None:
+    user = create_random_user(db)
+    article_id = sample_article.id
+    assert article_id is not None
+
+    author = Author(name="Ana Test", profile_url="https://example.com/ana")
+    category = Category(name="Geopolítica")
+    db.add(author)
+    db.add(category)
+    db.commit()
+    db.refresh(author)
+    db.refresh(category)
+
+    db.add(ArticleAuthor(article_id=article_id, author_id=author.id))
+    db.add(ArticleCategory(article_id=article_id, category_id=category.id))
+    db.commit()
+
+    empty_note = engagement_service.get_article_note(db, article_id, user)
+    assert empty_note.content == ""
+
+    saved = engagement_service.upsert_article_note(
+        db, article_id, user, "  Mi nota privada  "
+    )
+    assert saved.content == "Mi nota privada"
+
+    detail = engagement_service.get_article_detail(db, article_id, user)
+    assert detail.user_note == "Mi nota privada"
+    assert len(detail.follow_targets) == 2
+
+    follow_on = engagement_service.set_follow(
+        db,
+        user,
+        FollowCreate(target_type="author", target_id=author.id),
+        following=True,
+    )
+    assert follow_on.is_following is True
+
+    detail_after = engagement_service.get_article_detail(db, article_id, user)
+    author_target = next(
+        target for target in detail_after.follow_targets if target.target_type == "author"
+    )
+    assert author_target.is_following is True
+
+    follows = engagement_service.list_follows(db, user)
+    assert len(follows) == 1
+
+    cleared = engagement_service.upsert_article_note(db, article_id, user, "   ")
+    assert cleared.content == ""
+    assert db.exec(select(Note).where(Note.article_id == article_id)).first() is None

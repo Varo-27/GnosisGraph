@@ -4,17 +4,26 @@ from fastapi import HTTPException, status
 from sqlmodel import Session, func, select
 
 from app.models.article import Article
-from app.models.engagement import Comment, Favorite, Rating, get_datetime_utc
+from app.models.engagement import Comment, Favorite, Follow, Note, Rating, get_datetime_utc
 from app.models.relations import ArticleAuthor, ArticleCategory, ArticlePlace
-from app.models.taxonomy import Author, Category, Place
+from app.models.taxonomy import Author, Category, Place, Topic
 from app.models.user import User
 from app.schemas.engagement import (
     ArticleCommentPublic,
     ArticleDetailPublic,
     CommentPublic,
+    FavoriteArticlePublic,
     FavoriteStatusPublic,
+    FollowCreate,
+    FollowPublic,
+    FollowStatusPublic,
+    FollowTargetPublic,
+    FollowsListPublic,
+    NotePublic,
     RatingSummaryPublic,
 )
+
+ALLOWED_FOLLOW_TYPES = frozenset({"author", "category", "topic", "article"})
 
 
 def _author_display_name(user: User) -> str:
@@ -28,6 +37,233 @@ def _ensure_article(session: Session, article_id: int) -> Article:
     if not article:
         raise HTTPException(status_code=404, detail="Artículo no encontrado")
     return article
+
+
+def _ensure_follow_target(
+    session: Session, target_type: str, target_id: int
+) -> str:
+    normalized = target_type.strip().lower()
+    if normalized not in ALLOWED_FOLLOW_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"target_type debe ser uno de: {', '.join(sorted(ALLOWED_FOLLOW_TYPES))}",
+        )
+
+    if normalized == "author":
+        author = session.get(Author, target_id)
+        if not author:
+            raise HTTPException(status_code=404, detail="Autor no encontrado")
+        return author.name
+
+    if normalized == "category":
+        category = session.get(Category, target_id)
+        if not category:
+            raise HTTPException(status_code=404, detail="Categoría no encontrada")
+        return category.name
+
+    if normalized == "topic":
+        topic = session.get(Topic, target_id)
+        if not topic:
+            raise HTTPException(status_code=404, detail="Tema no encontrado")
+        return topic.name
+
+    article = session.get(Article, target_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Artículo no encontrado")
+    return article.title or article.url
+
+
+def _is_following(
+    session: Session, user: User, target_type: str, target_id: int
+) -> bool:
+    existing = session.exec(
+        select(Follow.id)
+        .where(Follow.user_id == user.id)
+        .where(Follow.target_type == target_type)
+        .where(Follow.target_id == target_id)
+    ).first()
+    return existing is not None
+
+
+def _build_article_follow_targets(
+    session: Session, article_id: int, user: User | None
+) -> list[FollowTargetPublic]:
+    author_rows = session.exec(
+        select(Author.id, Author.name)
+        .join(ArticleAuthor, ArticleAuthor.author_id == Author.id)
+        .where(ArticleAuthor.article_id == article_id)
+        .order_by(Author.name)
+    ).all()
+    category_rows = session.exec(
+        select(Category.id, Category.name)
+        .join(ArticleCategory, ArticleCategory.category_id == Category.id)
+        .where(ArticleCategory.article_id == article_id)
+        .order_by(Category.name)
+    ).all()
+
+    targets: list[FollowTargetPublic] = []
+    for author_id, author_name in author_rows:
+        if author_id is None:
+            continue
+        targets.append(
+            FollowTargetPublic(
+                target_type="author",
+                target_id=author_id,
+                label=author_name,
+                is_following=_is_following(session, user, "author", author_id)
+                if user
+                else False,
+            )
+        )
+
+    for category_id, category_name in category_rows:
+        if category_id is None:
+            continue
+        targets.append(
+            FollowTargetPublic(
+                target_type="category",
+                target_id=category_id,
+                label=category_name,
+                is_following=_is_following(session, user, "category", category_id)
+                if user
+                else False,
+            )
+        )
+
+    return targets
+
+
+def get_article_note(
+    session: Session, article_id: int, user: User
+) -> NotePublic:
+    _ensure_article(session, article_id)
+
+    note = session.exec(
+        select(Note)
+        .where(Note.user_id == user.id)
+        .where(Note.article_id == article_id)
+    ).first()
+
+    if not note:
+        return NotePublic(article_id=article_id, content="", updated_at=None)
+
+    return NotePublic(
+        article_id=article_id,
+        content=note.content,
+        updated_at=note.updated_at,
+    )
+
+
+def upsert_article_note(
+    session: Session, article_id: int, user: User, content: str
+) -> NotePublic:
+    _ensure_article(session, article_id)
+
+    trimmed = content.strip()
+    existing = session.exec(
+        select(Note)
+        .where(Note.user_id == user.id)
+        .where(Note.article_id == article_id)
+    ).first()
+
+    now = get_datetime_utc()
+
+    if not trimmed:
+        if existing:
+            session.delete(existing)
+            session.commit()
+        return NotePublic(article_id=article_id, content="", updated_at=None)
+
+    if existing:
+        existing.content = trimmed
+        existing.updated_at = now
+        session.add(existing)
+        session.commit()
+        session.refresh(existing)
+        return NotePublic(
+            article_id=article_id,
+            content=existing.content,
+            updated_at=existing.updated_at,
+        )
+
+    note = Note(
+        user_id=user.id,
+        article_id=article_id,
+        content=trimmed,
+        updated_at=now,
+    )
+    session.add(note)
+    session.commit()
+    session.refresh(note)
+    return NotePublic(
+        article_id=article_id,
+        content=note.content,
+        updated_at=note.updated_at,
+    )
+
+
+def set_follow(
+    session: Session, user: User, payload: FollowCreate, *, following: bool
+) -> FollowStatusPublic:
+    target_type = payload.target_type.strip().lower()
+    _ensure_follow_target(session, target_type, payload.target_id)
+
+    existing = session.exec(
+        select(Follow)
+        .where(Follow.user_id == user.id)
+        .where(Follow.target_type == target_type)
+        .where(Follow.target_id == payload.target_id)
+    ).first()
+
+    if following:
+        if not existing:
+            session.add(
+                Follow(
+                    user_id=user.id,
+                    target_type=target_type,
+                    target_id=payload.target_id,
+                )
+            )
+            session.commit()
+        return FollowStatusPublic(
+            target_type=target_type,
+            target_id=payload.target_id,
+            is_following=True,
+        )
+
+    if existing:
+        session.delete(existing)
+        session.commit()
+
+    return FollowStatusPublic(
+        target_type=target_type,
+        target_id=payload.target_id,
+        is_following=False,
+    )
+
+
+def list_follows(session: Session, user: User) -> list[FollowPublic]:
+    rows = session.exec(
+        select(Follow)
+        .where(Follow.user_id == user.id)
+        .order_by(Follow.created_at.desc())
+    ).all()
+
+    results: list[FollowPublic] = []
+    for follow in rows:
+        try:
+            label = _ensure_follow_target(session, follow.target_type, follow.target_id)
+        except HTTPException:
+            label = f"{follow.target_type} #{follow.target_id}"
+        results.append(
+            FollowPublic(
+                target_type=follow.target_type,
+                target_id=follow.target_id,
+                label=label,
+                created_at=follow.created_at,
+            )
+        )
+    return results
 
 
 def get_rating_summary(
@@ -110,6 +346,8 @@ def get_article_detail(
     rating_summary = get_rating_summary(session, article_id, user)
 
     is_favorited = False
+    user_note: str | None = None
+    user_note_updated_at: datetime | None = None
     if user:
         favorite = session.exec(
             select(Favorite.id)
@@ -117,6 +355,17 @@ def get_article_detail(
             .where(Favorite.article_id == article_id)
         ).first()
         is_favorited = favorite is not None
+
+        note = session.exec(
+            select(Note)
+            .where(Note.user_id == user.id)
+            .where(Note.article_id == article_id)
+        ).first()
+        if note:
+            user_note = note.content
+            user_note_updated_at = note.updated_at
+
+    follow_targets = _build_article_follow_targets(session, article_id, user)
 
     return ArticleDetailPublic(
         id=article.id,
@@ -134,7 +383,49 @@ def get_article_detail(
         ratings_count=rating_summary.ratings_count,
         user_rating=rating_summary.user_rating,
         is_favorited=is_favorited,
+        user_note=user_note,
+        user_note_updated_at=user_note_updated_at,
+        follow_targets=follow_targets,
     )
+
+
+def list_favorites(session: Session, user: User) -> list[FavoriteArticlePublic]:
+    rows = session.exec(
+        select(Favorite, Article)
+        .join(Article, Article.id == Favorite.article_id)
+        .where(Favorite.user_id == user.id)
+        .order_by(Favorite.created_at.desc())
+    ).all()
+
+    results: list[FavoriteArticlePublic] = []
+    for favorite, article in rows:
+        author_rows = session.exec(
+            select(Author.name)
+            .join(ArticleAuthor, ArticleAuthor.author_id == Author.id)
+            .where(ArticleAuthor.article_id == article.id)
+            .order_by(Author.name)
+        ).all()
+        category_rows = session.exec(
+            select(Category.name)
+            .join(ArticleCategory, ArticleCategory.category_id == Category.id)
+            .where(ArticleCategory.article_id == article.id)
+            .order_by(Category.name)
+        ).all()
+
+        results.append(
+            FavoriteArticlePublic(
+                article_id=article.id,
+                title=article.title,
+                excerpt=article.excerpt,
+                image_url=article.image_url,
+                url=article.url,
+                authors=list(author_rows),
+                categories=list(category_rows),
+                favorited_at=favorite.created_at,
+            )
+        )
+
+    return results
 
 
 def set_favorite(

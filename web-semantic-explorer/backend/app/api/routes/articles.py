@@ -7,6 +7,8 @@ from app.schemas.engagement import (
     CommentPublic,
     CommentUpdate,
     FavoriteStatusPublic,
+    NotePublic,
+    NoteUpsert,
     RatingSummaryPublic,
     RatingUpsert,
 )
@@ -83,6 +85,27 @@ def create_article_comment(
     current_user: CurrentUser,
 ) -> CommentPublic:
     return engagement_service.create_comment(
+        session, article_id, current_user, body.content
+    )
+
+
+@router.get("/{article_id}/note", response_model=NotePublic)
+def get_article_note(
+    article_id: int,
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> NotePublic:
+    return engagement_service.get_article_note(session, article_id, current_user)
+
+
+@router.put("/{article_id}/note", response_model=NotePublic)
+def upsert_article_note(
+    article_id: int,
+    body: NoteUpsert,
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> NotePublic:
+    return engagement_service.upsert_article_note(
         session, article_id, current_user, body.content
     )
 
