@@ -10,6 +10,8 @@ export type RenderCountry = {
   path: string
   isoCode?: string
   name?: string
+  /** Bounding box en coords. de proyección (para zoom al país). */
+  bounds?: [[number, number], [number, number]]
 }
 
 export type ChoroplethViewBox = {
@@ -77,6 +79,8 @@ export function buildChoroplethScene(
     const path = generator(geoFeature)
     if (!path) continue
 
+    const bounds = generator.bounds(geoFeature) as [[number, number], [number, number]]
+
     const isoCode = getGeoIsoCode({ properties: geoFeature.properties })
     const adminName =
       typeof geoFeature.properties?.NAME === "string"
@@ -93,6 +97,7 @@ export function buildChoroplethScene(
       path,
       isoCode,
       name,
+      bounds,
     })
   }
 

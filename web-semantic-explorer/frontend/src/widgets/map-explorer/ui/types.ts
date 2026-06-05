@@ -25,6 +25,7 @@ export type WorldChoroplethProps = {
   highlightedCodes: Set<string> | null
   hoveredRegionCodes: Set<string> | null
   projectionId: MapProjectionId
+  focusCountryCode?: string | null
   onHoverCountry: (isoCode: string | null, name?: string) => void
   onSelectCountry: (isoCode: string | undefined, name?: string) => void
 }
@@ -33,4 +34,13 @@ export type HeatmapPlaceGroups = {
   countryPlaces: HeatmapEntry[]
   regionPlaces: HeatmapEntry[]
   unmappedPlaces: HeatmapEntry[]
+}
+
+export type MapPlaceFilterIntent = {
+  place: string
+  q: string
+  label: string
+  isoCode?: string
+  placeId?: number
+  articleCount?: number
 }

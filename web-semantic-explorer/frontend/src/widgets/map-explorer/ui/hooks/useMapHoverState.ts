@@ -2,16 +2,14 @@ import { useNavigate } from "@tanstack/react-router"
 import { useCallback, useState } from "react"
 
 import type { HeatmapEntry } from "@/shared/api/stats"
-import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
-import { resolveCountryClickSearch } from "@/widgets/map-explorer/lib/heatmapColors"
 
 import type { MapHoverState } from "../types"
 
 type UseMapHoverStateOptions = {
-  entries: HeatmapEntry[]
+  onFocusCountry?: (isoCode: string) => void
 }
 
-export function useMapHoverState({ entries }: UseMapHoverStateOptions) {
+export function useMapHoverState({ onFocusCountry }: UseMapHoverStateOptions = {}) {
   const navigate = useNavigate()
 
   const [hoveredCode, setHoveredCode] = useState<string | null>(null)
@@ -40,9 +38,16 @@ export function useMapHoverState({ entries }: UseMapHoverStateOptions) {
     (entry: HeatmapEntry) => {
       setHighlightedCodes(null)
       setSelectedRegionId(null)
-      goToGraphWithPlace(entry)
+
+      const isoCode =
+        entry.map_country_codes?.[0] ?? entry.country_code ?? null
+      if (!isoCode) return
+
+      setSelectedCode(isoCode)
+      setHoveredName(entry.name)
+      onFocusCountry?.(isoCode)
     },
-    [goToGraphWithPlace],
+    [onFocusCountry],
   )
 
   const handleRegionPlaceClick = useCallback((entry: HeatmapEntry) => {
@@ -58,16 +63,10 @@ export function useMapHoverState({ entries }: UseMapHoverStateOptions) {
       setSelectedCode(isoCode)
       setHighlightedCodes(null)
       setSelectedRegionId(null)
-
-      const { place, q } = resolveCountryClickSearch(
-        entries,
-        isoCode,
-        countryName,
-        getCountrySearchLabel,
-      )
-      navigate({ to: "/", search: { place, q } })
+      setHoveredName(countryName ?? null)
+      onFocusCountry?.(isoCode)
     },
-    [entries, navigate],
+    [onFocusCountry],
   )
 
   const handleCountryHover = useCallback(
@@ -80,6 +79,25 @@ export function useMapHoverState({ entries }: UseMapHoverStateOptions) {
       }
     },
     [],
+  )
+
+  const handleCountryListHover = useCallback(
+    (entry: HeatmapEntry | null) => {
+      if (!entry) {
+        setHoveredCode(null)
+        if (!hoveredRegionEntry) setHoveredName(null)
+        return
+      }
+      const isoCode =
+        entry.map_country_codes?.[0] ?? entry.country_code ?? null
+      if (!isoCode) return
+
+      setHoveredCode(isoCode)
+      setHoveredName(entry.name)
+      setHoveredRegionCodes(null)
+      setHoveredRegionEntry(null)
+    },
+    [hoveredRegionEntry],
   )
 
   const handleRegionListHover = useCallback(
@@ -115,6 +133,7 @@ export function useMapHoverState({ entries }: UseMapHoverStateOptions) {
     handleRegionPlaceClick,
     handleCountryClick,
     handleCountryHover,
+    handleCountryListHover,
     handleRegionListHover,
   }
 }

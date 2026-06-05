@@ -83,13 +83,14 @@ export function WorldChoropleth({
   highlightedCodes,
   hoveredRegionCodes,
   projectionId,
+  focusCountryCode = null,
   onHoverCountry,
   onSelectCountry,
 }: WorldChoroplethProps) {
   const [countries, setCountries] = useState<FeatureCollection | null>(null)
   const [loadError, setLoadError] = useState(false)
 
-  const { svgRef, transform, resetView } = useChoroplethZoom(
+  const { svgRef, transform, resetView, zoomToBounds } = useChoroplethZoom(
     countries !== null,
     projectionId,
   )
@@ -117,6 +118,17 @@ export function WorldChoropleth({
     () => (countries ? buildChoroplethScene(countries, projectionId) : null),
     [countries, projectionId],
   )
+
+  useEffect(() => {
+    if (!focusCountryCode || !mapScene) return
+
+    const country = mapScene.items.find(
+      (item) => item.isoCode === focusCountryCode,
+    )
+    if (!country?.bounds) return
+
+    zoomToBounds(country.bounds, mapScene.viewBox)
+  }, [focusCountryCode, mapScene, zoomToBounds])
 
   const emphasizedItems = useMemo(() => {
     if (!mapScene) return []

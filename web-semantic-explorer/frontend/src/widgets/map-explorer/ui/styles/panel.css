@@ -10,4 +10,44 @@
   .map-panel__label {
     @apply font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
   }
+
+  .map-country-modal {
+    @apply text-lg;
+  }
+
+  .map-country-modal__section-label {
+    @apply mb-2.5 font-mono text-sm uppercase tracking-widest text-muted-foreground;
+  }
+
+  .map-country-modal__body-text {
+    @apply text-lg leading-relaxed text-muted-foreground;
+  }
+
+  .map-country-modal__article {
+    @apply gap-3.5 rounded-none p-2.5;
+  }
+
+  .map-country-modal__article-thumb {
+    @apply h-20 w-20 shrink-0 border border-foreground/20 object-cover;
+  }
+
+  .map-country-modal__article-thumb-fallback {
+    @apply flex h-20 w-20 shrink-0 items-center justify-center border border-foreground/20 bg-muted/40 text-xs uppercase tracking-widest text-muted-foreground;
+  }
+
+  .map-country-modal__article-title {
+    @apply line-clamp-2 text-lg font-semibold leading-snug;
+  }
+
+  .map-country-modal__article-meta {
+    @apply font-mono text-base tabular-nums text-muted-foreground;
+  }
+
+  .map-country-modal__article-empty {
+    @apply mt-1.5 block text-base text-muted-foreground;
+  }
+
+  .map-country-modal__add-btn {
+    @apply inline-flex max-w-full items-center gap-2 border border-foreground/35 bg-background px-3.5 py-2.5 font-mono text-sm uppercase tracking-widest text-foreground transition-colors hover:border-foreground hover:bg-background disabled:cursor-not-allowed disabled:opacity-45;
+  }
 }

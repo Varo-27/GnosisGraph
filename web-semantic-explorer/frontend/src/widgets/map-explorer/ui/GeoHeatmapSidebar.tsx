@@ -8,14 +8,20 @@ import {
   getHeatmapColorForCount,
 } from "@/widgets/map-explorer/lib/heatmapColors"
 
+import { MapCountryAddMenu } from "./MapCountryAddMenu"
 import type { HeatmapPlaceGroups, MapHoverState } from "./types"
 
 type GeoHeatmapSidebarProps = {
   maxCount: number
   placeGroups: HeatmapPlaceGroups
   hoverState: MapHoverState
-  onCountryPlaceClick: (entry: HeatmapEntry) => void
+  activeWorkspaceName?: string
+  isGuestMode: boolean
+  onCountryRowClick: (entry: HeatmapEntry) => void
+  onAddCountryToCurrent: (entry: HeatmapEntry) => void
+  onAddCountryToNew: (entry: HeatmapEntry) => void
   onRegionPlaceClick: (entry: HeatmapEntry) => void
+  onCountryListHover: (entry: HeatmapEntry | null) => void
   onRegionListHover: (entry: HeatmapEntry | null) => void
   onOpenSelectedRegion: () => void
   onUnmappedPlaceClick: (entry: HeatmapEntry) => void
@@ -25,14 +31,19 @@ export function GeoHeatmapSidebar({
   maxCount,
   placeGroups,
   hoverState,
-  onCountryPlaceClick,
+  activeWorkspaceName,
+  isGuestMode,
+  onCountryRowClick,
+  onAddCountryToCurrent,
+  onAddCountryToNew,
   onRegionPlaceClick,
+  onCountryListHover,
   onRegionListHover,
   onOpenSelectedRegion,
   onUnmappedPlaceClick,
 }: GeoHeatmapSidebarProps) {
   const { countryPlaces, regionPlaces, unmappedPlaces } = placeGroups
-  const { selectedRegionId } = hoverState
+  const { selectedRegionId, hoveredCode, hoveredRegionEntry } = hoverState
 
   return (
     <aside className="flex w-full shrink-0 flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-map-panel p-4 lg:w-80 lg:max-w-[min(20rem,40vw)] lg:border-t-0 lg:border-l-2">
@@ -69,9 +80,9 @@ export function GeoHeatmapSidebar({
         ))}
       </ul>
       <p className="text-[10px] text-muted-foreground">
-        Mar = gris EOM. País sin artículos = verde pálido (#ebf2e3). Verde =
-        hover de país. Ámbar claro = hover de macro-región en la lista. Dorado =
-        macro-región seleccionada con clic.
+        Mar = gris EOM. País sin artículos = verde pálido (#ebf2e3). Ámbar claro
+        = hover de país o macro-región en la lista. Dorado = macro-región
+        seleccionada con clic. Botón + junto al conteo para añadir al explorador.
       </p>
 
       <div className="max-h-52 space-y-1 overflow-y-auto">
@@ -86,12 +97,24 @@ export function GeoHeatmapSidebar({
                 entry.article_count,
                 maxCount,
               )
+              const isoCode =
+                entry.map_country_codes?.[0] ?? entry.country_code ?? null
+              const isHovered = Boolean(isoCode && hoveredCode === isoCode)
               return (
-                <li key={entry.place_id}>
+                <li
+                  key={entry.place_id}
+                  className={`flex items-center gap-1 border px-1 py-0.5 transition-colors hover:border-foreground hover:bg-accent ${
+                    isHovered
+                      ? "border-map-region-hover bg-map-region-hover/15"
+                      : "border-transparent"
+                  }`}
+                  onMouseEnter={() => onCountryListHover(entry)}
+                  onMouseLeave={() => onCountryListHover(null)}
+                >
                   <button
                     type="button"
-                    onClick={() => onCountryPlaceClick(entry)}
-                    className="flex w-full items-center gap-2 border border-transparent px-2 py-1 text-left text-sm transition-colors hover:border-foreground hover:bg-accent"
+                    onClick={() => onCountryRowClick(entry)}
+                    className="flex min-w-0 flex-1 items-center gap-2 px-1 py-0.5 text-left text-sm"
                   >
                     <span
                       className="h-4 w-4 shrink-0 border border-foreground/30"
@@ -101,10 +124,17 @@ export function GeoHeatmapSidebar({
                     <span className="min-w-0 flex-1 truncate font-medium">
                       {entry.name}
                     </span>
-                    <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
-                      {entry.article_count}
-                    </span>
                   </button>
+                  <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+                    {entry.article_count}
+                  </span>
+                  <MapCountryAddMenu
+                    countryName={entry.name}
+                    activeWorkspaceName={activeWorkspaceName}
+                    isGuestMode={isGuestMode}
+                    onAddToCurrent={() => onAddCountryToCurrent(entry)}
+                    onAddToNew={() => onAddCountryToNew(entry)}
+                  />
                 </li>
               )
             })}
@@ -117,7 +147,11 @@ export function GeoHeatmapSidebar({
             Macro-regiones ({regionPlaces.length})
           </p>
           <ul className="space-y-0.5">
-            {regionPlaces.map((entry) => (
+            {regionPlaces.map((entry) => {
+              const isRegionHovered =
+                hoveredRegionEntry?.place_id === entry.place_id
+              const isRegionSelected = selectedRegionId === entry.place_id
+              return (
               <li key={entry.place_id}>
                 <button
                   type="button"
@@ -125,9 +159,11 @@ export function GeoHeatmapSidebar({
                   onMouseEnter={() => onRegionListHover(entry)}
                   onMouseLeave={() => onRegionListHover(null)}
                   className={`flex w-full items-center gap-2 border px-2 py-1 text-left text-sm transition-colors hover:border-foreground hover:bg-accent ${
-                    selectedRegionId === entry.place_id
-                      ? "border-chart-4 bg-chart-4/15"
-                      : "border-transparent"
+                    isRegionSelected
+                      ? "border-map-region-selected bg-map-region-selected/15"
+                      : isRegionHovered
+                        ? "border-map-region-hover bg-map-region-hover/15"
+                        : "border-transparent"
                   }`}
                 >
                   <span
@@ -145,7 +181,8 @@ export function GeoHeatmapSidebar({
                   </span>
                 </button>
               </li>
-            ))}
+              )
+            })}
           </ul>
           {selectedRegionId && (
             <button

@@ -305,17 +305,17 @@ export function getCountryFill(
   highlightedCodes: Set<string> | null,
   hoveredRegionCodes: Set<string> | null = null,
 ) {
-  const countryHighlight = "var(--primary)"
+  const countrySelected = "var(--primary)"
   const regionHover = "var(--map-region-hover)"
   const regionSelected = "var(--map-region-selected)"
 
   if (!isoCode) return HEATMAP_SEA_FILL
 
-  if (selectedCode === isoCode || hoveredCode === isoCode) {
-    return countryHighlight
+  if (selectedCode === isoCode) {
+    return countrySelected
   }
 
-  if (hoveredRegionCodes?.has(isoCode)) {
+  if (hoveredCode === isoCode || hoveredRegionCodes?.has(isoCode)) {
     return regionHover
   }
 

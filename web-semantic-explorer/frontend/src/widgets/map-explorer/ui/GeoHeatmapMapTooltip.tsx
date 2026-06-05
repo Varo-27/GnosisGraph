@@ -1,5 +1,4 @@
 import type { HeatmapEntry } from "@/shared/api/stats"
-import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
 
 import type { MapHoverState } from "./types"
 
@@ -49,12 +48,9 @@ export function GeoHeatmapMapTooltip({
           <p className="font-mono text-lg font-bold">
             {countryCounts.get(hoveredCode) ?? 0} artículos (país)
           </p>
-          {(countryCounts.get(hoveredCode) ?? 0) === 0 && (
-            <p className="text-xs text-muted-foreground">
-              Clic →{" "}
-              {getCountrySearchLabel(hoveredCode, hoveredName ?? undefined)}
-            </p>
-          )}
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Clic → filtro de lugar
+          </p>
         </>
       )}
       {hoveredRegions.length > 0 && (

@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react"
-import { useMemo, useState } from "react"
-
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useNavigate } from "@tanstack/react-router"
 
 import {
   Select,
@@ -9,6 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select"
+import type { HeatmapEntry, PlaceArticlePreview } from "@/shared/api/stats"
+import type { AppNode } from "@/entities/graph"
+import { useWorkspaceStore } from "@/entities/workspace"
+import { ArticleNodeModal } from "@/widgets/article-modal"
+import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
+import { resolveCountryClickSearch } from "@/widgets/map-explorer/lib/heatmapColors"
 import {
   DEFAULT_PROJECTION_ID,
   MAP_PROJECTIONS,
@@ -19,18 +25,47 @@ import { GeoHeatmapMapTooltip } from "./GeoHeatmapMapTooltip"
 import { GeoHeatmapSidebar } from "./GeoHeatmapSidebar"
 import { useHeatmapData } from "./hooks/useHeatmapData"
 import { useMapHoverState } from "./hooks/useMapHoverState"
+import { MapPlaceFilterDialog } from "./MapPlaceFilterDialog"
+import type { MapPlaceFilterIntent } from "./types"
 import { WorldChoropleth } from "./WorldChoropleth"
 
 export function GeoHeatmap() {
+  const navigate = useNavigate()
   const [projectionId, setProjectionId] = useState<MapProjectionId>(
     DEFAULT_PROJECTION_ID,
   )
+  const [focusCountryCode, setFocusCountryCode] = useState<string | null>(null)
+  const [placeFilterIntent, setPlaceFilterIntent] =
+    useState<MapPlaceFilterIntent | null>(null)
+  const [articleModalNode, setArticleModalNode] = useState<AppNode | null>(null)
+  const [articleModalOpen, setArticleModalOpen] = useState(false)
+
+  const isGuestMode = useWorkspaceStore((state) => state.isGuestMode)
+  const hydrateForCurrentUser = useWorkspaceStore(
+    (state) => state.hydrateForCurrentUser,
+  )
+  const activeWorkspaceName = useWorkspaceStore((state) => {
+    const active = state.workspaces.find((ws) => ws.id === state.activeWorkspaceId)
+    return active?.name
+  })
+
+  useEffect(() => {
+    void hydrateForCurrentUser()
+  }, [hydrateForCurrentUser])
+
+  const focusCountryOnMap = useCallback((isoCode: string) => {
+    setFocusCountryCode(null)
+    requestAnimationFrame(() => setFocusCountryCode(isoCode))
+  }, [])
+
+  const openPlaceFilter = useCallback((intent: MapPlaceFilterIntent) => {
+    setPlaceFilterIntent(intent)
+  }, [])
 
   const {
     data,
     isLoading,
     isError,
-    entries,
     countryCounts,
     maxCount,
     placeGroups,
@@ -45,8 +80,127 @@ export function GeoHeatmap() {
     handleRegionPlaceClick,
     handleCountryClick,
     handleCountryHover,
+    handleCountryListHover,
     handleRegionListHover,
-  } = useMapHoverState({ entries })
+  } = useMapHoverState({
+    onFocusCountry: focusCountryOnMap,
+  })
+
+  const onMapCountrySelect = useCallback(
+    (isoCode: string | undefined, countryName?: string) => {
+      handleCountryClick(isoCode, countryName)
+      if (!isoCode) return
+
+      const direct = findDirectForCountry(isoCode)
+      const { place, q } = resolveCountryClickSearch(
+        placeGroups.countryPlaces,
+        isoCode,
+        countryName,
+        getCountrySearchLabel,
+      )
+      openPlaceFilter({
+        place,
+        q,
+        label: place,
+        isoCode,
+        placeId: direct?.place_id,
+        articleCount:
+          direct?.article_count ?? countryCounts.get(isoCode) ?? 0,
+      })
+    },
+    [
+      countryCounts,
+      findDirectForCountry,
+      handleCountryClick,
+      openPlaceFilter,
+      placeGroups.countryPlaces,
+    ],
+  )
+
+  const addPlaceToExplorer = useCallback(
+    (intent: MapPlaceFilterIntent, target: "current" | "new") => {
+      if (target === "new" && !isGuestMode) {
+        useWorkspaceStore
+          .getState()
+          .createWorkspace(`Mapa · ${intent.label}`)
+      }
+
+      void navigate({
+        to: "/",
+        search: {
+          place: intent.place,
+          q: intent.q,
+        },
+      })
+    },
+    [isGuestMode, navigate],
+  )
+
+  const intentFromEntry = useCallback(
+    (entry: HeatmapEntry): MapPlaceFilterIntent => ({
+      place: entry.name,
+      q: entry.name,
+      label: entry.name,
+      isoCode:
+        entry.map_country_codes?.[0] ?? entry.country_code ?? undefined,
+    }),
+    [],
+  )
+
+  const onSidebarCountryRowClick = useCallback(
+    (entry: HeatmapEntry) => {
+      handleCountryPlaceClick(entry)
+    },
+    [handleCountryPlaceClick],
+  )
+
+  const onAddCountryToCurrent = useCallback(
+    (entry: HeatmapEntry) => {
+      addPlaceToExplorer(intentFromEntry(entry), "current")
+    },
+    [addPlaceToExplorer, intentFromEntry],
+  )
+
+  const onAddCountryToNew = useCallback(
+    (entry: HeatmapEntry) => {
+      if (isGuestMode) return
+      addPlaceToExplorer(intentFromEntry(entry), "new")
+    },
+    [addPlaceToExplorer, intentFromEntry, isGuestMode],
+  )
+
+  const closePlaceFilter = useCallback((open: boolean) => {
+    if (!open) {
+      setPlaceFilterIntent(null)
+    }
+  }, [])
+
+  const handleAddToCurrentWorkspace = useCallback(() => {
+    if (!placeFilterIntent) return
+    addPlaceToExplorer(placeFilterIntent, "current")
+    setPlaceFilterIntent(null)
+  }, [addPlaceToExplorer, placeFilterIntent])
+
+  const handleAddToNewWorkspace = useCallback(() => {
+    if (!placeFilterIntent || isGuestMode) return
+    addPlaceToExplorer(placeFilterIntent, "new")
+    setPlaceFilterIntent(null)
+  }, [addPlaceToExplorer, isGuestMode, placeFilterIntent])
+
+  const handleMapArticleSelect = useCallback((article: PlaceArticlePreview) => {
+    setArticleModalNode({
+      id: String(article.id),
+      type: "article",
+      position: { x: 0, y: 0 },
+      data: {
+        title: article.title?.trim() || "Sin título",
+        excerpt: article.excerpt ?? undefined,
+        imageUrl: article.image_url ?? undefined,
+        appearDelay: 0,
+      },
+    })
+    setArticleModalOpen(true)
+  }, [])
 
   const activeProjection = MAP_PROJECTIONS.find((p) => p.id === projectionId)
 
@@ -77,8 +231,8 @@ export function GeoHeatmap() {
           <h1 className="font-sans text-2xl font-bold">Mapa de cobertura</h1>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">
             Intensidad por volumen de artículos. Rueda del ratón para zoom,
-            arrastra para mover. Clic en cualquier país abre búsqueda semántica
-            con ese país (aunque no tenga artículos en EOM).
+            arrastra para mover. Clic en un país hace zoom y te permite añadirlo
+            como filtro de lugar en el explorador.
           </p>
         </div>
 
@@ -153,9 +307,10 @@ export function GeoHeatmap() {
               hoveredCode={hoverState.hoveredCode}
               highlightedCodes={hoverState.highlightedCodes}
               hoveredRegionCodes={hoverState.hoveredRegionCodes}
+              focusCountryCode={focusCountryCode}
               projectionId={projectionId}
               onHoverCountry={handleCountryHover}
-              onSelectCountry={handleCountryClick}
+              onSelectCountry={onMapCountrySelect}
             />
           )}
 
@@ -171,13 +326,34 @@ export function GeoHeatmap() {
           maxCount={maxCount}
           placeGroups={placeGroups}
           hoverState={hoverState}
-          onCountryPlaceClick={handleCountryPlaceClick}
+          activeWorkspaceName={activeWorkspaceName}
+          isGuestMode={isGuestMode}
+          onCountryRowClick={onSidebarCountryRowClick}
+          onAddCountryToCurrent={onAddCountryToCurrent}
+          onAddCountryToNew={onAddCountryToNew}
           onRegionPlaceClick={handleRegionPlaceClick}
+          onCountryListHover={handleCountryListHover}
           onRegionListHover={handleRegionListHover}
           onOpenSelectedRegion={openSelectedRegion}
           onUnmappedPlaceClick={goToGraphWithPlace}
         />
       </div>
+
+      <MapPlaceFilterDialog
+        intent={placeFilterIntent}
+        activeWorkspaceName={activeWorkspaceName}
+        isGuestMode={isGuestMode}
+        onOpenChange={closePlaceFilter}
+        onAddToCurrent={handleAddToCurrentWorkspace}
+        onAddToNew={handleAddToNewWorkspace}
+        onArticleSelect={handleMapArticleSelect}
+      />
+
+      <ArticleNodeModal
+        node={articleModalNode}
+        open={articleModalOpen}
+        onOpenChange={setArticleModalOpen}
+      />
     </div>
   )
 }
