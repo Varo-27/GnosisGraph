@@ -6,7 +6,6 @@ import {
   type RenderCountry,
 } from "@/widgets/map-explorer/lib/choroplethScene"
 import {
-  getCountryBaseFill,
   getCountryFill,
   HEATMAP_SEA_FILL,
   isCountryEmphasized,
@@ -130,25 +129,6 @@ export function WorldChoropleth({
     zoomToBounds(country.bounds, mapScene.viewBox)
   }, [focusCountryCode, mapScene, zoomToBounds])
 
-  const emphasizedItems = useMemo(() => {
-    if (!mapScene) return []
-    return mapScene.items.filter((country) =>
-      isCountryEmphasized(
-        country.isoCode,
-        selectedCode,
-        hoveredCode,
-        highlightedCodes,
-        hoveredRegionCodes,
-      ),
-    )
-  }, [
-    mapScene,
-    selectedCode,
-    hoveredCode,
-    highlightedCodes,
-    hoveredRegionCodes,
-  ])
-
   if (loadError) {
     return (
       <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -197,11 +177,23 @@ export function WorldChoropleth({
             className="pointer-events-none"
           />
           {items.map((country) => {
-            const fill = getCountryBaseFill(
+            const fill = getCountryFill(
               country.isoCode,
               countryCounts,
               maxCount,
+              selectedCode,
+              hoveredCode,
+              highlightedCodes,
+              hoveredRegionCodes,
             )
+            const emphasized = isCountryEmphasized(
+              country.isoCode,
+              selectedCode,
+              hoveredCode,
+              highlightedCodes,
+              hoveredRegionCodes,
+            )
+            const strokeWidth = emphasized ? emphasisStroke : baseStroke
             const isInteractive = Boolean(country.isoCode)
 
             if (!isInteractive) {
@@ -210,7 +202,7 @@ export function WorldChoropleth({
                   key={country.key}
                   country={country}
                   fill={fill}
-                  strokeWidth={baseStroke}
+                  strokeWidth={strokeWidth}
                   pointerEvents="none"
                 />
               )
@@ -221,31 +213,12 @@ export function WorldChoropleth({
                 key={country.key}
                 country={country}
                 fill={fill}
-                strokeWidth={baseStroke}
+                strokeWidth={strokeWidth}
                 onHoverCountry={onHoverCountry}
                 onSelectCountry={onSelectCountry}
               />
             )
           })}
-          <g aria-hidden pointerEvents="none">
-            {emphasizedItems.map((country) => (
-              <CountryPath
-                key={`emphasis-${country.key}`}
-                country={country}
-                fill={getCountryFill(
-                  country.isoCode,
-                  countryCounts,
-                  maxCount,
-                  selectedCode,
-                  hoveredCode,
-                  highlightedCodes,
-                  hoveredRegionCodes,
-                )}
-                strokeWidth={emphasisStroke}
-                pointerEvents="none"
-              />
-            ))}
-          </g>
         </g>
       </svg>
     </div>
