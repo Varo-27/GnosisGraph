@@ -1,22 +1,24 @@
+import { memo } from "react"
+
 import type { HeatmapEntry } from "@/shared/api/stats"
 
-import type { MapHoverState } from "./types"
-
 type GeoHeatmapMapTooltipProps = {
-  hoverState: MapHoverState
+  hoveredCode: string | null
+  hoveredName: string | null
+  hoveredRegionEntry: HeatmapEntry | null
   countryCounts: Map<string, number>
   hoveredDirect?: HeatmapEntry
   hoveredRegions: HeatmapEntry[]
 }
 
-export function GeoHeatmapMapTooltip({
-  hoverState,
+export const GeoHeatmapMapTooltip = memo(function GeoHeatmapMapTooltip({
+  hoveredCode,
+  hoveredName,
+  hoveredRegionEntry,
   countryCounts,
   hoveredDirect,
   hoveredRegions,
 }: GeoHeatmapMapTooltipProps) {
-  const { hoveredCode, hoveredName, hoveredRegionEntry } = hoverState
-
   const visible =
     hoveredDirect ||
     hoveredRegions.length > 0 ||
@@ -64,4 +66,4 @@ export function GeoHeatmapMapTooltip({
       )}
     </div>
   )
-}
+})

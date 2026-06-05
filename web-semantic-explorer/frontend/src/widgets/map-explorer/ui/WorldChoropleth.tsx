@@ -1,5 +1,5 @@
 import type { FeatureCollection } from "geojson"
-import { useEffect, useMemo, useState } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
 import {
   buildChoroplethScene,
   CHOROPLETH_OCEAN_RECT,
@@ -74,7 +74,7 @@ function InteractiveCountry({
   )
 }
 
-export function WorldChoropleth({
+export const WorldChoropleth = memo(function WorldChoropleth({
   countryCounts,
   maxCount,
   selectedCode,
@@ -223,6 +223,6 @@ export function WorldChoropleth({
       </svg>
     </div>
   )
-}
+})
 
 export { DEFAULT_PROJECTION_ID }
