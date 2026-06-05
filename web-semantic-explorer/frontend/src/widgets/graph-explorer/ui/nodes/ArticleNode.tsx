@@ -18,7 +18,7 @@ import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
 
 import {
-  applyTreeLayout,
+  applySugiyamaLayout,
   articleDetailToMetadata,
   articleNodeToMetadata,
   createFilterFromArticleByKind,
@@ -129,7 +129,7 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
       const branch = createQueryBranchFromArticle(node, metadata)
       const mergedNodes = [...nodes, ...branch.nodes]
       const mergedEdges = [...edges, ...branch.edges]
-      setNodes(applyTreeLayout(mergedNodes, mergedEdges))
+      setNodes(applySugiyamaLayout(mergedNodes, mergedEdges))
       useGraphStore.getState().setEdges(mergedEdges)
       toast.success("Rama query + filtro creada")
     },

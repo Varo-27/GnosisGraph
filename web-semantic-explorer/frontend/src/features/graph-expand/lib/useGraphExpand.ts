@@ -3,7 +3,7 @@ import { toast } from "sonner"
 
 import { expandGraphWithFilters } from "@/shared/api/searchWithFilters"
 import {
-  applyTreeLayout,
+  applySugiyamaLayout,
   dedupeEdgesById,
   EXPAND_SIMILAR_LIMIT,
   EXPAND_SIMILAR_THRESHOLD,
@@ -81,7 +81,7 @@ export function useGraphExpand({
           newEdges,
         )
 
-        const layoutedNodes = applyTreeLayout(mergedNodes, mergedEdges)
+        const layoutedNodes = applySugiyamaLayout(mergedNodes, mergedEdges)
         const newNodeIds = new Set(newNodes.map((current) => current.id))
 
         const layoutedKeptNodes = layoutedNodes.filter(
@@ -94,11 +94,24 @@ export function useGraphExpand({
           return layouted ?? incoming
         })
 
+        // Una arista por nodo nuevo para la animación; el backend devuelve además
+        // aristas cruzadas new↔existing por similitud que no caben 1:1 en el stagger.
+        const staggerEdges = layoutedNewNodes.map((incoming) => {
+          const matched = newEdges.find((edge) => edge.target === incoming.id)
+          return (
+            matched ?? {
+              id: `edge-${node.id}-${incoming.id}`,
+              source: String(node.id),
+              target: incoming.id,
+            }
+          )
+        })
+
         await revealGraphNodesStaggered(
           layoutedKeptNodes,
           edges,
           layoutedNewNodes,
-          newEdges,
+          staggerEdges,
           SEARCH_REVEAL_STAGGER_MS,
           (stepNodes, stepEdges) => {
             setNodes(stepNodes)
@@ -106,9 +119,8 @@ export function useGraphExpand({
           },
         )
 
-        const { nodes: finalNodes } = useGraphStore.getState()
         setNodes(
-          finalNodes.map((current) => {
+          layoutedNodes.map((current) => {
             if (current.data.appearDelay == null) {
               return current
             }
@@ -116,6 +128,7 @@ export function useGraphExpand({
             return { ...current, data }
           }),
         )
+        useGraphStore.getState().setEdges(dedupeEdgesById(mergedEdges))
         centerViewportOnNode(node.id)
 
         if (newNodes.length === 0) {

@@ -1,6 +1,6 @@
 import type { Edge, ReactFlowInstance } from "@xyflow/react"
 
-import { GRAPH_LAYOUT_TREE } from "@/entities/graph"
+import { GRAPH_LAYOUT_SUGIYAMA } from "@/entities/graph"
 import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
 
@@ -20,9 +20,9 @@ export function centerViewportOnNodeInFlow(
   }
 
   const width =
-    node.measured?.width ?? node.width ?? GRAPH_LAYOUT_TREE.nodeWidth
+    node.measured?.width ?? node.width ?? GRAPH_LAYOUT_SUGIYAMA.nodeWidth
   const height =
-    node.measured?.height ?? node.height ?? GRAPH_LAYOUT_TREE.nodeHeight
+    node.measured?.height ?? node.height ?? GRAPH_LAYOUT_SUGIYAMA.nodeHeight
 
   const x = node.position.x + width / 2
   const y = node.position.y + height / 2
