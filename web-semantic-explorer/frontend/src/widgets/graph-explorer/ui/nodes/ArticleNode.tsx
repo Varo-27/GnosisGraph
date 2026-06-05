@@ -18,6 +18,7 @@ import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
 
 import {
+  applyTreeLayout,
   articleDetailToMetadata,
   articleNodeToMetadata,
   createFilterFromArticleByKind,
@@ -126,8 +127,10 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
 
       const { nodes, edges } = useGraphStore.getState()
       const branch = createQueryBranchFromArticle(node, metadata)
-      setNodes([...nodes, ...branch.nodes])
-      setEdges([...edges, ...branch.edges])
+      const mergedNodes = [...nodes, ...branch.nodes]
+      const mergedEdges = [...edges, ...branch.edges]
+      setNodes(applyTreeLayout(mergedNodes, mergedEdges))
+      useGraphStore.getState().setEdges(mergedEdges)
       toast.success("Rama query + filtro creada")
     },
     onError: () => showErrorToast("No se pudo crear la rama"),

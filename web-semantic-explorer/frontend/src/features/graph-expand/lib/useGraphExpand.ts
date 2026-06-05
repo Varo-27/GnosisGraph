@@ -4,12 +4,15 @@ import { toast } from "sonner"
 import { expandGraphWithFilters } from "@/shared/api/searchWithFilters"
 import {
   applyTreeLayout,
+  dedupeEdgesById,
   EXPAND_SIMILAR_LIMIT,
   EXPAND_SIMILAR_THRESHOLD,
   getStaggerDelay,
   graphNodeToAppNode,
   mergeGraphArticles,
   resolveExpandContext,
+  revealGraphNodesStaggered,
+  SEARCH_REVEAL_STAGGER_MS,
 } from "@/entities/graph"
 import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
@@ -79,9 +82,40 @@ export function useGraphExpand({
         )
 
         const layoutedNodes = applyTreeLayout(mergedNodes, mergedEdges)
+        const newNodeIds = new Set(newNodes.map((current) => current.id))
 
-        setNodes(layoutedNodes)
-        useGraphStore.getState().setEdges(mergedEdges)
+        const layoutedKeptNodes = layoutedNodes.filter(
+          (current) => !newNodeIds.has(current.id),
+        )
+        const layoutedNewNodes = newNodes.map((incoming) => {
+          const layouted = layoutedNodes.find(
+            (candidate) => candidate.id === incoming.id,
+          )
+          return layouted ?? incoming
+        })
+
+        await revealGraphNodesStaggered(
+          layoutedKeptNodes,
+          edges,
+          layoutedNewNodes,
+          newEdges,
+          SEARCH_REVEAL_STAGGER_MS,
+          (stepNodes, stepEdges) => {
+            setNodes(stepNodes)
+            useGraphStore.getState().setEdges(dedupeEdgesById(stepEdges))
+          },
+        )
+
+        const { nodes: finalNodes } = useGraphStore.getState()
+        setNodes(
+          finalNodes.map((current) => {
+            if (current.data.appearDelay == null) {
+              return current
+            }
+            const { appearDelay: _removed, ...data } = current.data
+            return { ...current, data }
+          }),
+        )
         centerViewportOnNode(node.id)
 
         if (newNodes.length === 0) {

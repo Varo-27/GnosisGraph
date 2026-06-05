@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { useShallow } from "zustand/react/shallow"
 
 import {
+  applyTreeLayout,
   centerPaletteDropPosition,
   createFilterNodeAtPosition,
   createQueryNodeAtPosition,
@@ -243,7 +244,9 @@ export function GraphExplorer() {
               centerPaletteDropPosition(dropPosition, payload.filterKey),
             )
 
-      setNodes([...currentNodes, newNode])
+      const mergedNodes = [...currentNodes, newNode]
+      const { edges: currentEdges } = useGraphStore.getState()
+      setNodes(applyTreeLayout(mergedNodes, currentEdges))
     },
     [setNodes],
   )
