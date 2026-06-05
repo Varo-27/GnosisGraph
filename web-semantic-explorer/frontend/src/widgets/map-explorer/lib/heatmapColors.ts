@@ -305,14 +305,13 @@ export function getCountryFill(
   highlightedCodes: Set<string> | null,
   hoveredRegionCodes: Set<string> | null = null,
 ) {
-  const countrySelected = "var(--primary)"
   const regionHover = "var(--map-region-hover)"
   const regionSelected = "var(--map-region-selected)"
 
   if (!isoCode) return HEATMAP_SEA_FILL
 
   if (selectedCode === isoCode) {
-    return countrySelected
+    return regionSelected
   }
 
   if (hoveredCode === isoCode || hoveredRegionCodes?.has(isoCode)) {
@@ -374,6 +373,17 @@ export const EOM_GREEN_LEGEND_STEPS: {
   { key: 100, label: "Muy bajo" },
   { key: 300, label: "Bajo" },
   { key: 500, label: "Medio" },
+  { key: 700, label: "Alto" },
+  { key: 950, label: "Máximo" },
+]
+
+/** Leyenda reducida del panel: intensidad de cobertura (4 niveles). */
+export const EOM_GREEN_COVERAGE_LEGEND: {
+  key: keyof typeof EOM_GREEN
+  label: string
+}[] = [
+  { key: 100, label: "Muy bajo" },
+  { key: 300, label: "Bajo" },
   { key: 700, label: "Alto" },
   { key: 950, label: "Máximo" },
 ]

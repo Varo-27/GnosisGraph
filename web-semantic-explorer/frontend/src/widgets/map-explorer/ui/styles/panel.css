@@ -1,6 +1,6 @@
 @layer components {
   .map-panel {
-    @apply flex w-full shrink-0 flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-map-panel p-4 lg:max-w-[min(20rem,40vw)] lg:w-80 lg:border-t-0 lg:border-l-2;
+    @apply flex w-full shrink-0 flex-col gap-4 overflow-y-auto border-t-2 border-foreground bg-map-panel p-4;
   }
 
   .map-panel__field {
@@ -11,43 +11,238 @@
     @apply font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
   }
 
+  .map-sidebar {
+    @apply hidden h-full shrink-0 overflow-hidden border-l-2 border-foreground bg-map-panel transition-[width] duration-300 ease-in-out lg:block;
+    width: min(28rem, 30vw);
+  }
+
+  .map-sidebar--collapsed {
+    @apply w-0 border-l-0;
+  }
+
+  .map-sidebar__inner {
+    @apply flex h-full flex-col gap-4 overflow-hidden p-4;
+    width: min(28rem, 30vw);
+  }
+
+  .map-sidebar__toolbar {
+    @apply flex shrink-0 items-center justify-between gap-2 border-b border-foreground/15 pb-3;
+  }
+
+  .map-sidebar__toolbar-label {
+    @apply font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .map-sidebar__collapse-btn {
+    @apply inline-flex items-center justify-center rounded-none border-2 border-foreground/25 bg-background p-1 text-muted-foreground transition-colors hover:border-foreground hover:text-foreground;
+  }
+
+  .map-sidebar__country-list {
+    @apply min-h-0 flex-1 overflow-y-auto;
+  }
+
+  .map-sidebar__legend {
+    @apply flex shrink-0 flex-col gap-3;
+  }
+
+  .map-sidebar__legend-heading {
+    @apply flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground;
+  }
+
+  .map-sidebar__legend-gradient {
+    @apply h-5 w-full overflow-hidden rounded-sm border border-foreground/40;
+  }
+
+  .map-sidebar__legend-steps {
+    @apply grid grid-cols-2 gap-x-3 gap-y-2;
+  }
+
+  .map-sidebar__legend-steps--four {
+    @apply sm:grid-cols-4;
+  }
+
+  .map-sidebar__legend-step {
+    @apply flex min-w-0 items-center gap-2 text-sm text-muted-foreground;
+  }
+
+  .map-sidebar__legend-swatch {
+    @apply h-4 w-4 shrink-0 border border-foreground/25;
+  }
+
+  .map-sidebar__legend-step-label {
+    @apply min-w-0 leading-snug;
+  }
+
+  .map-sidebar__legend-notes {
+    @apply list-disc space-y-1.5 border-t border-foreground/15 pt-3 pl-4 text-sm leading-relaxed text-muted-foreground;
+  }
+
+  .map-sidebar-toggle {
+    @apply absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 border-2 border-foreground bg-background px-2 py-1 text-[10px] uppercase tracking-widest shadow-[2px_2px_0_0_var(--color-foreground)] hover:bg-muted/60;
+  }
+
+  .map-sidebar-toggle--desktop {
+    @apply left-auto right-3 top-12;
+  }
+
+  .map-sidebar-sheet {
+    @apply flex h-full w-[min(92vw,22rem)] max-w-none flex-col gap-0 rounded-none border-l-2 border-foreground p-0 shadow-[6px_0_0_0_var(--color-foreground)] sm:max-w-none;
+  }
+
+  .map-sidebar-sheet [data-slot="dialog-close"] {
+    @apply top-3 right-3 rounded-none border-2 border-foreground bg-background opacity-100 shadow-[2px_2px_0_0_var(--color-foreground)] hover:bg-muted;
+  }
+
+  .map-sidebar-sheet__header {
+    @apply shrink-0 border-b border-foreground/15 px-4 py-3 text-left;
+  }
+
+  .map-sidebar-sheet__title {
+    @apply font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .map-sidebar-sheet__body {
+    @apply flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4;
+  }
+
+  .map-sidebar-sheet__body .map-sidebar__country-list {
+    @apply flex-none overflow-visible;
+  }
+
   .map-country-modal {
-    @apply text-lg;
+    /* Mismo shell que graph-article-modal; flex para repartir altura sin scroll */
+    @apply flex max-h-[min(92dvh,880px)] w-full max-w-[calc(100%-1rem)]! flex-col gap-0 overflow-hidden rounded-none border-2 border-foreground bg-background p-0 sm:max-w-[min(92vw,48rem)]! lg:max-w-[min(90vw,52rem)]!;
+    box-shadow: 6px 6px 0 0 var(--color-foreground);
+  }
+
+  .map-country-modal__shell {
+    @apply flex min-h-0 flex-1 flex-col overflow-hidden;
+  }
+
+  .map-country-modal__header {
+    @apply flex shrink-0 items-start gap-2 border-b-2 border-foreground/15 px-4 py-4 sm:gap-3 sm:px-7 sm:py-5 lg:px-9 lg:py-6;
+  }
+
+  .map-country-modal__header-inner {
+    @apply min-w-0 flex-1 space-y-1.5 text-left sm:space-y-2;
+  }
+
+  .map-country-modal__kicker {
+    @apply font-mono text-[10px] font-bold uppercase tracking-widest text-primary;
+  }
+
+  .map-country-modal__title {
+    @apply font-sans text-xl font-bold leading-tight text-pretty sm:text-2xl lg:text-3xl;
+  }
+
+  .map-country-modal__meta {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground;
+  }
+
+  .map-country-modal__meta-count {
+    @apply font-mono text-xs font-bold tabular-nums text-foreground sm:text-sm;
+  }
+
+  .map-country-modal__close {
+    @apply inline-flex shrink-0 items-center justify-center rounded-none border-2 border-foreground bg-background p-1 text-muted-foreground opacity-100 shadow-[2px_2px_0_0_var(--color-foreground)] transition-colors hover:bg-muted hover:text-foreground sm:p-1.5;
+  }
+
+  .map-country-modal__body {
+    @apply flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-3 sm:px-7 sm:py-4 lg:px-9 lg:py-5;
   }
 
   .map-country-modal__section-label {
-    @apply mb-2.5 font-mono text-sm uppercase tracking-widest text-muted-foreground;
+    @apply mb-2 flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
   }
 
   .map-country-modal__body-text {
-    @apply text-lg leading-relaxed text-muted-foreground;
+    @apply font-sans text-sm leading-relaxed text-muted-foreground;
   }
 
-  .map-country-modal__article {
-    @apply gap-3.5 rounded-none p-2.5;
+  .map-country-modal__loading {
+    @apply flex items-center gap-2 py-4 text-sm text-muted-foreground;
   }
 
-  .map-country-modal__article-thumb {
-    @apply h-20 w-20 shrink-0 border border-foreground/20 object-cover;
+  .map-country-modal__articles {
+    @apply min-h-0 flex-1;
   }
 
-  .map-country-modal__article-thumb-fallback {
-    @apply flex h-20 w-20 shrink-0 items-center justify-center border border-foreground/20 bg-muted/40 text-xs uppercase tracking-widest text-muted-foreground;
+  .map-country-modal__article-grid {
+    @apply grid h-full min-h-0 grid-cols-2 gap-2;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
   }
 
-  .map-country-modal__article-title {
-    @apply line-clamp-2 text-lg font-semibold leading-snug;
+  @media (min-width: 640px) {
+    .map-country-modal__article-grid {
+      @apply grid-cols-3 gap-3;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .map-country-modal__article-card {
+    @apply flex h-full min-h-0 flex-col overflow-hidden rounded-none border-2 border-foreground/25 bg-background p-0 text-left transition-colors hover:border-foreground hover:bg-muted/30;
+  }
+
+  .map-country-modal__article-card-thumb {
+    @apply min-h-0 w-full max-h-[4.5rem] shrink border-b-2 border-foreground/15 object-cover sm:max-h-[5.5rem] lg:max-h-none lg:min-h-0 lg:flex-1;
+  }
+
+  .map-country-modal__article-card-thumb-fallback {
+    @apply flex min-h-0 w-full max-h-[4.5rem] shrink items-center justify-center border-b-2 border-foreground/15 bg-muted/40 font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:max-h-[5.5rem] lg:max-h-none lg:min-h-0 lg:flex-1;
+  }
+
+  .map-country-modal__article-card-body {
+    @apply flex shrink-0 flex-col gap-1 px-2 py-1.5 sm:gap-1.5 sm:px-2.5 sm:py-2;
+  }
+
+  .map-country-modal__article-card-title {
+    @apply line-clamp-2 font-sans text-xs font-semibold leading-snug text-pretty sm:text-sm lg:line-clamp-3 lg:text-base;
+  }
+
+  .map-country-modal__article-card-rating {
+    @apply flex items-center gap-1;
   }
 
   .map-country-modal__article-meta {
-    @apply font-mono text-base tabular-nums text-muted-foreground;
+    @apply font-mono text-[10px] tabular-nums text-muted-foreground;
   }
 
   .map-country-modal__article-empty {
-    @apply mt-1.5 block text-base text-muted-foreground;
+    @apply block font-mono text-[10px] uppercase tracking-wider text-muted-foreground;
+  }
+
+  .map-country-modal__footer {
+    @apply shrink-0 border-t-2 border-foreground bg-muted/25 px-4 py-3 sm:px-5 sm:py-4 lg:px-7 lg:py-5;
   }
 
   .map-country-modal__add-btn {
-    @apply inline-flex max-w-full items-center gap-2 border border-foreground/35 bg-background px-3.5 py-2.5 font-mono text-sm uppercase tracking-widest text-foreground transition-colors hover:border-foreground hover:bg-background disabled:cursor-not-allowed disabled:opacity-45;
+    @apply inline-flex max-w-full items-center gap-1.5 rounded-none border-2 border-foreground/25 bg-background px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-foreground transition-colors hover:border-foreground hover:bg-background disabled:cursor-not-allowed disabled:opacity-45 sm:gap-2 sm:px-4 sm:py-2.5;
+  }
+
+  @media (max-height: 720px) {
+    .map-country-modal__header {
+      @apply py-3;
+    }
+
+    .map-country-modal__title {
+      @apply text-lg sm:text-xl;
+    }
+
+    .map-country-modal__body {
+      @apply py-2;
+    }
+
+    .map-country-modal__article-card-thumb,
+    .map-country-modal__article-card-thumb-fallback {
+      @apply max-h-[3.25rem];
+    }
+
+    .map-country-modal__article-card-title {
+      @apply line-clamp-2 text-[11px];
+    }
+
+    .map-country-modal__footer {
+      @apply py-2.5;
+    }
   }
 }

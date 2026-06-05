@@ -21,11 +21,13 @@ function CountryPath({
   fill,
   strokeWidth,
   pointerEvents = "auto",
+  className,
 }: {
   country: RenderCountry
   fill: string
   strokeWidth: number
   pointerEvents?: "auto" | "none"
+  className?: string
 }) {
   return (
     <path
@@ -34,6 +36,7 @@ function CountryPath({
       stroke="var(--map-stroke)"
       strokeWidth={strokeWidth}
       pointerEvents={pointerEvents}
+      className={className}
     />
   )
 }
@@ -55,6 +58,7 @@ function InteractiveCountry({
     <g
       role="button"
       tabIndex={0}
+      className="world-choropleth__country"
       aria-label={country.name}
       style={{ cursor: "pointer" }}
       onMouseEnter={() =>
@@ -69,7 +73,12 @@ function InteractiveCountry({
         }
       }}
     >
-      <CountryPath country={country} fill={fill} strokeWidth={strokeWidth} />
+      <CountryPath
+        country={country}
+        fill={fill}
+        strokeWidth={strokeWidth}
+        className="world-choropleth__shape"
+      />
     </g>
   )
 }
@@ -163,7 +172,7 @@ export const WorldChoropleth = memo(function WorldChoropleth({
         ref={svgRef}
         viewBox={viewBoxStr}
         preserveAspectRatio="xMidYMid meet"
-        className="h-full w-full cursor-grab touch-none active:cursor-grabbing"
+        className="world-choropleth h-full w-full cursor-grab touch-none active:cursor-grabbing"
         role="img"
         aria-label="Mapa mundial de cobertura"
       >

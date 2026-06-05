@@ -1,17 +1,15 @@
-import { FolderPlus, Layers, Loader2, MapPin, X } from "lucide-react"
+import { FolderPlus, Layers, Loader2, X } from "lucide-react"
 
 import type { PlaceArticlePreview } from "@/shared/api/stats"
-import { cn } from "@/shared/lib/utils"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
 
 import { usePlacePreview } from "./hooks/usePlacePreview"
-import { MapPlaceArticleRow } from "./MapPlaceArticleRow"
+import { MapPlaceArticleCard } from "./MapPlaceArticleCard"
 import type { MapPlaceFilterIntent } from "./types"
 
 type MapPlaceFilterDialogProps = {
@@ -47,43 +45,31 @@ export function MapPlaceFilterDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className={cn(
-          "map-country-modal",
-          "eom-brutal-border eom-shadow-xs eom-surface-flat",
-          "max-h-[min(88vh,680px)] max-w-xl rounded-none border-foreground bg-background p-0 shadow-none",
-        )}
-      >
-        <div className="flex max-h-[min(88vh,680px)] flex-col">
-          <div className="flex items-start gap-2 border-b border-foreground/15 p-5 pb-4">
-            <DialogHeader className="min-w-0 flex-1 space-y-2 text-left">
-              <DialogTitle className="font-sans text-3xl font-bold leading-tight">
+      <DialogContent showCloseButton={false} className="map-country-modal">
+        <div className="map-country-modal__shell">
+          <div className="map-country-modal__header">
+            <DialogHeader className="map-country-modal__header-inner">
+              <p className="map-country-modal__kicker">Lugar geográfico</p>
+              <DialogTitle className="map-country-modal__title">
                 {intent?.label}
               </DialogTitle>
-              <DialogDescription asChild>
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-lg text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-5 w-5 shrink-0" aria-hidden />
-                    Lugar geográfico
-                  </span>
-                  <span className="font-mono text-xl font-bold tabular-nums text-foreground">
-                    {articleCount} artículos
-                  </span>
-                </div>
-              </DialogDescription>
+              <div className="map-country-modal__meta">
+                <span className="map-country-modal__meta-count">
+                  {articleCount} artículos
+                </span>
+              </div>
             </DialogHeader>
             <button
               type="button"
               aria-label="Cerrar"
-              className="graph-node__delete-close shrink-0"
+              className="map-country-modal__close"
               onClick={() => onOpenChange(false)}
             >
-              <X className="graph-node__icon" />
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <div className="map-country-modal__body">
             <p className="map-country-modal__section-label">Mejor valorados</p>
 
             {!placeId && (
@@ -94,8 +80,8 @@ export function MapPlaceFilterDialog({
             )}
 
             {placeId && isLoading && (
-              <div className="map-country-modal__body-text flex items-center gap-2 py-6">
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+              <div className="map-country-modal__loading">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                 Cargando artículos…
               </div>
             )}
@@ -113,28 +99,32 @@ export function MapPlaceFilterDialog({
             )}
 
             {preview && preview.top_rated.length > 0 && (
-              <ul className="space-y-2">
-                {preview.top_rated.map((article) => (
-                  <li key={article.id}>
-                    <MapPlaceArticleRow
-                      article={article}
-                      onSelect={onArticleSelect}
-                    />
-                  </li>
-                ))}
-              </ul>
+              <div className="map-country-modal__articles">
+                <ul className="map-country-modal__article-grid">
+                  {preview.top_rated.map((article) => (
+                    <li key={article.id} className="min-h-0">
+                      <MapPlaceArticleCard
+                        article={article}
+                        onSelect={onArticleSelect}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
 
-          <div className="shrink-0 border-t border-foreground/15 bg-muted/20 px-5 py-4">
-            <p className="map-country-modal__section-label">Añadir al explorador</p>
+          <div className="map-country-modal__footer">
+            <p className="map-country-modal__section-label">
+              Añadir al explorador
+            </p>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 className="map-country-modal__add-btn"
                 onClick={onAddToCurrent}
               >
-                <Layers className="h-5 w-5 shrink-0" aria-hidden />
+                <Layers className="h-4 w-4 shrink-0" aria-hidden />
                 <span className="truncate">
                   {activeWorkspaceName ?? "Área actual"}
                 </span>
@@ -150,7 +140,7 @@ export function MapPlaceFilterDialog({
                     : undefined
                 }
               >
-                <FolderPlus className="h-5 w-5 shrink-0" aria-hidden />
+                <FolderPlus className="h-4 w-4 shrink-0" aria-hidden />
                 Nuevo
               </button>
             </div>

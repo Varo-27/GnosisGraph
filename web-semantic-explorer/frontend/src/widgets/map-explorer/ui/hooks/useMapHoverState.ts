@@ -169,13 +169,15 @@ function hoverReducer(state: HoverState, action: HoverAction): HoverState {
         state.selectedRegionId === action.entry.place_id &&
         regionCodesEqual(state.highlightedCodes, nextCodes) &&
         state.hoveredRegionCodes === null &&
-        state.hoveredRegionEntry === null
+        state.hoveredRegionEntry === null &&
+        state.selectedCode === null
       ) {
         return state
       }
 
       return {
         ...state,
+        selectedCode: null,
         hoveredRegionCodes: null,
         hoveredRegionEntry: null,
         highlightedCodes: nextCodes,

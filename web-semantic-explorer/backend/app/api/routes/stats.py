@@ -60,7 +60,7 @@ def get_heatmap(session: SessionDep) -> HeatmapResponse:
 def get_place_preview(
     place_id: int,
     session: SessionDep,
-    limit: int = Query(5, ge=1, le=10),
+    limit: int = Query(6, ge=1, le=10),
 ) -> PlacePreviewResponse:
     """Artículos mejor valorados de un lugar para el modal del mapa."""
     place = session.get(Place, place_id)

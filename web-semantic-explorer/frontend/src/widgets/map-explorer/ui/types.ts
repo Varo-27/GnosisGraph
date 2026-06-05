@@ -36,6 +36,8 @@ export type HeatmapPlaceGroups = {
   unmappedPlaces: HeatmapEntry[]
 }
 
+export const MAP_PLACE_PREVIEW_ARTICLE_LIMIT = 6
+
 export type MapPlaceFilterIntent = {
   place: string
   q: string

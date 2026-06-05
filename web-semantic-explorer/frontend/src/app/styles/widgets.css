@@ -9,4 +9,5 @@
 @import "../../widgets/graph-explorer/ui/styles/nodes.css";
 @import "../../widgets/graph-explorer/ui/styles/explorer.css";
 @import "../../widgets/map-explorer/ui/styles/panel.css";
+@import "../../widgets/map-explorer/ui/styles/choropleth.css";
 @import "../../widgets/article-modal/ui/article-modal.css";

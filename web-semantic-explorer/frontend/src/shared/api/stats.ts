@@ -22,7 +22,7 @@ export const StatsApi = {
 
   getPlacePreview(
     placeId: number,
-    limit = 5,
+    limit = 6,
   ): CancelablePromise<PlacePreviewResponse> {
     return request(OpenAPI, {
       method: "GET",

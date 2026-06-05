@@ -1,13 +1,21 @@
-import { Loader2 } from "lucide-react"
-import { memo, useCallback, useMemo } from "react"
+import { Loader2, PanelRightOpen } from "lucide-react"
+import { memo, useCallback, useMemo, useState } from "react"
 
 import type { HeatmapEntry } from "@/shared/api/stats"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/shared/ui/sheet"
 import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
 import { resolveCountryClickSearch } from "@/widgets/map-explorer/lib/heatmapColors"
 import type { MapProjectionId } from "@/widgets/map-explorer/lib/mapProjections"
 
 import { GeoHeatmapMapTooltip } from "./GeoHeatmapMapTooltip"
 import { GeoHeatmapSidebar } from "./GeoHeatmapSidebar"
+import { GeoHeatmapSidebarContent } from "./GeoHeatmapSidebarContent"
 import { useMapHoverState } from "./hooks/useMapHoverState"
 import type { HeatmapPlaceGroups, MapPlaceFilterIntent } from "./types"
 import { WorldChoropleth } from "./WorldChoropleth"
@@ -49,6 +57,9 @@ export const GeoHeatmapMain = memo(function GeoHeatmapMain({
   onAddCountryToCurrent,
   onAddCountryToNew,
 }: GeoHeatmapMainProps) {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState(false)
+
   const {
     hoverState,
     goToGraphWithPlace,
@@ -59,6 +70,30 @@ export const GeoHeatmapMain = memo(function GeoHeatmapMain({
     handleCountryListHover,
     handleRegionListHover,
   } = useMapHoverState({ onFocusCountry })
+
+  const sidebarContentProps = {
+    maxCount,
+    placeGroups,
+    hoveredCode: hoverState.hoveredCode,
+    selectedCode: hoverState.selectedCode,
+    hoveredRegionEntry: hoverState.hoveredRegionEntry,
+    selectedRegionId: hoverState.selectedRegionId,
+    activeWorkspaceName,
+    isGuestMode,
+    onCountryRowClick: handleCountryPlaceClick,
+    onAddCountryToCurrent,
+    onAddCountryToNew,
+    onRegionPlaceClick: handleRegionPlaceClick,
+    onCountryListHover: handleCountryListHover,
+    onRegionListHover: handleRegionListHover,
+    onOpenSelectedRegion: () => {
+      const entry = placeGroups.regionPlaces.find(
+        (e) => e.place_id === hoverState.selectedRegionId,
+      )
+      if (entry) goToGraphWithPlace(entry)
+    },
+    onUnmappedPlaceClick: goToGraphWithPlace,
+  }
 
   const onMapCountryClick = useCallback(
     (isoCode: string | undefined, countryName?: string) => {
@@ -101,16 +136,9 @@ export const GeoHeatmapMain = memo(function GeoHeatmapMain({
     return findRegionsForCountry(hoverState.hoveredCode)
   }, [findRegionsForCountry, hoverState.hoveredCode])
 
-  const openSelectedRegion = useCallback(() => {
-    const entry = placeGroups.regionPlaces.find(
-      (e) => e.place_id === hoverState.selectedRegionId,
-    )
-    if (entry) goToGraphWithPlace(entry)
-  }, [goToGraphWithPlace, hoverState.selectedRegionId, placeGroups.regionPlaces])
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-      <div className="relative min-h-[min(50vh,360px)] min-w-0 flex-1 overflow-hidden border-b-2 border-foreground bg-map-ocean lg:min-h-0 lg:border-b-0 lg:border-r-2">
+    <div className="flex min-h-0 flex-1 overflow-hidden">
+      <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-map-ocean lg:border-r-0">
         {isLoading && (
           <div
             className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-background/70 text-sm text-muted-foreground"
@@ -151,25 +179,56 @@ export const GeoHeatmapMain = memo(function GeoHeatmapMain({
           hoveredDirect={hoveredDirect}
           hoveredRegions={hoveredRegions}
         />
+
+        <button
+          type="button"
+          className="map-sidebar-toggle lg:hidden"
+          aria-expanded={mobileSidebarOpen}
+          aria-controls="map-sidebar-mobile"
+          onClick={() => setMobileSidebarOpen(true)}
+        >
+          <PanelRightOpen className="h-3.5 w-3.5" aria-hidden />
+          Panel
+        </button>
+
+        {desktopSidebarCollapsed && (
+          <button
+            type="button"
+            className="map-sidebar-toggle map-sidebar-toggle--desktop hidden lg:inline-flex"
+            aria-expanded={false}
+            onClick={() => setDesktopSidebarCollapsed(false)}
+          >
+            <PanelRightOpen className="h-3.5 w-3.5" aria-hidden />
+            Panel
+          </button>
+        )}
       </div>
 
       <GeoHeatmapSidebar
-        maxCount={maxCount}
-        placeGroups={placeGroups}
-        hoveredCode={hoverState.hoveredCode}
-        hoveredRegionEntry={hoverState.hoveredRegionEntry}
-        selectedRegionId={hoverState.selectedRegionId}
-        activeWorkspaceName={activeWorkspaceName}
-        isGuestMode={isGuestMode}
-        onCountryRowClick={handleCountryPlaceClick}
-        onAddCountryToCurrent={onAddCountryToCurrent}
-        onAddCountryToNew={onAddCountryToNew}
-        onRegionPlaceClick={handleRegionPlaceClick}
-        onCountryListHover={handleCountryListHover}
-        onRegionListHover={handleRegionListHover}
-        onOpenSelectedRegion={openSelectedRegion}
-        onUnmappedPlaceClick={goToGraphWithPlace}
+        collapsed={desktopSidebarCollapsed}
+        onCollapse={() => setDesktopSidebarCollapsed(true)}
+        {...sidebarContentProps}
       />
+
+      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+        <SheetContent
+          id="map-sidebar-mobile"
+          side="right"
+          className="map-sidebar-sheet"
+        >
+          <SheetHeader className="map-sidebar-sheet__header">
+            <SheetTitle className="map-sidebar-sheet__title">
+              Panel del mapa
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Leyenda, países y macro-regiones del mapa de cobertura.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="map-sidebar-sheet__body">
+            <GeoHeatmapSidebarContent {...sidebarContentProps} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 })
