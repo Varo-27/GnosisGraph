@@ -10,12 +10,14 @@ type AuthorFilterComboboxProps = {
   value: string
   onCommit: (value: string) => void
   placeholder?: string
+  disabled?: boolean
 }
 
 function AuthorFilterComboboxComponent({
   value,
   onCommit,
   placeholder = "Buscar autor…",
+  disabled = false,
 }: AuthorFilterComboboxProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState(value)
@@ -65,17 +67,26 @@ function AuthorFilterComboboxComponent({
       <Input
         value={query}
         onChange={(event) => {
+          if (disabled) {
+            return
+          }
           setQuery(event.target.value)
           setOpen(true)
         }}
-        onFocus={() => setOpen(true)}
+        onFocus={() => {
+          if (!disabled) {
+            setOpen(true)
+          }
+        }}
         placeholder={placeholder}
         className="graph-node__filter-input nodrag nopan"
+        disabled={disabled}
+        readOnly={disabled}
         onMouseDown={(event) => event.stopPropagation()}
         autoComplete="off"
       />
 
-      {open && (
+      {open && !disabled && (
         <ul
           className="graph-node__author-menu nodrag nopan"
           onMouseDown={(event) => event.stopPropagation()}

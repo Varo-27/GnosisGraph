@@ -24,6 +24,7 @@ function updateNodeData(nodeId: string, patch: Partial<AppNode["data"]>) {
 function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
   const activeNodeId = useGraphStore((state) => state.activeNodeId)
   const isActive = activeNodeId === id
+  const isSearched = data.searched === true
   const filterKey = data.filterKey as FilterNodeKind | undefined
   const dimensionLabel =
     filterKey && filterKey in FILTER_NODE_DIMENSIONS
@@ -38,6 +39,9 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
   }, [storedValue])
 
   const commitValue = (nextValue: string) => {
+    if (isSearched) {
+      return
+    }
     updateNodeData(id, {
       filterValue: nextValue,
       title: `${dimensionLabel}: ${nextValue || "…"}`,
@@ -45,7 +49,7 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
   }
 
   useEffect(() => {
-    if (filterKey === "author") {
+    if (isSearched || filterKey === "author") {
       return
     }
 
@@ -59,7 +63,7 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
     }, 400)
 
     return () => window.clearTimeout(timeout)
-  }, [draftValue, dimensionLabel, filterKey, id, storedValue])
+  }, [draftValue, dimensionLabel, filterKey, id, isSearched, storedValue])
 
   const isYearField = filterKey === "year_start" || filterKey === "year_end"
 
@@ -78,6 +82,7 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
           <AuthorFilterCombobox
             value={storedValue}
             onCommit={commitValue}
+            disabled={isSearched}
             placeholder={String(FILTER_LABELS.author)}
           />
         ) : (
@@ -99,6 +104,8 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
             }
             type={isYearField ? "number" : "text"}
             className="graph-node__filter-input nodrag nopan"
+            disabled={isSearched}
+            readOnly={isSearched}
             onMouseDown={(event) => event.stopPropagation()}
           />
         )}

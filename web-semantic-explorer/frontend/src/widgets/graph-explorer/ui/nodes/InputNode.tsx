@@ -14,6 +14,7 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
   const isLoading = useGraphStore((state) => state.isLoading)
   const activeNodeId = useGraphStore((state) => state.activeNodeId)
   const isActive = activeNodeId === id
+  const isSearched = data.searched === true
 
   const initialQuery =
     typeof data.query === "string" ? data.query : readQueryFromTitle(data.title)
@@ -26,6 +27,9 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
+    if (isSearched) {
+      return
+    }
     const trimmed = query.trim()
     const searchFromInput = useGraphStore.getState().searchFromInput
     if (!trimmed || !searchFromInput) {
@@ -47,7 +51,9 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="eom-label-primary">Consulta semántica</span>
-              <span className="eom-lead-serif">Escribe y pulsa Explorar</span>
+              <span className="eom-lead-serif">
+                {isSearched ? data.title : "Escribe y pulsa Explorar"}
+              </span>
             </div>
           </div>
           <NodeDeleteButton nodeId={id} ariaLabel="Eliminar consulta" />
@@ -59,11 +65,13 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Temática, autor, lugar..."
             className="graph-node__input nodrag nopan"
+            disabled={isSearched}
+            readOnly={isSearched}
             onMouseDown={(event) => event.stopPropagation()}
           />
           <Button
             type="submit"
-            disabled={isLoading || !query.trim()}
+            disabled={isLoading || !query.trim() || isSearched}
             className="graph-node__submit nodrag nopan"
             onMouseDown={(event) => event.stopPropagation()}
           >

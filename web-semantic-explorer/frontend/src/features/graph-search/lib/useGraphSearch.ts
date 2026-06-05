@@ -3,18 +3,20 @@ import { toast } from "sonner"
 
 import { searchArticlesWithFilters } from "@/shared/api/searchWithFilters"
 import {
+  applySugiyamaLayout,
   collectDownstreamArticleIds,
   createSearchEdges,
-  createSearchResultNodesAround,
+  createSearchResultNodes,
   dedupeEdgesById,
   isQueryNodeType,
+  markPipelineSearched,
   removeEdgesTouchingNodes,
+  resolveSearchAttachmentNodeId,
   resolveSearchContext,
   revealGraphNodesStaggered,
   SEARCH_ARTICLES_LIMIT,
   SEARCH_REVEAL_STAGGER_MS,
   updateInputNodeQuery,
-  applyTreeLayout,
 } from "@/entities/graph"
 import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
@@ -86,28 +88,34 @@ export function useGraphSearch({
           },
         )
 
-        const resultNodesRaw = createSearchResultNodesAround(
-          response.results,
-          inputNode.position,
+        const attachmentId = resolveSearchAttachmentNodeId(
+          inputNodeId,
+          keptNodes,
+          keptEdges,
         )
-
-        const newEdges = createSearchEdges(response.results, inputNodeId)
+        const resultNodesRaw = createSearchResultNodes(response.results)
+        const newEdges = createSearchEdges(response.results, attachmentId)
         const mergedForLayout = [...keptNodes, ...resultNodesRaw]
         const mergedEdgesForLayout = dedupeEdgesById([...keptEdges, ...newEdges])
-        const layoutedNodes = applyTreeLayout(
+        const layoutedNodes = applySugiyamaLayout(
           mergedForLayout,
+          mergedEdgesForLayout,
+        )
+        const lockedNodes = markPipelineSearched(
+          layoutedNodes,
+          inputNodeId,
           mergedEdgesForLayout,
         )
 
         const layoutedKeptNodes = keptNodes.map((node) => {
-          const layouted = layoutedNodes.find(
+          const layouted = lockedNodes.find(
             (candidate) => candidate.id === node.id,
           )
           return layouted ?? node
         })
 
         const layoutedResultNodes = resultNodesRaw.map((node) => {
-          const layouted = layoutedNodes.find(
+          const layouted = lockedNodes.find(
             (candidate) => candidate.id === node.id,
           )
           return {
