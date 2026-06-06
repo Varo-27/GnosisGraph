@@ -1,14 +1,18 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react"
 import { Filter } from "lucide-react"
 import { memo, useEffect, useState } from "react"
-
-import { Input } from "@/shared/ui/input"
-import { cn } from "@/shared/lib/utils"
-import { type ArticleMetadataFilters, FILTER_LABELS } from "@/shared/lib/filters"
 import type { AppNode } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
-
-import { FILTER_NODE_DIMENSIONS, type FilterNodeKind } from "@/entities/graph"
+import {
+  FILTER_NODE_DIMENSIONS,
+  type FilterNodeKind,
+  useGraphStore,
+} from "@/entities/graph"
+import {
+  type ArticleMetadataFilters,
+  FILTER_LABELS,
+} from "@/shared/lib/filters"
+import { cn } from "@/shared/lib/utils"
+import { Input } from "@/shared/ui/input"
 import { AuthorFilterCombobox } from "./AuthorFilterCombobox"
 import { NodeDeleteButton } from "./NodeDeleteButton"
 
@@ -69,7 +73,10 @@ function FilterNodeComponent({ id, data }: NodeProps<AppNode>) {
 
   return (
     <div
-      className={cn("graph-node graph-node--filter", isActive && "graph-node-active")}
+      className={cn(
+        "graph-node graph-node--filter",
+        isActive && "graph-node-active",
+      )}
     >
       <Handle type="target" position={Position.Top} className="rf-handle" />
       <div className="graph-node__surface">

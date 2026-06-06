@@ -1,33 +1,33 @@
 import {
+  applyNodeChanges,
   Background,
   BackgroundVariant,
-  Controls,
   type Connection,
+  Controls,
   type Edge,
   type EdgeTypes,
   type IsValidConnection,
+  type NodeChange,
   type NodeMouseHandler,
   type NodeTypes,
   ReactFlow,
   type ReactFlowInstance,
-  applyNodeChanges,
-  type NodeChange,
 } from "@xyflow/react"
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-
-import { decorateEdgesForFocus } from "./edges/decorateEdgesForFocus"
-import { GraphFlowEdge } from "./edges/GraphFlowEdge"
 import {
-  GRAPH_BACKGROUND_GRID_COLOR,
+  type AppNode,
   GRAPH_BACKGROUND_PROPS,
   GRAPH_FIT_VIEW_OPTIONS,
   GRAPH_MAX_ZOOM,
   GRAPH_MIN_ZOOM,
   isActiveNodeDrag,
+  useGraphStore,
 } from "@/entities/graph"
-import { type AppNode, useGraphStore } from "@/entities/graph"
-import { useWorkspaceStore } from "@/entities/workspace"
 import type { WorkspaceViewport } from "@/entities/workspace"
+import { useWorkspaceStore } from "@/entities/workspace"
+import { useThemeCssVariable } from "@/shared/lib/theme"
+import { decorateEdgesForFocus } from "./edges/decorateEdgesForFocus"
+import { GraphFlowEdge } from "./edges/GraphFlowEdge"
 
 const edgeTypes: EdgeTypes = {
   graphFlow: GraphFlowEdge,
@@ -68,6 +68,10 @@ function GraphFlowCanvasComponent({
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
 
   const focusNodeId = hoveredNodeId ?? activeNodeId
+  const graphGridColor = useThemeCssVariable(
+    "--graph-grid-color",
+    "color-mix(in srgb, var(--primary) 25%, transparent)",
+  )
   const displayEdges = useMemo(
     () => decorateEdgesForFocus(edges, focusNodeId),
     [edges, focusNodeId],
@@ -94,7 +98,11 @@ function GraphFlowCanvasComponent({
   }, [storeNodes])
 
   useEffect(() => {
-    if (!isWorkspaceHydrated || fitViewDoneRef.current || storeNodes.length === 0) {
+    if (
+      !isWorkspaceHydrated ||
+      fitViewDoneRef.current ||
+      storeNodes.length === 0
+    ) {
       return
     }
 
@@ -149,9 +157,7 @@ function GraphFlowCanvasComponent({
   const handleMoveEnd = useCallback(() => {
     const viewport = reactFlowRef.current?.getViewport()
     onMoveEnd(
-      viewport
-        ? { x: viewport.x, y: viewport.y, zoom: viewport.zoom }
-        : null,
+      viewport ? { x: viewport.x, y: viewport.y, zoom: viewport.zoom } : null,
     )
   }, [onMoveEnd])
 
@@ -197,7 +203,7 @@ function GraphFlowCanvasComponent({
         variant={BackgroundVariant.Lines}
         gap={GRAPH_BACKGROUND_PROPS.gap}
         size={GRAPH_BACKGROUND_PROPS.size}
-        color={GRAPH_BACKGROUND_GRID_COLOR}
+        color={graphGridColor}
       />
     </ReactFlow>
   )

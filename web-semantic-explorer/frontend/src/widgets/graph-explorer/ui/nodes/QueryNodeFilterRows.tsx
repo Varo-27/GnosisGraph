@@ -1,15 +1,14 @@
 import { Plus, X } from "lucide-react"
 import { memo, useCallback } from "react"
-
+import type { AppNode } from "@/entities/graph"
 import {
   createInputFilterRow,
   FILTER_NODE_DIMENSIONS,
   type FilterNodeKind,
   type InputFilterRow,
   readInputFilterRows,
+  useGraphStore,
 } from "@/entities/graph"
-import type { AppNode } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
 import { Button } from "@/shared/ui/button"
 import {
   Select,

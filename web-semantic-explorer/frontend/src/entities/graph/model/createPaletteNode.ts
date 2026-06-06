@@ -1,12 +1,11 @@
 import type { XYPosition } from "@xyflow/react"
-
-import type { AppNode } from "./types"
 import { createFilterNodeId, createInputNodeId } from "./graphNodeIds"
 import {
   FILTER_NODE_DIMENSIONS,
   type FilterNodeKind,
   GRAPH_NODE_TYPE,
 } from "./graphNodeTypes"
+import type { AppNode } from "./types"
 
 export function createQueryNodeAtPosition(
   position: XYPosition,

@@ -2,8 +2,8 @@ import { Globe2, MapPin } from "lucide-react"
 import { memo, useMemo } from "react"
 
 import type { HeatmapEntry } from "@/shared/api/stats"
-import { Badge } from "@/shared/ui/badge"
 import { cn } from "@/shared/lib/utils"
+import { Badge } from "@/shared/ui/badge"
 import {
   EOM_GREEN,
   EOM_GREEN_COVERAGE_LEGEND,

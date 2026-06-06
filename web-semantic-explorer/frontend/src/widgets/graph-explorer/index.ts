@@ -1,1 +1,1 @@
-export { GraphExplorer, default } from "./ui/GraphExplorer"
+export { default, GraphExplorer } from "./ui/GraphExplorer"

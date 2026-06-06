@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { toast } from "sonner"
-
-import { expandGraphWithFilters } from "@/shared/api/searchWithFilters"
+import type { AppNode } from "@/entities/graph"
 import {
   applySugiyamaLayout,
   dedupeEdgesById,
@@ -14,9 +13,9 @@ import {
   resolveExpandContext,
   revealGraphNodesStaggered,
   SEARCH_REVEAL_STAGGER_MS,
+  useGraphStore,
 } from "@/entities/graph"
-import type { AppNode } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
+import { expandGraphWithFilters } from "@/shared/api/searchWithFilters"
 
 type UseGraphExpandOptions = {
   setNodes: (nodes: AppNode[]) => void

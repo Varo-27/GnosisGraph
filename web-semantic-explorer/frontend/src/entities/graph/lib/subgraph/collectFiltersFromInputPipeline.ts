@@ -1,13 +1,11 @@
 import type { Edge } from "@xyflow/react"
-
-import type { ArticleMetadataFilters } from "@/shared/lib/filters"
-import type { AppNode } from "@/entities/graph/model/types"
-
+import { isQueryNodeType } from "@/entities/graph/model/graphNodeTypes"
 import {
   inputFilterRowsToMetadata,
   readInputFilterRows,
 } from "@/entities/graph/model/inputFilters"
-import { isQueryNodeType } from "@/entities/graph/model/graphNodeTypes"
+import type { AppNode } from "@/entities/graph/model/types"
+import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 
 /**
  * Filtros definidos en el nodo consulta (filas inline).

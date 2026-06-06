@@ -1,14 +1,13 @@
-import { ChevronDown, MessageSquare, Pencil, Trash2 } from "lucide-react"
 import { Link as RouterLink } from "@tanstack/react-router"
+import { ChevronDown, MessageSquare, Pencil, Trash2 } from "lucide-react"
 import { useState } from "react"
 
 import type { ArticleComment } from "@/entities/article"
-import { Button } from "@/shared/ui/button"
-import { Textarea } from "@/shared/ui/textarea"
+import { formatArticleDate } from "@/entities/article/lib/formatArticleDate"
 import { isLoggedIn } from "@/shared/auth"
 import { cn } from "@/shared/lib/utils"
-
-import { formatArticleDate } from "@/entities/article/lib/formatArticleDate"
+import { Button } from "@/shared/ui/button"
+import { Textarea } from "@/shared/ui/textarea"
 import { useArticleComments } from "../lib/useArticleComments"
 
 type CommentsSectionProps = {
@@ -105,7 +104,10 @@ export function CommentsSection({ articleId, comments }: CommentsSectionProps) {
               </p>
             )}
             {comments?.map((comment) => (
-              <article key={comment.id} className="graph-article-modal__comment">
+              <article
+                key={comment.id}
+                className="graph-article-modal__comment"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
                     {comment.author_name}

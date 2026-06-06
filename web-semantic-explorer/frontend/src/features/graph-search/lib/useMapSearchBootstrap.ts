@@ -1,14 +1,13 @@
 import { useEffect, useRef } from "react"
-
-import type { GraphSearchParams } from "@/shared/lib/filters"
-import { searchParamsToFilters } from "@/shared/lib/filters"
 import {
   centerPaletteDropPosition,
   createInputFilterRow,
   createQueryNodeAtPosition,
   GRAPH_NODE_TYPE,
+  useGraphStore,
 } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
+import type { GraphSearchParams } from "@/shared/lib/filters"
+import { searchParamsToFilters } from "@/shared/lib/filters"
 
 type UseMapSearchBootstrapOptions = {
   searchParams: GraphSearchParams
@@ -55,7 +54,7 @@ export function useMapSearchBootstrap({
       ? [{ ...createInputFilterRow("place"), value: place }]
       : undefined
 
-    let nextNodes = existingQuery
+    const nextNodes = existingQuery
       ? nodes.map((node) =>
           node.id === queryNode.id
             ? {
@@ -82,7 +81,7 @@ export function useMapSearchBootstrap({
 
     const nextEdges = [...edges]
     const searchNodeId = queryNode.id
-    let searchQuery = queryText ?? place ?? ""
+    const searchQuery = queryText ?? place ?? ""
 
     useGraphStore.getState().setNodes(nextNodes)
     useGraphStore.getState().setEdges(nextEdges)

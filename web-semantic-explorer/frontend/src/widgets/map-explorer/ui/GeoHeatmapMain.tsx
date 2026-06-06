@@ -113,8 +113,7 @@ export const GeoHeatmapMain = memo(function GeoHeatmapMain({
         label: place,
         isoCode,
         placeId: direct?.place_id,
-        articleCount:
-          direct?.article_count ?? countryCounts.get(isoCode) ?? 0,
+        articleCount: direct?.article_count ?? countryCounts.get(isoCode) ?? 0,
       })
     },
     [

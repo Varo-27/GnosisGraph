@@ -1,14 +1,12 @@
 import { Filter, MapPin, Tag, User, X } from "lucide-react"
-import { useState, type MouseEvent } from "react"
-
+import { type MouseEvent, useState } from "react"
+import type { ArticleExpandFilterKind } from "@/entities/graph"
+import { cn } from "@/shared/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
-import { cn } from "@/shared/lib/utils"
-
-import type { ArticleExpandFilterKind } from "@/entities/graph"
 
 type ArticleAddFilterButtonProps = {
   articleId: string
@@ -84,7 +82,11 @@ export function ArticleAddFilterButton({
             <X className="graph-node__icon" />
           </button>
         </div>
-        <div className="mt-1 flex flex-col gap-1.5" role="group" aria-labelledby={menuId}>
+        <div
+          className="mt-1 flex flex-col gap-1.5"
+          role="group"
+          aria-labelledby={menuId}
+        >
           <button
             type="button"
             className="graph-node__filter-option nodrag nopan"

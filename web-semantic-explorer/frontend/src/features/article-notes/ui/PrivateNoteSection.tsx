@@ -1,12 +1,10 @@
 import { ChevronDown, NotebookPen } from "lucide-react"
 import { useEffect, useState } from "react"
-
-import { Button } from "@/shared/ui/button"
-import { Textarea } from "@/shared/ui/textarea"
+import { formatArticleDate } from "@/entities/article/lib/formatArticleDate"
 import { isLoggedIn } from "@/shared/auth"
 import { cn } from "@/shared/lib/utils"
-
-import { formatArticleDate } from "@/entities/article/lib/formatArticleDate"
+import { Button } from "@/shared/ui/button"
+import { Textarea } from "@/shared/ui/textarea"
 import { useArticleNote } from "../lib/useArticleNote"
 
 type PrivateNoteSectionProps = {
@@ -27,7 +25,7 @@ export function PrivateNoteSection({
 
   useEffect(() => {
     setNoteDraft(userNote ?? "")
-  }, [userNote, articleId])
+  }, [userNote])
 
   if (!loggedIn) {
     return null

@@ -1,12 +1,10 @@
 import type { Connection, Edge } from "@xyflow/react"
-
-import type { AppNode } from "@/entities/graph/model/types"
-
 import {
   GRAPH_NODE_TYPE,
   isArticleNodeType,
   isQueryNodeType,
 } from "@/entities/graph/model/graphNodeTypes"
+import type { AppNode } from "@/entities/graph/model/types"
 
 function nodeTypeOf(
   nodeId: string | null | undefined,

@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
-
-import type { HeatmapEntry, PlaceArticlePreview } from "@/shared/api/stats"
+import { useCallback, useEffect, useState } from "react"
 import type { AppNode } from "@/entities/graph"
 import { useWorkspaceStore } from "@/entities/workspace"
+import type { HeatmapEntry, PlaceArticlePreview } from "@/shared/api/stats"
 import { ArticleNodeModal } from "@/widgets/article-modal"
 import {
   DEFAULT_PROJECTION_ID,
@@ -32,7 +31,9 @@ export function GeoHeatmap() {
     (state) => state.hydrateForCurrentUser,
   )
   const activeWorkspaceName = useWorkspaceStore((state) => {
-    const active = state.workspaces.find((ws) => ws.id === state.activeWorkspaceId)
+    const active = state.workspaces.find(
+      (ws) => ws.id === state.activeWorkspaceId,
+    )
     return active?.name
   })
 
@@ -63,9 +64,7 @@ export function GeoHeatmap() {
   const addPlaceToExplorer = useCallback(
     (intent: MapPlaceFilterIntent, target: "current" | "new") => {
       if (target === "new" && !isGuestMode) {
-        useWorkspaceStore
-          .getState()
-          .createWorkspace(`Mapa · ${intent.label}`)
+        useWorkspaceStore.getState().createWorkspace(`Mapa · ${intent.label}`)
       }
 
       void navigate({
@@ -84,8 +83,7 @@ export function GeoHeatmap() {
       place: entry.name,
       q: entry.name,
       label: entry.name,
-      isoCode:
-        entry.map_country_codes?.[0] ?? entry.country_code ?? undefined,
+      isoCode: entry.map_country_codes?.[0] ?? entry.country_code ?? undefined,
     }),
     [],
   )

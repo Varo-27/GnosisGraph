@@ -1,8 +1,6 @@
 import type { Edge } from "@xyflow/react"
-
-import type { AppNode } from "@/entities/graph/model/types"
-
 import { isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
+import type { AppNode } from "@/entities/graph/model/types"
 
 /**
  * Marca en data de cada artículo si tiene consulta cableada downstream.

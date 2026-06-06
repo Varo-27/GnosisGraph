@@ -61,9 +61,7 @@ function InteractiveCountry({
       className="world-choropleth__country"
       aria-label={country.name}
       style={{ cursor: "pointer" }}
-      onMouseEnter={() =>
-        onHoverCountry(country.isoCode ?? null, country.name)
-      }
+      onMouseEnter={() => onHoverCountry(country.isoCode ?? null, country.name)}
       onMouseLeave={() => onHoverCountry(null)}
       onClick={() => onSelectCountry(country.isoCode, country.name)}
       onKeyDown={(event) => {

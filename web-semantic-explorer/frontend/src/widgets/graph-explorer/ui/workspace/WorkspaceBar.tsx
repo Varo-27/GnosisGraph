@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "@tanstack/react-router"
 import { Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
-
+import { useWorkspaceStore } from "@/entities/workspace"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import {
@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select"
-import { useWorkspaceStore } from "@/entities/workspace"
 
 export function WorkspaceBar() {
   const workspaces = useWorkspaceStore((state) => state.workspaces)
@@ -73,11 +72,7 @@ export function WorkspaceBar() {
       <div className="flex items-center justify-between gap-2">
         <h2 className="eom-heading-section">Área de trabajo</h2>
         <span className="eom-label-status">
-          {isSyncing
-            ? "Sincronizando…"
-            : isDirty
-              ? "Sin guardar"
-              : "Guardada"}
+          {isSyncing ? "Sincronizando…" : isDirty ? "Sin guardar" : "Guardada"}
         </span>
       </div>
 

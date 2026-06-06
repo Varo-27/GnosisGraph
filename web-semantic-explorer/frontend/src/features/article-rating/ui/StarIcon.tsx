@@ -31,11 +31,7 @@ export function StarIcon({ fill, size = "md", className }: StarIconProps) {
             iconClass,
             "absolute inset-0 fill-primary text-primary",
           )}
-          style={
-            fill === "half"
-              ? { clipPath: "inset(0 50% 0 0)" }
-              : undefined
-          }
+          style={fill === "half" ? { clipPath: "inset(0 50% 0 0)" } : undefined}
           aria-hidden
         />
       )}

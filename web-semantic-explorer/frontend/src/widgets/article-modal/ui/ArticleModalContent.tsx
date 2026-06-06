@@ -2,12 +2,12 @@ import { ExternalLink } from "lucide-react"
 
 import type { ArticleDetail } from "@/entities/article"
 import { formatArticleDate } from "@/entities/article/lib/formatArticleDate"
-import { DialogHeader, DialogTitle } from "@/shared/ui/dialog"
+import type { AppNode } from "@/entities/graph"
 import { CommentsSection } from "@/features/article-comments"
 import { FavoriteButton } from "@/features/article-favorite"
 import { PrivateNoteSection } from "@/features/article-notes"
 import { RatingPanel } from "@/features/article-rating"
-import type { AppNode } from "@/entities/graph"
+import { DialogHeader, DialogTitle } from "@/shared/ui/dialog"
 
 import { ArticleModalTaxonomy } from "./ArticleModalTaxonomy"
 
@@ -16,7 +16,10 @@ type ArticleModalContentProps = {
   detail: ArticleDetail | undefined
 }
 
-export function ArticleModalContent({ node, detail }: ArticleModalContentProps) {
+export function ArticleModalContent({
+  node,
+  detail,
+}: ArticleModalContentProps) {
   const articleId = Number(node.id)
   const displayTitle = detail?.title ?? node.data.title ?? "Sin título"
   const displayImage = detail?.image_url ?? node.data.imageUrl
@@ -62,10 +65,7 @@ export function ArticleModalContent({ node, detail }: ArticleModalContentProps) 
           </DialogHeader>
 
           {detail?.date && (
-            <time
-              className="graph-article-modal__date"
-              dateTime={detail.date}
-            >
+            <time className="graph-article-modal__date" dateTime={detail.date}>
               {formatArticleDate(detail.date)}
             </time>
           )}

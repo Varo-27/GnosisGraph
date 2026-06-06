@@ -1,21 +1,20 @@
 import type { Edge, XYPosition } from "@xyflow/react"
 
 import type { ArticleDetail } from "@/entities/article"
-import type { ArticleMetadataFilters } from "@/shared/lib/filters"
-import type { AppNode, AppNodeData } from "@/entities/graph/model/types"
-
-import { createDefaultQueryNode } from "@/entities/graph/model/createDefaultInputNode"
 import { buildEdge } from "@/entities/graph/lib/edges/isValidGraphConnection"
+import { createDefaultQueryNode } from "@/entities/graph/model/createDefaultInputNode"
 import { createInputNodeId } from "@/entities/graph/model/graphNodeIds"
-import {
-  createInputFilterRow,
-  type InputFilterRow,
-} from "@/entities/graph/model/inputFilters"
 import {
   FILTER_NODE_DIMENSIONS,
   type FilterNodeKind,
   GRAPH_NODE_TYPE,
 } from "@/entities/graph/model/graphNodeTypes"
+import {
+  createInputFilterRow,
+  type InputFilterRow,
+} from "@/entities/graph/model/inputFilters"
+import type { AppNode, AppNodeData } from "@/entities/graph/model/types"
+import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 
 type ArticleMetadata = {
   authors?: string[]
@@ -55,7 +54,13 @@ export function readArticleExpandFilters(
   }
 
   const filters: ArticleMetadataFilters = {}
-  for (const key of ["place", "category", "author", "year_start", "year_end"] as const) {
+  for (const key of [
+    "place",
+    "category",
+    "author",
+    "year_start",
+    "year_end",
+  ] as const) {
     const value = raw[key]
     if (value === undefined || value === "") {
       continue
@@ -247,7 +252,9 @@ export function createQueryBranchFromArticle(
   return { nodes, edges }
 }
 
-export function articleDetailToMetadata(detail: ArticleDetail): ArticleMetadata {
+export function articleDetailToMetadata(
+  detail: ArticleDetail,
+): ArticleMetadata {
   return {
     authors: detail.authors,
     categories: detail.categories,

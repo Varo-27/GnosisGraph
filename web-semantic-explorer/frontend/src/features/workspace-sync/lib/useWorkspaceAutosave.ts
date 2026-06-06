@@ -24,7 +24,7 @@ export function useWorkspaceAutosave({
   )
   const markDirty = useWorkspaceStore((state) => state.markDirty)
 
-  const graphRevision = useGraphStore((state) => state.graphRevision)
+  const _graphRevision = useGraphStore((state) => state.graphRevision)
 
   const getViewportRef = useRef(getViewport)
   getViewportRef.current = getViewport
@@ -42,5 +42,5 @@ export function useWorkspaceAutosave({
     }, AUTOSAVE_MS)
 
     return () => window.clearTimeout(timer)
-  }, [enabled, isHydrated, captureActiveWorkspace, markDirty, graphRevision])
+  }, [enabled, isHydrated, captureActiveWorkspace, markDirty])
 }

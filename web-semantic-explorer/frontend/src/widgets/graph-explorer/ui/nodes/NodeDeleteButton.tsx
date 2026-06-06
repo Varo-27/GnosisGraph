@@ -1,13 +1,12 @@
 import { Trash2, X } from "lucide-react"
-import { useState, type MouseEvent } from "react"
-
+import { type MouseEvent, useState } from "react"
+import { useGraphStore } from "@/entities/graph"
+import { cn } from "@/shared/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
-import { cn } from "@/shared/lib/utils"
-import { useGraphStore } from "@/entities/graph"
 
 type NodeDeleteButtonProps = {
   nodeId: string
@@ -62,10 +61,7 @@ export function NodeDeleteButton({
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
         <div className="flex items-start gap-2">
-          <p
-            className="graph-node__delete-prompt flex-1"
-            id={promptId}
-          >
+          <p className="graph-node__delete-prompt flex-1" id={promptId}>
             ¿Eliminar este nodo?
           </p>
           <button

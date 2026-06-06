@@ -3,9 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { renderHook, waitFor } from "@testing-library/react"
 import type { ReactNode } from "react"
 import { describe, expect, it, vi } from "vitest"
-
-import { articleDetailQueryKey } from "@/entities/article"
 import type { ArticleDetail } from "@/entities/article"
+import { articleDetailQueryKey } from "@/entities/article"
 import { useFollowTargets } from "@/features/article-follow"
 
 vi.mock("@/entities/engagement", () => ({

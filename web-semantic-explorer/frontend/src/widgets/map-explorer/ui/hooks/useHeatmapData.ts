@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
-
+import { fetchHeatmapMock } from "@/mocks/heatmap.mock"
 import { StatsApi } from "@/shared/api/stats"
 import {
   buildCountryCounts,
@@ -10,7 +10,6 @@ import {
   isRegionEntry,
 } from "@/widgets/map-explorer/lib/heatmapColors"
 import { enrichHeatmapResponse } from "@/widgets/map-explorer/lib/placeGeoResolve"
-import { fetchHeatmapMock } from "@/mocks/heatmap.mock"
 
 import type { HeatmapPlaceGroups } from "../types"
 

@@ -19,8 +19,8 @@ export function GraphNodePalette({ isLoading }: GraphNodePaletteProps) {
       <div>
         <h2 className="eom-heading-section">Añadir nodos</h2>
         <p className="graph-palette__hint">
-          Arrastra un nodo consulta al lienzo. Añade filtros dentro del nodo
-          y conéctalo con los artículos.
+          Arrastra un nodo consulta al lienzo. Añade filtros dentro del nodo y
+          conéctalo con los artículos.
         </p>
       </div>
 

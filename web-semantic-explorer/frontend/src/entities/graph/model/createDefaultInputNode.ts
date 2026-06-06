@@ -1,6 +1,5 @@
-import type { AppNode } from "@/entities/graph/model/types"
-
 import { GRAPH_LAYOUT_SUGIYAMA } from "@/entities/graph/lib/explorer/graphConstants"
+import type { AppNode } from "@/entities/graph/model/types"
 import { DEFAULT_INPUT_NODE_ID } from "./graphNodeIds"
 import { GRAPH_NODE_TYPE } from "./graphNodeTypes"
 

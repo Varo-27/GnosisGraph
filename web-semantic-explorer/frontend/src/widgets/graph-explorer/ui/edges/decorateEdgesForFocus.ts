@@ -12,8 +12,7 @@ export function decorateEdgesForFocus(
     const source = String(edge.source)
     const target = String(edge.target)
     const highlighted =
-      focusNodeId !== null &&
-      (source === focusNodeId || target === focusNodeId)
+      focusNodeId !== null && (source === focusNodeId || target === focusNodeId)
 
     const data: GraphFlowEdgeData = {
       ...(typeof edge.data === "object" && edge.data !== null

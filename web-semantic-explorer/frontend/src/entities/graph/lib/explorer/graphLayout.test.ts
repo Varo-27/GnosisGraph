@@ -49,7 +49,11 @@ describe("findConnectedComponents", () => {
   })
 
   it("separa componentes inconexos", () => {
-    const nodes = [queryNode("query-a"), queryNode("query-b"), articleNode("a1")]
+    const nodes = [
+      queryNode("query-a"),
+      queryNode("query-b"),
+      articleNode("a1"),
+    ]
     const edges = [{ id: "e1", source: "query-a", target: "a1" }]
 
     expect(findConnectedComponents(nodes, edges)).toHaveLength(2)

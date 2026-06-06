@@ -1,12 +1,15 @@
 import { create } from "zustand"
-import { migrateGraphSnapshot, syncLinkedContextFlags } from "@/entities/graph"
+import {
+  migrateGraphSnapshot,
+  syncLinkedContextFlags,
+  useGraphStore,
+} from "@/entities/graph"
 import {
   fetchWorkspaceSync,
   pushWorkspaceSync,
   syncResponseToStoragePayload,
 } from "@/shared/api/workspaces"
 import { isLoggedIn } from "@/shared/auth"
-import { useGraphStore } from "@/entities/graph"
 
 import {
   buildDefaultStoragePayload,
@@ -136,7 +139,7 @@ function payloadLatestUpdatedAt(payload: WorkspaceStoragePayload): number {
 
 async function resolveLoggedInPayload(): Promise<WorkspaceStoragePayload> {
   const local = loadWorkspacesFromStorage()
-  let payload = local ?? buildDefaultStoragePayload()
+  const payload = local ?? buildDefaultStoragePayload()
 
   try {
     const remote = await fetchWorkspaceSync()

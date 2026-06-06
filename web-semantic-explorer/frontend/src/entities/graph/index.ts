@@ -1,71 +1,19 @@
-export type { AppNode, AppNodeData, GraphState } from "./model/types"
-export { useGraphStore } from "./model/useGraphStore"
-export {
-  GRAPH_NODE_TYPE,
-  FILTER_NODE_DIMENSIONS,
-  isFilterNodeType,
-  isQueryNodeType,
-  isInputNodeType,
-  isArticleNodeType,
-  type FilterNodeKind,
-  type GraphNodeType,
-} from "./model/graphNodeTypes"
-export {
-  createDefaultQueryNode,
-  createDefaultInputNode,
-  createQueryNodeAtOffset,
-  createInputNodeAtOffset,
-} from "./model/createDefaultInputNode"
-export {
-  createQueryNodeAtPosition,
-  createInputNodeAtPosition,
-  createFilterNodeAtPosition,
-} from "./model/createPaletteNode"
-export { createInputNodeId, createFilterNodeId, DEFAULT_INPUT_NODE_ID } from "./model/graphNodeIds"
-export {
-  createInputFilterRow,
-  readInputFilterRows,
-  inputFilterRowsToMetadata,
-  type InputFilterRow,
-} from "./model/inputFilters"
-export { absorbFilterNodesIntoInputs } from "./lib/workspace/absorbFilterNodesIntoInputs"
-export { migrateGraphSnapshot } from "./lib/workspace/migrateGraphSnapshot"
-export { syncLinkedContextFlags } from "./lib/context/syncLinkedContextFlags"
-export { resolveContextChain, mergeContextFilters } from "./lib/context/resolveContextChain"
-export { resolveSearchContext } from "./lib/context/resolveSearchContext"
-export { resolveExpandContext } from "./lib/context/resolveExpandContext"
 export { hasLinkedDownstreamContext } from "./lib/context/hasLinkedDownstreamContext"
 export {
-  collectDownstreamArticleIds,
-  removeEdgesTouchingNodes,
-} from "./lib/subgraph/collectDownstreamArticleIds"
-export { collectFiltersFromInputPipeline } from "./lib/subgraph/collectFiltersFromInputPipeline"
-export { resolveSearchAttachmentNodeId } from "./lib/subgraph/resolveSearchAttachmentNodeId"
-export { markPipelineSearched } from "./lib/subgraph/markPipelineSearched"
-export { deleteGraphNode } from "./lib/graph/deleteGraphNode"
+  mergeContextFilters,
+  resolveContextChain,
+} from "./lib/context/resolveContextChain"
+export { resolveExpandContext } from "./lib/context/resolveExpandContext"
+export { resolveSearchContext } from "./lib/context/resolveSearchContext"
+export { syncLinkedContextFlags } from "./lib/context/syncLinkedContextFlags"
 export {
-  isValidGraphConnection,
-  getInvalidConnectionMessage,
   buildEdge,
   createEdgeId,
+  getInvalidConnectionMessage,
+  isValidGraphConnection,
 } from "./lib/edges/isValidGraphConnection"
-export { markArticleVisited, isArticleVisited } from "./lib/graph/markArticleVisited"
-export { dedupeEdgesById } from "./lib/mappers/dedupeEdges"
 export {
-  createFilterFromArticleAtPosition,
-  createFilterFromArticleByKind,
-  pickFilterValueForKind,
-  readArticleExpandFilters,
-  removeArticleExpandFilter,
-  setArticleExpandFilter,
-  type ArticleExpandFilterKind,
-  createQueryBranchFromArticle,
-  favoriteArticleToGraphNode,
-  pickFilterFromArticle,
-  articleDetailToMetadata,
-  articleNodeToMetadata,
-} from "./lib/graph/articleBranchActions"
-export {
+  DEFAULT_ARTICLE_TITLE,
   EXPAND_SIMILAR_LIMIT,
   EXPAND_SIMILAR_THRESHOLD,
   GRAPH_BACKGROUND_GRID_COLOR,
@@ -75,12 +23,13 @@ export {
   GRAPH_LAYOUT_TREE,
   GRAPH_MAX_ZOOM,
   GRAPH_MIN_ZOOM,
+  getStaggerDelay,
   SEARCH_ARTICLES_LIMIT,
   SEARCH_REVEAL_STAGGER_MS,
   SEARCH_ROOT_ID,
-  DEFAULT_ARTICLE_TITLE,
-  getStaggerDelay,
 } from "./lib/explorer/graphConstants"
+export { assignLayersLongestPath } from "./lib/explorer/graphLayerAssignment"
+export { applySugiyamaLayout } from "./lib/explorer/graphLayout"
 export {
   articleToNodeData,
   createSearchEdges,
@@ -89,8 +38,6 @@ export {
   graphNodeToAppNode,
   updateInputNodeQuery,
 } from "./lib/explorer/graphMappers"
-export { applySugiyamaLayout } from "./lib/explorer/graphLayout"
-export { assignLayersLongestPath } from "./lib/explorer/graphLayerAssignment"
 export {
   filterSubgraph,
   findConnectedComponents,
@@ -99,7 +46,73 @@ export {
 export { mergeGraphArticles } from "./lib/explorer/mergeGraphArticles"
 export { revealGraphNodesStaggered } from "./lib/explorer/revealGraphNodesStaggered"
 export {
+  type ArticleExpandFilterKind,
+  articleDetailToMetadata,
+  articleNodeToMetadata,
+  createFilterFromArticleAtPosition,
+  createFilterFromArticleByKind,
+  createQueryBranchFromArticle,
+  favoriteArticleToGraphNode,
+  pickFilterFromArticle,
+  pickFilterValueForKind,
+  readArticleExpandFilters,
+  removeArticleExpandFilter,
+  setArticleExpandFilter,
+} from "./lib/graph/articleBranchActions"
+export { deleteGraphNode } from "./lib/graph/deleteGraphNode"
+export {
+  isActiveNodeDrag,
+  isPositionOnlyChange,
+} from "./lib/graph/graphFlowDrag"
+export {
+  isArticleVisited,
+  markArticleVisited,
+} from "./lib/graph/markArticleVisited"
+export { dedupeEdgesById } from "./lib/mappers/dedupeEdges"
+export {
   centerPaletteDropPosition,
   PALETTE_NODE_DIMENSIONS,
 } from "./lib/palette/paletteDropPosition"
-export { isPositionOnlyChange, isActiveNodeDrag } from "./lib/graph/graphFlowDrag"
+export {
+  collectDownstreamArticleIds,
+  removeEdgesTouchingNodes,
+} from "./lib/subgraph/collectDownstreamArticleIds"
+export { collectFiltersFromInputPipeline } from "./lib/subgraph/collectFiltersFromInputPipeline"
+export { markPipelineSearched } from "./lib/subgraph/markPipelineSearched"
+export { resolveSearchAttachmentNodeId } from "./lib/subgraph/resolveSearchAttachmentNodeId"
+export { absorbFilterNodesIntoInputs } from "./lib/workspace/absorbFilterNodesIntoInputs"
+export { migrateGraphSnapshot } from "./lib/workspace/migrateGraphSnapshot"
+export {
+  createDefaultInputNode,
+  createDefaultQueryNode,
+  createInputNodeAtOffset,
+  createQueryNodeAtOffset,
+} from "./model/createDefaultInputNode"
+export {
+  createFilterNodeAtPosition,
+  createInputNodeAtPosition,
+  createQueryNodeAtPosition,
+} from "./model/createPaletteNode"
+export {
+  createFilterNodeId,
+  createInputNodeId,
+  DEFAULT_INPUT_NODE_ID,
+} from "./model/graphNodeIds"
+export {
+  FILTER_NODE_DIMENSIONS,
+  type FilterNodeKind,
+  GRAPH_NODE_TYPE,
+  type GraphNodeType,
+  isArticleNodeType,
+  isFilterNodeType,
+  isInputNodeType,
+  isQueryNodeType,
+} from "./model/graphNodeTypes"
+export {
+  createInputFilterRow,
+  type InputFilterRow,
+  inputFilterRowsToMetadata,
+  readInputFilterRows,
+} from "./model/inputFilters"
+export type { AppNode, AppNodeData, GraphState } from "./model/types"
+export { useGraphStore } from "./model/useGraphStore"

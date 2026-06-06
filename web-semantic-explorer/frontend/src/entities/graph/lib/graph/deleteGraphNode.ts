@@ -4,10 +4,8 @@ import {
   getIncomers,
   getOutgoers,
 } from "@xyflow/react"
-
-import type { AppNode } from "@/entities/graph/model/types"
-
 import { dedupeEdgesById } from "@/entities/graph/lib/mappers/dedupeEdges"
+import type { AppNode } from "@/entities/graph/model/types"
 
 /**
  * Elimina un nodo del grafo.

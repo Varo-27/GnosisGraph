@@ -2,7 +2,11 @@ import { useCallback, useState } from "react"
 
 import { cn } from "@/shared/lib/utils"
 
-import { getStarFill, normalizeRatingValue, ratingFromPointerRatio } from "../lib/starFill"
+import {
+  getStarFill,
+  normalizeRatingValue,
+  ratingFromPointerRatio,
+} from "../lib/starFill"
 import { StarIcon } from "./StarIcon"
 
 type InteractiveStarRatingProps = {

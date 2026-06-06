@@ -1,9 +1,8 @@
 import type { Edge } from "@xyflow/react"
-
-import type { AppNode } from "@/entities/graph/model/types"
+import { collectDownstreamNodeIds } from "@/entities/graph/lib/subgraph/collectDownstreamNodeIds"
 
 import { isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
-import { collectDownstreamNodeIds } from "@/entities/graph/lib/subgraph/collectDownstreamNodeIds"
+import type { AppNode } from "@/entities/graph/model/types"
 import { hasLinkedDownstreamContext } from "./hasLinkedDownstreamContext"
 import {
   mergeContextFilters,

@@ -48,7 +48,6 @@ export function useArticleComments(articleId: number) {
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
-    error:
-      createMutation.error ?? updateMutation.error ?? deleteMutation.error,
+    error: createMutation.error ?? updateMutation.error ?? deleteMutation.error,
   }
 }

@@ -1,5 +1,5 @@
-import type { PlaceArticlePreview } from "@/shared/api/stats"
 import { StarRating } from "@/features/article-rating"
+import type { PlaceArticlePreview } from "@/shared/api/stats"
 import { cn } from "@/shared/lib/utils"
 
 type MapPlaceArticleCardProps = {

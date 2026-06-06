@@ -36,7 +36,9 @@ export function RatingPanel({
               </span>
             </>
           ) : (
-            <span className="text-sm text-muted-foreground">Sin valoraciones</span>
+            <span className="text-sm text-muted-foreground">
+              Sin valoraciones
+            </span>
           )}
         </div>
       </div>

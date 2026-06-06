@@ -1,17 +1,19 @@
 import type { Edge } from "@xyflow/react"
-
-import type { AppNode } from "@/entities/graph/model/types"
 import {
-  filterRowFromLegacyNode,
-  readInputFilterRows,
-  type InputFilterRow,
-} from "@/entities/graph/model/inputFilters"
+  buildEdge,
+  createEdgeId,
+} from "@/entities/graph/lib/edges/isValidGraphConnection"
 import {
   GRAPH_NODE_TYPE,
   isFilterNodeType,
   isQueryNodeType,
 } from "@/entities/graph/model/graphNodeTypes"
-import { buildEdge, createEdgeId } from "@/entities/graph/lib/edges/isValidGraphConnection"
+import {
+  filterRowFromLegacyNode,
+  type InputFilterRow,
+  readInputFilterRows,
+} from "@/entities/graph/model/inputFilters"
+import type { AppNode } from "@/entities/graph/model/types"
 
 /**
  * Convierte nodos filtro del pipeline en filas dentro del nodo consulta
@@ -37,7 +39,11 @@ export function absorbFilterNodesIntoInputs(
         return node
       }
 
-      const legacyRows = collectLegacyFilterRowsForInput(node.id, nodeById, edges)
+      const legacyRows = collectLegacyFilterRowsForInput(
+        node.id,
+        nodeById,
+        edges,
+      )
       if (legacyRows.length === 0) {
         return node
       }
@@ -123,7 +129,12 @@ function rewireEdgesWithoutFilters(
     .map((node) => node.id)
 
   for (const sourceId of sources) {
-    for (const targetId of resolveTargetsSkippingFilters(sourceId, edges, filterIds, nodeById)) {
+    for (const targetId of resolveTargetsSkippingFilters(
+      sourceId,
+      edges,
+      filterIds,
+      nodeById,
+    )) {
       const key = `${sourceId}->${targetId}`
       if (edgeKeys.has(key)) {
         continue

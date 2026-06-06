@@ -87,8 +87,7 @@ function hoverReducer(state: HoverState, action: HoverAction): HoverState {
         return state
       }
 
-      const isoCode =
-        entry.map_country_codes?.[0] ?? entry.country_code ?? null
+      const isoCode = entry.map_country_codes?.[0] ?? entry.country_code ?? null
       if (!isoCode) return state
 
       if (
@@ -112,7 +111,10 @@ function hoverReducer(state: HoverState, action: HoverAction): HoverState {
     case "region_list_hover": {
       const { entry } = action
       if (!entry) {
-        if (state.hoveredRegionCodes === null && state.hoveredRegionEntry === null) {
+        if (
+          state.hoveredRegionCodes === null &&
+          state.hoveredRegionEntry === null
+        ) {
           if (!state.hoveredCode && state.hoveredName) {
             return { ...state, hoveredName: null }
           }
@@ -190,7 +192,9 @@ function hoverReducer(state: HoverState, action: HoverAction): HoverState {
   }
 }
 
-export function useMapHoverState({ onFocusCountry }: UseMapHoverStateOptions = {}) {
+export function useMapHoverState({
+  onFocusCountry,
+}: UseMapHoverStateOptions = {}) {
   const navigate = useNavigate()
   const [state, dispatch] = useReducer(hoverReducer, initialState)
 
@@ -206,8 +210,7 @@ export function useMapHoverState({ onFocusCountry }: UseMapHoverStateOptions = {
 
   const handleCountryPlaceClick = useCallback(
     (entry: HeatmapEntry) => {
-      const isoCode =
-        entry.map_country_codes?.[0] ?? entry.country_code ?? null
+      const isoCode = entry.map_country_codes?.[0] ?? entry.country_code ?? null
       if (!isoCode) return
 
       dispatch({ type: "country_place_click", entry, isoCode })

@@ -2,13 +2,9 @@ import dagre from "@dagrejs/dagre"
 import type { Edge } from "@xyflow/react"
 
 import type { AppNode } from "@/entities/graph/model/types"
-
-import { assignLayersLongestPath } from "./graphLayerAssignment"
 import { GRAPH_LAYOUT_SUGIYAMA } from "./graphConstants"
-import {
-  filterSubgraph,
-  findConnectedComponents,
-} from "./graphTopology"
+import { assignLayersLongestPath } from "./graphLayerAssignment"
+import { filterSubgraph, findConnectedComponents } from "./graphTopology"
 
 function layoutOrderWithinLayer(
   nodeIds: string[],
@@ -54,7 +50,11 @@ export const applySugiyamaLayout = (nodes: AppNode[], edges: Edge[]) => {
 
   let globalOffsetX = 0
 
-  for (let componentIndex = 0; componentIndex < components.length; componentIndex++) {
+  for (
+    let componentIndex = 0;
+    componentIndex < components.length;
+    componentIndex++
+  ) {
     const componentNodeIds = components[componentIndex]
     const { nodes: componentNodes, edges: componentEdges } = filterSubgraph(
       nodes,

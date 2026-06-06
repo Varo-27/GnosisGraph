@@ -1,7 +1,6 @@
 import { useCallback } from "react"
 import { toast } from "sonner"
-
-import { searchArticlesWithFilters } from "@/shared/api/searchWithFilters"
+import type { AppNode } from "@/entities/graph"
 import {
   applySugiyamaLayout,
   collectDownstreamArticleIds,
@@ -17,9 +16,9 @@ import {
   SEARCH_ARTICLES_LIMIT,
   SEARCH_REVEAL_STAGGER_MS,
   updateInputNodeQuery,
+  useGraphStore,
 } from "@/entities/graph"
-import type { AppNode } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
+import { searchArticlesWithFilters } from "@/shared/api/searchWithFilters"
 
 type UseGraphSearchOptions = {
   setNodes: (nodes: AppNode[]) => void
@@ -96,7 +95,10 @@ export function useGraphSearch({
         const resultNodesRaw = createSearchResultNodes(response.results)
         const newEdges = createSearchEdges(response.results, attachmentId)
         const mergedForLayout = [...keptNodes, ...resultNodesRaw]
-        const mergedEdgesForLayout = dedupeEdgesById([...keptEdges, ...newEdges])
+        const mergedEdgesForLayout = dedupeEdgesById([
+          ...keptEdges,
+          ...newEdges,
+        ])
         const layoutedNodes = applySugiyamaLayout(
           mergedForLayout,
           mergedEdgesForLayout,

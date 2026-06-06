@@ -11,21 +11,21 @@ import {
   fetchArticleDetail,
 } from "@/entities/article"
 import { toggleArticleFavorite } from "@/entities/engagement"
-import { isLoggedIn } from "@/shared/auth"
-import useCustomToast from "@/shared/lib/useCustomToast"
-import { cn } from "@/shared/lib/utils"
-import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 import type { AppNode } from "@/entities/graph"
 import {
-  FILTER_NODE_DIMENSIONS,
+  type ArticleExpandFilterKind,
   articleDetailToMetadata,
   articleNodeToMetadata,
+  FILTER_NODE_DIMENSIONS,
   readArticleExpandFilters,
   removeArticleExpandFilter,
   setArticleExpandFilter,
   useGraphStore,
-  type ArticleExpandFilterKind,
 } from "@/entities/graph"
+import { isLoggedIn } from "@/shared/auth"
+import type { ArticleMetadataFilters } from "@/shared/lib/filters"
+import useCustomToast from "@/shared/lib/useCustomToast"
+import { cn } from "@/shared/lib/utils"
 import { ArticleAddFilterButton } from "./ArticleAddFilterButton"
 import { NodeDeleteButton } from "./NodeDeleteButton"
 
@@ -56,7 +56,10 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
   const usesLinkedContext = data.hasLinkedDownstreamContext === true
   const expandFilters = readArticleExpandFilters(data)
   const expandFilterEntries = (
-    Object.entries(expandFilters) as [keyof ArticleMetadataFilters, string | number][]
+    Object.entries(expandFilters) as [
+      keyof ArticleMetadataFilters,
+      string | number,
+    ][]
   ).filter(([, value]) => value !== undefined && value !== "")
   const isActive = activeNodeId === id
   const visited = typeof data.visitedAt === "string"
@@ -88,7 +91,9 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
 
   const addFilterMutation = useMutation({
     mutationFn: async (kind: ArticleExpandFilterKind) => {
-      const node = useGraphStore.getState().nodes.find((candidate) => candidate.id === id)
+      const node = useGraphStore
+        .getState()
+        .nodes.find((candidate) => candidate.id === id)
       if (!node) {
         return
       }
@@ -111,14 +116,18 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
       }
 
       const { nodes } = useGraphStore.getState()
-      setNodes(nodes.map((candidate) => (candidate.id === id ? updated : candidate)))
+      setNodes(
+        nodes.map((candidate) => (candidate.id === id ? updated : candidate)),
+      )
       toast.success(`Filtro de ${EXPAND_FILTER_LABELS[kind]} añadido`)
     },
     onError: () => showErrorToast("No se pudo añadir el filtro"),
   })
 
   const removeExpandFilter = (kind: keyof ArticleMetadataFilters) => {
-    const node = useGraphStore.getState().nodes.find((candidate) => candidate.id === id)
+    const node = useGraphStore
+      .getState()
+      .nodes.find((candidate) => candidate.id === id)
     if (!node) {
       return
     }
@@ -245,15 +254,21 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
             />
           </div>
           {expandFilterEntries.length > 0 && (
-            <ul className="graph-node__expand-filters nodrag nopan" aria-label="Filtros para Ver más">
+            <ul
+              className="graph-node__expand-filters nodrag nopan"
+              aria-label="Filtros para Ver más"
+            >
               {expandFilterEntries.map(([kind, value]) => (
                 <li key={kind} className="graph-node__expand-filter">
                   <span className="graph-node__expand-filter-label">
-                    {FILTER_NODE_DIMENSIONS[kind as keyof typeof FILTER_NODE_DIMENSIONS] ??
-                      kind}
+                    {FILTER_NODE_DIMENSIONS[
+                      kind as keyof typeof FILTER_NODE_DIMENSIONS
+                    ] ?? kind}
                     :
                   </span>
-                  <span className="graph-node__expand-filter-value">{value}</span>
+                  <span className="graph-node__expand-filter-value">
+                    {value}
+                  </span>
                   <button
                     type="button"
                     aria-label={`Quitar filtro ${kind}`}

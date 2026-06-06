@@ -5,9 +5,9 @@ import type { AppNode, AppNodeData } from "@/entities/graph/model/types"
 
 import {
   DEFAULT_ARTICLE_TITLE,
+  GRAPH_LAYOUT_SUGIYAMA,
   getStaggerDelay,
   SEARCH_ROOT_ID,
-  GRAPH_LAYOUT_SUGIYAMA,
 } from "./graphConstants"
 
 export function articleToNodeData(

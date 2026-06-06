@@ -1,3 +1,12 @@
+export {
+  createArticleComment,
+  deleteComment,
+  updateComment,
+} from "./api/articleComments"
+export { fetchArticleNote, upsertArticleNote } from "./api/articleNotes"
+export { upsertArticleRating } from "./api/articleRatings"
+export { followTarget, unfollowTarget } from "./api/follows"
+export { toggleArticleFavorite } from "./api/toggleArticleFavorite"
 export type {
   ArticleNote,
   CommentRecord,
@@ -6,12 +15,3 @@ export type {
   FollowTarget,
   RatingSummary,
 } from "./model/types"
-export { toggleArticleFavorite } from "./api/toggleArticleFavorite"
-export { upsertArticleRating } from "./api/articleRatings"
-export {
-  createArticleComment,
-  deleteComment,
-  updateComment,
-} from "./api/articleComments"
-export { fetchArticleNote, upsertArticleNote } from "./api/articleNotes"
-export { followTarget, unfollowTarget } from "./api/follows"

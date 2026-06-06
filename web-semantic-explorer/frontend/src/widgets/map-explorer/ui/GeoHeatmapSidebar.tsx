@@ -20,10 +20,7 @@ export const GeoHeatmapSidebar = memo(function GeoHeatmapSidebar({
 }: GeoHeatmapSidebarProps) {
   return (
     <aside
-      className={cn(
-        "map-sidebar",
-        collapsed && "map-sidebar--collapsed",
-      )}
+      className={cn("map-sidebar", collapsed && "map-sidebar--collapsed")}
       aria-hidden={collapsed}
     >
       <div className="map-sidebar__inner">

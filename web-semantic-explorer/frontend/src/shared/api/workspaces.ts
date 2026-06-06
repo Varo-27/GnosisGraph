@@ -97,7 +97,8 @@ export function syncResponseToStoragePayload(
   response: WorkspaceSyncResponse,
 ): WorkspaceStoragePayload {
   return {
-    schemaVersion: response.schema_version as WorkspaceStoragePayload["schemaVersion"],
+    schemaVersion:
+      response.schema_version as WorkspaceStoragePayload["schemaVersion"],
     activeWorkspaceId: response.active_workspace_id,
     workspaces: response.workspaces.map(toWorkspaceRecord),
   }

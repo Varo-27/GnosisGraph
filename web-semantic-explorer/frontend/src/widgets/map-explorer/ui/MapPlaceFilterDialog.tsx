@@ -1,13 +1,13 @@
 import { FolderPlus, Layers, Loader2, X } from "lucide-react"
 
 import type { PlaceArticlePreview } from "@/shared/api/stats"
+import { cn } from "@/shared/lib/utils"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
-import { cn } from "@/shared/lib/utils"
 
 import { usePlacePreview } from "./hooks/usePlacePreview"
 import { MapPlaceArticleCard } from "./MapPlaceArticleCard"
@@ -35,14 +35,9 @@ export function MapPlaceFilterDialog({
   const open = intent !== null
   const placeId = intent?.placeId
 
-  const {
-    data: preview,
-    isLoading,
-    isError,
-  } = usePlacePreview(placeId, open)
+  const { data: preview, isLoading, isError } = usePlacePreview(placeId, open)
 
-  const articleCount =
-    preview?.article_count ?? intent?.articleCount ?? 0
+  const articleCount = preview?.article_count ?? intent?.articleCount ?? 0
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

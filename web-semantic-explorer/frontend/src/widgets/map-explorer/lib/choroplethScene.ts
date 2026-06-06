@@ -3,7 +3,10 @@ import type { FeatureCollection } from "geojson"
 
 import { getCountrySearchLabel } from "@/widgets/map-explorer/lib/countrySearchLabels"
 import { getGeoIsoCode } from "@/widgets/map-explorer/lib/heatmapColors"
-import { getProjectionOption, type MapProjectionId } from "@/widgets/map-explorer/lib/mapProjections"
+import {
+  getProjectionOption,
+  type MapProjectionId,
+} from "@/widgets/map-explorer/lib/mapProjections"
 
 export type RenderCountry = {
   key: string
@@ -79,7 +82,10 @@ export function buildChoroplethScene(
     const path = generator(geoFeature)
     if (!path) continue
 
-    const bounds = generator.bounds(geoFeature) as [[number, number], [number, number]]
+    const bounds = generator.bounds(geoFeature) as [
+      [number, number],
+      [number, number],
+    ]
 
     const isoCode = getGeoIsoCode({ properties: geoFeature.properties })
     const adminName =
@@ -88,9 +94,7 @@ export function buildChoroplethScene(
         : typeof geoFeature.properties?.ADMIN === "string"
           ? geoFeature.properties.ADMIN
           : undefined
-    const name = isoCode
-      ? getCountrySearchLabel(isoCode, adminName)
-      : adminName
+    const name = isoCode ? getCountrySearchLabel(isoCode, adminName) : adminName
 
     items.push({
       key: `country-${index}`,

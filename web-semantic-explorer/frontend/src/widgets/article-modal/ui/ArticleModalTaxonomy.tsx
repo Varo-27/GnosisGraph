@@ -1,5 +1,5 @@
-import { Bell, BellRing, MapPin, Tag, User } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { Bell, BellRing, MapPin, Tag, User } from "lucide-react"
 import type { ReactNode } from "react"
 
 import type { FollowTarget } from "@/entities/engagement"
@@ -71,7 +71,10 @@ function TaxonomyChip({
             aria-hidden
           />
         ) : (
-          <Bell className="graph-article-modal__taxon-follow-icon" aria-hidden />
+          <Bell
+            className="graph-article-modal__taxon-follow-icon"
+            aria-hidden
+          />
         ))}
     </>
   )
@@ -82,9 +85,7 @@ function TaxonomyChip({
         type="button"
         disabled={isPending}
         aria-pressed={following}
-        aria-label={
-          following ? `Dejar de seguir ${label}` : `Seguir ${label}`
-        }
+        aria-label={following ? `Dejar de seguir ${label}` : `Seguir ${label}`}
         onClick={() => onToggle(followTarget)}
         className={cn(
           "graph-article-modal__taxon-chip",

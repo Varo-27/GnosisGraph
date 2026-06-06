@@ -38,7 +38,9 @@ export function useFollowTargets(articleId: number) {
           : current,
       )
       showSuccessToast(
-        status.is_following ? "Seguimiento activado" : "Seguimiento desactivado",
+        status.is_following
+          ? "Seguimiento activado"
+          : "Seguimiento desactivado",
       )
     },
     onError: () => showErrorToast("No se pudo actualizar el seguimiento"),

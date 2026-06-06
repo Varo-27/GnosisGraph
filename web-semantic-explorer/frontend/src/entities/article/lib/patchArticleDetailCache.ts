@@ -1,7 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query"
-
-import type { ArticleDetail } from "../model/types"
 import { articleDetailQueryKey } from "../model/queryKeys"
+import type { ArticleDetail } from "../model/types"
 
 export function patchArticleDetailCache(
   queryClient: QueryClient,

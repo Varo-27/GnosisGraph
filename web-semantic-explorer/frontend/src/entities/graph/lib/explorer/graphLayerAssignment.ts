@@ -50,7 +50,8 @@ export function assignLayersLongestPath(
       const nextLayer =
         parents.length === 0
           ? 1
-          : 1 + Math.max(...parents.map((parentId) => layers.get(parentId) ?? 0))
+          : 1 +
+            Math.max(...parents.map((parentId) => layers.get(parentId) ?? 0))
 
       if (layers.get(nodeId) !== nextLayer) {
         layers.set(nodeId, nextLayer)

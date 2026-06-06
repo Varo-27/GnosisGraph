@@ -1,17 +1,15 @@
 import type { Edge } from "@xyflow/react"
-
-import type { ArticleMetadataFilters } from "@/shared/lib/filters"
-import type { AppNode } from "@/entities/graph/model/types"
-
-import {
-  inputFilterRowsToMetadata,
-  readInputFilterRows,
-} from "@/entities/graph/model/inputFilters"
 import {
   FILTER_NODE_DIMENSIONS,
   isFilterNodeType,
   isInputNodeType,
 } from "@/entities/graph/model/graphNodeTypes"
+import {
+  inputFilterRowsToMetadata,
+  readInputFilterRows,
+} from "@/entities/graph/model/inputFilters"
+import type { AppNode } from "@/entities/graph/model/types"
+import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 
 export type ResolvedContextChain = {
   /** Textos de nodos input encontrados al subir por el grafo. */

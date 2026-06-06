@@ -1,8 +1,7 @@
 import type { ArticleMetadataFilters } from "@/shared/lib/filters"
-
-import type { AppNodeData } from "./types"
 import type { FilterNodeKind } from "./graphNodeTypes"
 import { FILTER_NODE_DIMENSIONS } from "./graphNodeTypes"
+import type { AppNodeData } from "./types"
 
 export type InputFilterRow = {
   id: string
@@ -53,7 +52,10 @@ function normalizeInputFilterRow(entry: unknown): InputFilterRow | null {
   return {
     id,
     key: key as FilterNodeKind,
-    value: typeof record.value === "string" ? record.value : String(record.value ?? ""),
+    value:
+      typeof record.value === "string"
+        ? record.value
+        : String(record.value ?? ""),
   }
 }
 
@@ -89,7 +91,9 @@ export function applyFilterRowValue(
   }
 }
 
-export function filterRowFromLegacyNode(data: AppNodeData): InputFilterRow | null {
+export function filterRowFromLegacyNode(
+  data: AppNodeData,
+): InputFilterRow | null {
   const key = data.filterKey
   if (typeof key !== "string" || !(key in FILTER_NODE_DIMENSIONS)) {
     return null

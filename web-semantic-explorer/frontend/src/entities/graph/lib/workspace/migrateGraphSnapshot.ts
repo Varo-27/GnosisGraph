@@ -1,10 +1,9 @@
-import type { AppNode } from "@/entities/graph/model/types"
-import type { WorkspaceGraphSnapshot } from "@/entities/workspace"
-
-import { absorbFilterNodesIntoInputs } from "./absorbFilterNodesIntoInputs"
 import { createDefaultQueryNode } from "@/entities/graph/model/createDefaultInputNode"
 import { createInputNodeId } from "@/entities/graph/model/graphNodeIds"
 import { GRAPH_NODE_TYPE } from "@/entities/graph/model/graphNodeTypes"
+import type { AppNode } from "@/entities/graph/model/types"
+import type { WorkspaceGraphSnapshot } from "@/entities/workspace"
+import { absorbFilterNodesIntoInputs } from "./absorbFilterNodesIntoInputs"
 
 /**
  * Normaliza snapshots antiguos:
@@ -23,7 +22,9 @@ export function migrateGraphSnapshot(
 
       const title = node.data.title ?? ""
       const prefix = "Búsqueda: "
-      const query = title.startsWith(prefix) ? title.slice(prefix.length) : title
+      const query = title.startsWith(prefix)
+        ? title.slice(prefix.length)
+        : title
 
       return {
         ...node,

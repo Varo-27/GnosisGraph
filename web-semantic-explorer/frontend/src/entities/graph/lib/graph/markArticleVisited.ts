@@ -1,7 +1,10 @@
 import type { AppNode } from "@/entities/graph/model/types"
 
 /** Marca un artículo como visitado (persistido en el workspace). */
-export function markArticleVisited(nodes: AppNode[], articleId: string): AppNode[] {
+export function markArticleVisited(
+  nodes: AppNode[],
+  articleId: string,
+): AppNode[] {
   const visitedAt = new Date().toISOString()
 
   return nodes.map((node) => {

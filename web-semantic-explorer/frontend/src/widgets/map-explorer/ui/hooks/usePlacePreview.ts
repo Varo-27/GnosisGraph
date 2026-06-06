@@ -8,7 +8,10 @@ export function usePlacePreview(placeId: number | undefined, enabled: boolean) {
   return useQuery({
     queryKey: ["place-preview", placeId, MAP_PLACE_PREVIEW_ARTICLE_LIMIT],
     queryFn: () =>
-      StatsApi.getPlacePreview(placeId as number, MAP_PLACE_PREVIEW_ARTICLE_LIMIT),
+      StatsApi.getPlacePreview(
+        placeId as number,
+        MAP_PLACE_PREVIEW_ARTICLE_LIMIT,
+      ),
     enabled: enabled && placeId != null,
     staleTime: 60_000,
   })

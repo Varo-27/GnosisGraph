@@ -1,12 +1,11 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react"
 import { Search } from "lucide-react"
 import { memo, useEffect, useState } from "react"
-
-import { Button } from "@/shared/ui/button"
-import { Input } from "@/shared/ui/input"
-import { cn } from "@/shared/lib/utils"
 import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
+import { cn } from "@/shared/lib/utils"
+import { Button } from "@/shared/ui/button"
+import { Input } from "@/shared/ui/input"
 
 import { NodeDeleteButton } from "./NodeDeleteButton"
 import { QueryNodeFilterRows } from "./QueryNodeFilterRows"
@@ -41,7 +40,10 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
 
   return (
     <div
-      className={cn("graph-node graph-node--query", isActive && "graph-node-active")}
+      className={cn(
+        "graph-node graph-node--query",
+        isActive && "graph-node-active",
+      )}
     >
       <Handle type="target" position={Position.Top} className="rf-handle" />
       <div className="graph-node__surface">

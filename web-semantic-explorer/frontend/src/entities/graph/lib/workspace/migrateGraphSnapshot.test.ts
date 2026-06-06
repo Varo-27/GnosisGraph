@@ -85,7 +85,9 @@ describe("migrateGraphSnapshot", () => {
     })
 
     expect(snapshot.nodes).toHaveLength(2)
-    expect(snapshot.nodes.find((node) => node.type === "filter")).toBeUndefined()
+    expect(
+      snapshot.nodes.find((node) => node.type === "filter"),
+    ).toBeUndefined()
 
     const queryNode = snapshot.nodes.find((node) => node.id === "input")
     expect(queryNode?.data.inputFilters).toEqual([

@@ -1,18 +1,18 @@
-import { toast } from "sonner"
 import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   type NodeChange,
 } from "@xyflow/react"
+import { toast } from "sonner"
 import { create } from "zustand"
 
 import { syncLinkedContextFlags } from "../lib/context/syncLinkedContextFlags"
-import { deleteGraphNode } from "../lib/graph/deleteGraphNode"
 import {
   getInvalidConnectionMessage,
   isValidGraphConnection,
 } from "../lib/edges/isValidGraphConnection"
+import { deleteGraphNode } from "../lib/graph/deleteGraphNode"
 import { isPositionOnlyChange } from "../lib/graph/graphFlowDrag"
 
 import type { AppNode, GraphState } from "./types"

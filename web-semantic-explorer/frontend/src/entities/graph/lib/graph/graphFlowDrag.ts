@@ -13,5 +13,7 @@ export function isActiveNodeDrag(changes: NodeChange[]): boolean {
 }
 
 export function isPositionOnlyChange(changes: NodeChange[]): boolean {
-  return changes.length > 0 && changes.every((change) => change.type === "position")
+  return (
+    changes.length > 0 && changes.every((change) => change.type === "position")
+  )
 }

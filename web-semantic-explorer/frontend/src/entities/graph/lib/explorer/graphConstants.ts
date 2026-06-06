@@ -10,7 +10,7 @@ export const GRAPH_FIT_VIEW_OPTIONS = {
   minZoom: GRAPH_MIN_ZOOM,
 } as const
 
-/** Grid del fondo React Flow (verde EOM al 25 % de opacidad). */
+/** @deprecated Usar token CSS `--graph-grid-color` (tema). */
 export const GRAPH_BACKGROUND_GRID_COLOR = "#497d0b40"
 
 export const GRAPH_BACKGROUND_PROPS = {

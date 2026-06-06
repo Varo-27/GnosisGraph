@@ -1,8 +1,8 @@
 import { memo } from "react"
 
 import type { FilterNodeKind } from "@/entities/graph"
-import { Input } from "@/shared/ui/input"
 import { FILTER_LABELS } from "@/shared/lib/filters"
+import { Input } from "@/shared/ui/input"
 
 import { AuthorFilterCombobox } from "./AuthorFilterCombobox"
 

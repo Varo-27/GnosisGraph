@@ -1,9 +1,7 @@
 import type { Edge } from "@xyflow/react"
-
-import type { ArticleMetadataFilters } from "@/shared/lib/filters"
-import type { AppNode } from "@/entities/graph/model/types"
-
 import { collectFiltersFromInputPipeline } from "@/entities/graph/lib/subgraph/collectFiltersFromInputPipeline"
+import type { AppNode } from "@/entities/graph/model/types"
+import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 import {
   mergeContextFilters,
   type ResolvedContextChain,

@@ -11,7 +11,10 @@ type FavoriteButtonProps = {
   isFavorited: boolean
 }
 
-export function FavoriteButton({ articleId, isFavorited }: FavoriteButtonProps) {
+export function FavoriteButton({
+  articleId,
+  isFavorited,
+}: FavoriteButtonProps) {
   const loggedIn = isLoggedIn()
   const { showErrorToast } = useCustomToast()
   const { mutate, isPending } = useToggleFavorite(articleId)

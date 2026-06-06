@@ -1,4 +1,4 @@
-import { BaseEdge, getBezierPath, type EdgeProps } from "@xyflow/react"
+import { BaseEdge, type EdgeProps, getBezierPath } from "@xyflow/react"
 import { memo } from "react"
 
 import { cn } from "@/shared/lib/utils"
@@ -29,7 +29,8 @@ function GraphFlowEdgeComponent({
     targetPosition,
   })
 
-  const highlighted = (data as GraphFlowEdgeData | undefined)?.highlighted === true
+  const highlighted =
+    (data as GraphFlowEdgeData | undefined)?.highlighted === true
 
   return (
     <>

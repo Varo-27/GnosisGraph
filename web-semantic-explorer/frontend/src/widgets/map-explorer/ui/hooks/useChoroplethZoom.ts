@@ -13,10 +13,7 @@ function lerpTransform(
   t: number,
 ): ZoomTransform {
   return zoomIdentity
-    .translate(
-      from.x + (to.x - from.x) * t,
-      from.y + (to.y - from.y) * t,
-    )
+    .translate(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t)
     .scale(from.k + (to.k - from.k) * t)
 }
 
@@ -50,12 +47,12 @@ function boundsToTransform(
 
 export function useChoroplethZoom(
   countriesLoaded: boolean,
-  projectionId: MapProjectionId,
+  _projectionId: MapProjectionId,
 ) {
   const svgRef = useRef<SVGSVGElement>(null)
-  const zoomRef = useRef<ReturnType<typeof zoom<SVGSVGElement, unknown>> | null>(
-    null,
-  )
+  const zoomRef = useRef<ReturnType<
+    typeof zoom<SVGSVGElement, unknown>
+  > | null>(null)
   const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity)
 
   useEffect(() => {
@@ -83,37 +80,34 @@ export function useChoroplethZoom(
     if (!svgEl) return
     select(svgEl).call(zoom<SVGSVGElement, unknown>().transform, zoomIdentity)
     setTransform(zoomIdentity)
-  }, [projectionId])
+  }, [])
 
-  const applyTransform = useCallback(
-    (next: ZoomTransform, animate = true) => {
-      const svgEl = svgRef.current
-      const zoomBehavior = zoomRef.current
-      if (!svgEl || !zoomBehavior) return
+  const applyTransform = useCallback((next: ZoomTransform, animate = true) => {
+    const svgEl = svgRef.current
+    const zoomBehavior = zoomRef.current
+    if (!svgEl || !zoomBehavior) return
 
-      const svg = select(svgEl)
-      if (!animate) {
-        svg.call(zoomBehavior.transform, next)
-        setTransform(next)
-        return
-      }
+    const svg = select(svgEl)
+    if (!animate) {
+      svg.call(zoomBehavior.transform, next)
+      setTransform(next)
+      return
+    }
 
-      const from = zoomTransform(svgEl)
-      const start = performance.now()
+    const from = zoomTransform(svgEl)
+    const start = performance.now()
 
-      const tick = (now: number) => {
-        const t = Math.min(1, (now - start) / ZOOM_DURATION_MS)
-        const eased = 1 - (1 - t) ** 2
-        const current = lerpTransform(from, next, eased)
-        svg.call(zoomBehavior.transform, current)
-        setTransform(current)
-        if (t < 1) requestAnimationFrame(tick)
-      }
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / ZOOM_DURATION_MS)
+      const eased = 1 - (1 - t) ** 2
+      const current = lerpTransform(from, next, eased)
+      svg.call(zoomBehavior.transform, current)
+      setTransform(current)
+      if (t < 1) requestAnimationFrame(tick)
+    }
 
-      requestAnimationFrame(tick)
-    },
-    [],
-  )
+    requestAnimationFrame(tick)
+  }, [])
 
   const resetView = useCallback(() => {
     applyTransform(zoomIdentity, true)

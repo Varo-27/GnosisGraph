@@ -1,8 +1,6 @@
 import type { Edge, ReactFlowInstance } from "@xyflow/react"
-
-import { GRAPH_LAYOUT_SUGIYAMA } from "@/entities/graph"
 import type { AppNode } from "@/entities/graph"
-import { useGraphStore } from "@/entities/graph"
+import { GRAPH_LAYOUT_SUGIYAMA, useGraphStore } from "@/entities/graph"
 
 type CenterViewportOptions = {
   duration?: number
@@ -14,7 +12,9 @@ export function centerViewportOnNodeInFlow(
   nodeId: string,
   options: CenterViewportOptions = {},
 ): void {
-  const node = useGraphStore.getState().nodes.find((candidate) => candidate.id === nodeId)
+  const node = useGraphStore
+    .getState()
+    .nodes.find((candidate) => candidate.id === nodeId)
   if (!node) {
     return
   }
