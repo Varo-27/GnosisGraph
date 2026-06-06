@@ -94,6 +94,99 @@ def _is_following(
     return existing is not None
 
 
+def _batch_load_article_authors(
+    session: Session, article_ids: list[int]
+) -> dict[int, list[str]]:
+    if not article_ids:
+        return {}
+
+    rows = session.exec(
+        select(ArticleAuthor.article_id, Author.name)
+        .join(Author, Author.id == ArticleAuthor.author_id)
+        .where(ArticleAuthor.article_id.in_(article_ids))  # type: ignore[attr-defined]
+        .order_by(ArticleAuthor.article_id, Author.name)
+    ).all()
+
+    authors_map: dict[int, list[str]] = {}
+    for article_id, author_name in rows:
+        authors_map.setdefault(article_id, []).append(author_name)
+    return authors_map
+
+
+def _batch_load_article_categories(
+    session: Session, article_ids: list[int]
+) -> dict[int, list[str]]:
+    if not article_ids:
+        return {}
+
+    rows = session.exec(
+        select(ArticleCategory.article_id, Category.name)
+        .join(Category, Category.id == ArticleCategory.category_id)
+        .where(ArticleCategory.article_id.in_(article_ids))  # type: ignore[attr-defined]
+        .order_by(ArticleCategory.article_id, Category.name)
+    ).all()
+
+    categories_map: dict[int, list[str]] = {}
+    for article_id, category_name in rows:
+        categories_map.setdefault(article_id, []).append(category_name)
+    return categories_map
+
+
+def _batch_load_article_places(
+    session: Session, article_ids: list[int]
+) -> dict[int, list[str]]:
+    if not article_ids:
+        return {}
+
+    rows = session.exec(
+        select(ArticlePlace.article_id, Place.name)
+        .join(Place, Place.id == ArticlePlace.place_id)
+        .where(ArticlePlace.article_id.in_(article_ids))  # type: ignore[attr-defined]
+        .order_by(ArticlePlace.article_id, Place.name)
+    ).all()
+
+    places_map: dict[int, list[str]] = {}
+    for article_id, place_name in rows:
+        places_map.setdefault(article_id, []).append(place_name)
+    return places_map
+
+
+def _batch_load_average_ratings(
+    session: Session, article_ids: list[int]
+) -> dict[int, float | None]:
+    if not article_ids:
+        return {}
+
+    rows = session.exec(
+        select(Rating.article_id, func.avg(Rating.value))
+        .where(Rating.article_id.in_(article_ids))  # type: ignore[attr-defined]
+        .group_by(Rating.article_id)
+    ).all()
+
+    return {
+        article_id: round(float(avg_raw) / 2, 1) if avg_raw is not None else None
+        for article_id, avg_raw in rows
+    }
+
+
+def _batch_load_user_ratings(
+    session: Session, article_ids: list[int], user: User
+) -> dict[int, float]:
+    if not article_ids:
+        return {}
+
+    rows = session.exec(
+        select(Rating.article_id, Rating.value)
+        .where(Rating.article_id.in_(article_ids))  # type: ignore[attr-defined]
+        .where(Rating.user_id == user.id)
+    ).all()
+
+    return {
+        article_id: _rating_from_storage(int(value))
+        for article_id, value in rows
+    }
+
+
 def _build_article_follow_targets(
     session: Session, article_id: int, user: User | None
 ) -> list[FollowTargetPublic]:
@@ -410,30 +503,37 @@ def list_favorites(session: Session, user: User) -> list[FavoriteArticlePublic]:
         .order_by(Favorite.created_at.desc())
     ).all()
 
+    if not rows:
+        return []
+
+    article_ids = [
+        article.id for _, article in rows if article.id is not None
+    ]
+
+    authors_map = _batch_load_article_authors(session, article_ids)
+    categories_map = _batch_load_article_categories(session, article_ids)
+    places_map = _batch_load_article_places(session, article_ids)
+    average_ratings = _batch_load_average_ratings(session, article_ids)
+    user_ratings = _batch_load_user_ratings(session, article_ids, user)
+
     results: list[FavoriteArticlePublic] = []
     for favorite, article in rows:
-        author_rows = session.exec(
-            select(Author.name)
-            .join(ArticleAuthor, ArticleAuthor.author_id == Author.id)
-            .where(ArticleAuthor.article_id == article.id)
-            .order_by(Author.name)
-        ).all()
-        category_rows = session.exec(
-            select(Category.name)
-            .join(ArticleCategory, ArticleCategory.category_id == Category.id)
-            .where(ArticleCategory.article_id == article.id)
-            .order_by(Category.name)
-        ).all()
+        if article.id is None:
+            continue
 
+        article_id = article.id
         results.append(
             FavoriteArticlePublic(
-                article_id=article.id,
+                article_id=article_id,
                 title=article.title,
                 excerpt=article.excerpt,
                 image_url=article.image_url,
                 url=article.url,
-                authors=list(author_rows),
-                categories=list(category_rows),
+                authors=authors_map.get(article_id, []),
+                categories=categories_map.get(article_id, []),
+                places=places_map.get(article_id, []),
+                average_rating=average_ratings.get(article_id),
+                user_rating=user_ratings.get(article_id),
                 favorited_at=favorite.created_at,
             )
         )

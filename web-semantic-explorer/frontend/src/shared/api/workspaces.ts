@@ -16,6 +16,9 @@ export type FavoriteArticle = {
   url: string
   authors: string[]
   categories: string[]
+  places: string[]
+  average_rating: number | null
+  user_rating: number | null
   favorited_at: string
 }
 

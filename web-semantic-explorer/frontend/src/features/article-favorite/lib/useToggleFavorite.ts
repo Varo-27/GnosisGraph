@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { patchArticleDetailCache } from "@/entities/article/lib/patchArticleDetailCache"
 import { toggleArticleFavorite } from "@/entities/engagement"
+import { FAVORITES_QUERY_KEY } from "@/features/favorites"
 import useCustomToast from "@/shared/lib/useCustomToast"
 
 export function useToggleFavorite(articleId: number) {
@@ -14,6 +15,7 @@ export function useToggleFavorite(articleId: number) {
       patchArticleDetailCache(queryClient, articleId, {
         is_favorited: response.is_favorited,
       })
+      void queryClient.invalidateQueries({ queryKey: FAVORITES_QUERY_KEY })
       showSuccessToast(
         response.is_favorited
           ? "Artículo guardado en favoritos"

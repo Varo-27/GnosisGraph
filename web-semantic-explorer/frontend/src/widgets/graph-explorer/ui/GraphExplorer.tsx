@@ -2,6 +2,7 @@ import { type Edge, type NodeMouseHandler, type NodeTypes } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 import { useShallow } from "zustand/react/shallow"
 
 import {
@@ -13,6 +14,7 @@ import {
 } from "@/entities/graph"
 import { useGraphExpand } from "@/features/graph-expand"
 import { useGraphSearch, useMapSearchBootstrap } from "@/features/graph-search"
+import { injectFavoriteToGraph } from "@/features/favorites"
 import { useWorkspaceAutosave } from "@/features/workspace-sync"
 import { useTheme } from "@/shared/lib/theme/ThemeProvider"
 import { cn } from "@/shared/lib/utils"
@@ -219,11 +221,7 @@ export function GraphExplorer() {
 
       const payload = readPaletteDragData(event)
       const flow = reactFlowRef.current
-      if (
-        !payload ||
-        !flow ||
-        (payload.type !== "query" && payload.type !== "input")
-      ) {
+      if (!payload || !flow) {
         return
       }
 
@@ -231,6 +229,27 @@ export function GraphExplorer() {
         x: event.clientX,
         y: event.clientY,
       })
+
+      if (payload.type === "article") {
+        const position = centerPaletteDropPosition(dropPosition, "article")
+        const added = injectFavoriteToGraph(payload.favorite, position)
+
+        if (!added) {
+          toast.message("Ya está en el lienzo", {
+            description:
+              payload.favorite.title ??
+              `Artículo ${payload.favorite.article_id}`,
+          })
+          return
+        }
+
+        toast.success("Artículo añadido al lienzo")
+        return
+      }
+
+      if (payload.type !== "query" && payload.type !== "input") {
+        return
+      }
 
       const currentNodes = useGraphStore.getState().nodes
       const newNode = createQueryNodeAtPosition(

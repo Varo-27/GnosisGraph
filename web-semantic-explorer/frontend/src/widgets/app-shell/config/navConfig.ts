@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { Globe, Home, Users } from "lucide-react"
+import { Globe, Home, Star, Users } from "lucide-react"
 
 export type NavItem = {
   icon: LucideIcon
@@ -10,6 +10,7 @@ export type NavItem = {
 export const BASE_NAV_ITEMS: NavItem[] = [
   { icon: Home, title: "Buscador", path: "/" },
   { icon: Globe, title: "Mapa", path: "/map" },
+  { icon: Star, title: "Favoritos", path: "/favorites" },
 ]
 
 export const ADMIN_NAV_ITEM: NavItem = {

@@ -6,11 +6,12 @@ from sqlmodel import Session, select
 
 from app.models.article import Article
 from app.models.engagement import Comment, Favorite, Follow, Note, Rating
-from app.models.relations import ArticleAuthor, ArticleCategory
-from app.models.taxonomy import Author, Category
+from app.models.relations import ArticleAuthor, ArticleCategory, ArticlePlace
+from app.models.taxonomy import Author, Category, Place
 from app.services import engagement_service
 from app.schemas.engagement import FollowCreate
 from tests.utils.user import create_random_user
+from tests.utils.utils import random_lower_string
 
 
 @pytest.fixture
@@ -152,3 +153,80 @@ def test_note_and_follow(db: Session, sample_article: Article) -> None:
     cleared = engagement_service.upsert_article_note(db, article_id, user, "   ")
     assert cleared.content == ""
     assert db.exec(select(Note).where(Note.article_id == article_id)).first() is None
+
+
+def test_list_favorites_enriched_batch(db: Session) -> None:
+    user = create_random_user(db)
+    suffix = random_lower_string()
+
+    article_a = Article(
+        url=f"https://example.com/fav-a-{suffix}",
+        title="Favorito A",
+        excerpt="Resumen A",
+        date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        paywalled=False,
+    )
+    article_b = Article(
+        url=f"https://example.com/fav-b-{suffix}",
+        title="Favorito B",
+        excerpt="Resumen B",
+        date=datetime(2024, 2, 1, tzinfo=timezone.utc),
+        paywalled=False,
+    )
+    db.add(article_a)
+    db.add(article_b)
+    db.commit()
+    db.refresh(article_a)
+    db.refresh(article_b)
+    assert article_a.id is not None
+    assert article_b.id is not None
+
+    author = Author(
+        name=f"Zara Test {suffix}",
+        profile_url=f"https://example.com/zara-{suffix}",
+    )
+    category = Category(name=f"Economía {suffix}")
+    place = Place(name=f"España {suffix}", slug=f"espana-{suffix}")
+    db.add(author)
+    db.add(category)
+    db.add(place)
+    db.commit()
+    db.refresh(author)
+    db.refresh(category)
+    db.refresh(place)
+
+    db.add(ArticleAuthor(article_id=article_a.id, author_id=author.id))
+    db.add(ArticleCategory(article_id=article_a.id, category_id=category.id))
+    db.add(ArticlePlace(article_id=article_a.id, place_id=place.id))
+    db.add(Favorite(user_id=user.id, article_id=article_a.id))
+    db.add(Favorite(user_id=user.id, article_id=article_b.id))
+    db.add(
+        Rating(
+            user_id=user.id,
+            article_id=article_a.id,
+            value=8,
+            updated_at=datetime.now(timezone.utc),
+        )
+    )
+    db.commit()
+
+    favorites = engagement_service.list_favorites(db, user)
+
+    assert len(favorites) == 2
+    by_id = {favorite.article_id: favorite for favorite in favorites}
+
+    fav_a = by_id[article_a.id]
+    assert fav_a.title == "Favorito A"
+    assert fav_a.authors == [f"Zara Test {suffix}"]
+    assert fav_a.categories == [f"Economía {suffix}"]
+    assert fav_a.places == [f"España {suffix}"]
+    assert fav_a.average_rating == 4.0
+    assert fav_a.user_rating == 4.0
+
+    fav_b = by_id[article_b.id]
+    assert fav_b.title == "Favorito B"
+    assert fav_b.authors == []
+    assert fav_b.categories == []
+    assert fav_b.places == []
+    assert fav_b.average_rating is None
+    assert fav_b.user_rating is None

@@ -52,6 +52,9 @@ class FavoriteArticlePublic(BaseModel):
     url: str
     authors: list[str]
     categories: list[str]
+    places: list[str] = Field(default_factory=list)
+    average_rating: float | None = None
+    user_rating: float | None = None
     favorited_at: datetime
 
 
