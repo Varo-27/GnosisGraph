@@ -85,13 +85,13 @@ export function CommentsSection({ articleId, comments }: CommentsSectionProps) {
                 onChange={(event) => setCommentDraft(event.target.value)}
                 placeholder="Escribe un comentario…"
                 rows={3}
-                className="rounded-none border-2 border-foreground text-sm"
+                className="eom-brutal-border text-sm"
               />
               <Button
                 type="submit"
                 size="sm"
                 disabled={isCreating || !commentDraft.trim()}
-                className="rounded-none border-2 border-foreground uppercase tracking-widest text-[10px]"
+                className="eom-btn-micro"
               >
                 Publicar
               </Button>
@@ -163,7 +163,7 @@ export function CommentsSection({ articleId, comments }: CommentsSectionProps) {
                       value={editDraft}
                       onChange={(event) => setEditDraft(event.target.value)}
                       rows={2}
-                      className="rounded-none border-2 border-foreground text-sm"
+                      className="eom-brutal-border text-sm"
                     />
                     <div className="flex gap-2">
                       <Button

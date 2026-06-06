@@ -90,7 +90,8 @@
   }
 
   .map-sidebar-sheet [data-slot="dialog-close"] {
-    @apply top-3 right-3 rounded-none border-2 border-foreground bg-background opacity-100 shadow-[2px_2px_0_0_var(--color-foreground)] hover:bg-muted;
+    @apply inline-flex items-center justify-center rounded-none border-2 border-foreground bg-background text-muted-foreground opacity-100 transition-colors hover:bg-muted hover:text-foreground top-3 right-3;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
   }
 
   .map-sidebar-sheet__header {
@@ -110,7 +111,6 @@
   }
 
   .map-country-modal {
-    /* Mismo shell que graph-article-modal; flex para repartir altura sin scroll */
     @apply flex max-h-[min(92dvh,880px)] w-full max-w-[calc(100%-1rem)]! flex-col gap-0 overflow-hidden rounded-none border-2 border-foreground bg-background p-0 sm:max-w-[min(92vw,48rem)]! lg:max-w-[min(90vw,52rem)]!;
     box-shadow: 6px 6px 0 0 var(--color-foreground);
   }
@@ -144,7 +144,7 @@
   }
 
   .map-country-modal__close {
-    @apply inline-flex shrink-0 items-center justify-center rounded-none border-2 border-foreground bg-background p-1 text-muted-foreground opacity-100 shadow-[2px_2px_0_0_var(--color-foreground)] transition-colors hover:bg-muted hover:text-foreground sm:p-1.5;
+    @apply shrink-0 p-1 sm:p-1.5;
   }
 
   .map-country-modal__body {
@@ -180,7 +180,7 @@
   }
 
   .map-country-modal__article-card {
-    @apply flex h-full min-h-0 flex-col overflow-hidden rounded-none border-2 border-foreground/25 bg-background p-0 text-left transition-colors hover:border-foreground hover:bg-muted/30;
+    @apply h-full min-h-0;
   }
 
   .map-country-modal__article-card-thumb {

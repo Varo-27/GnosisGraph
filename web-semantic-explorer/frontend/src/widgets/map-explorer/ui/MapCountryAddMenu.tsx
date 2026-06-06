@@ -57,7 +57,7 @@ export function MapCountryAddMenu({
         sideOffset={6}
         className={cn(
           "graph-node__filter-menu",
-          "eom-brutal-border eom-shadow-xs eom-surface-flat",
+          "eom-surface-brutal",
           "w-44 rounded-none border-foreground bg-background p-2 shadow-none",
         )}
         onClick={(event) => event.stopPropagation()}

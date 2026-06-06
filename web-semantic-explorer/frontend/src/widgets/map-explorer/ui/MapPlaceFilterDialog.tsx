@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
+import { cn } from "@/shared/lib/utils"
 
 import { usePlacePreview } from "./hooks/usePlacePreview"
 import { MapPlaceArticleCard } from "./MapPlaceArticleCard"
@@ -62,7 +63,7 @@ export function MapPlaceFilterDialog({
             <button
               type="button"
               aria-label="Cerrar"
-              className="map-country-modal__close"
+              className={cn("eom-btn-icon map-country-modal__close")}
               onClick={() => onOpenChange(false)}
             >
               <X className="h-4 w-4" aria-hidden />

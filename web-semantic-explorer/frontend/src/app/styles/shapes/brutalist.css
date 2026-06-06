@@ -28,6 +28,59 @@
     @apply rounded-none;
   }
 
+  /** Popover / menú contextual (borde + sombra + fondo). */
+  .eom-surface-brutal {
+    @apply rounded-none border-2 border-foreground bg-background;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  /** Ítem arrastrable (paleta, favoritos en sidebar). */
+  .eom-draggable {
+    @apply cursor-grab select-none rounded-none border-2 border-foreground bg-background transition-opacity disabled:pointer-events-none disabled:opacity-50;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  .eom-draggable:active {
+    cursor: grabbing;
+  }
+
+  /** Botón cuadrado con icono (toolbar, cierre). */
+  .eom-btn-icon {
+    @apply inline-flex items-center justify-center rounded-none border-2 border-foreground bg-background text-muted-foreground opacity-100 transition-colors hover:bg-muted hover:text-foreground;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  /** Cierre en esquina de modal / sheet (posición con top/right en el consumidor). */
+  .eom-dialog-close {
+    @apply inline-flex items-center justify-center rounded-none border-2 border-foreground bg-background text-muted-foreground opacity-100 transition-colors hover:bg-muted hover:text-foreground;
+    box-shadow: 2px 2px 0 0 var(--color-foreground);
+  }
+
+  /** Tarjeta clickeable de artículo o lugar. */
+  .eom-tile-card {
+    @apply flex flex-col overflow-hidden rounded-none border-2 border-foreground/25 bg-background p-0 text-left transition-colors hover:border-foreground hover:bg-muted/30;
+  }
+
+  /** Input / select / botón de workspace o filtros. */
+  .eom-control {
+    @apply h-9 rounded-none border-2 border-foreground font-mono text-xs uppercase tracking-wider;
+  }
+
+  .eom-control-soft {
+    @apply h-9 rounded-none border-foreground/40 font-mono text-xs;
+  }
+
+  /** Botón compacto (comentarios, acciones secundarias). */
+  .eom-btn-micro {
+    @apply rounded-none border-2 border-foreground font-mono uppercase tracking-widest text-[10px];
+  }
+
+  /** Shell de modal con sombra dura (artículo, mapa). */
+  .eom-modal-shell {
+    @apply flex flex-col gap-0 overflow-hidden rounded-none border-2 border-foreground bg-background p-0;
+    box-shadow: 6px 6px 0 0 var(--color-foreground);
+  }
+
   .eom-lift-active {
     @apply -translate-x-0.5 -translate-y-0.5 border-foreground bg-background text-foreground;
     box-shadow: 3px 3px 0 0 var(--color-foreground);

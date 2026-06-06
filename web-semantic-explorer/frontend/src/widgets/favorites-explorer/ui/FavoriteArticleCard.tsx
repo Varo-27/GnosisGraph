@@ -1,5 +1,6 @@
 import type { FavoriteArticle } from "@/shared/api/workspaces"
 import { StarRating } from "@/features/article-rating"
+import { cn } from "@/shared/lib/utils"
 
 import { FavoriteArticleAddMenu } from "./FavoriteArticleAddMenu"
 
@@ -26,7 +27,7 @@ export function FavoriteArticleCard({
     <article className="favorites-card">
       <button
         type="button"
-        className="favorites-card__open"
+        className={cn("eom-tile-card favorites-card__open")}
         onClick={() => onOpen(favorite)}
       >
         {favorite.image_url ? (

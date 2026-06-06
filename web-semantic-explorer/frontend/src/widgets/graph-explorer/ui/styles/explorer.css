@@ -27,15 +27,6 @@
     @apply mt-1 text-xs leading-relaxed text-muted-foreground;
   }
 
-  .graph-palette__draggable {
-    cursor: grab;
-    user-select: none;
-  }
-
-  .graph-palette__draggable:active {
-    cursor: grabbing;
-  }
-
   .graph-explorer__canvas--drag-over {
     @apply outline-2 outline-dashed outline-primary/40 -outline-offset-2;
   }
@@ -61,6 +52,6 @@
   }
 
   .graph-workspace__btn {
-    @apply rounded-none border-2 border-foreground font-mono text-xs uppercase tracking-wider;
+    @apply h-9 rounded-none border-2 border-foreground font-mono text-xs uppercase tracking-wider;
   }
 }

@@ -26,7 +26,7 @@ type FavoritesToolbarProps = {
 }
 
 const favoriteItemClass =
-  "graph-palette__draggable flex h-auto w-full items-start justify-start whitespace-normal rounded-none border-2 border-foreground bg-background px-2 py-2 text-left text-[11px] shadow-[2px_2px_0_0_var(--color-foreground)] transition-opacity disabled:pointer-events-none disabled:opacity-50"
+  "eom-draggable flex h-auto w-full items-start justify-start whitespace-normal px-2 py-2 text-left text-[11px]"
 
 function toPaletteArticleDragData(
   favorite: FavoriteArticle,

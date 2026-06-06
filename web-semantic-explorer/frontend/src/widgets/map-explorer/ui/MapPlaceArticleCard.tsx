@@ -1,5 +1,6 @@
 import type { PlaceArticlePreview } from "@/shared/api/stats"
 import { StarRating } from "@/features/article-rating"
+import { cn } from "@/shared/lib/utils"
 
 type MapPlaceArticleCardProps = {
   article: PlaceArticlePreview
@@ -16,7 +17,7 @@ export function MapPlaceArticleCard({
     <button
       type="button"
       onClick={() => onSelect(article)}
-      className="map-country-modal__article-card"
+      className={cn("eom-tile-card map-country-modal__article-card")}
     >
       {article.image_url ? (
         <img

@@ -22,7 +22,7 @@
 
   .favorites-filters {
     @apply flex flex-col gap-3 border-2 border-foreground bg-background p-3;
-    box-shadow: 3px 3px 0 0 var(--color-foreground);
+    box-shadow: 4px 4px 0 0 var(--color-foreground);
   }
 
   .favorites-filters__row {
@@ -58,7 +58,7 @@
   }
 
   .favorites-card__open {
-    @apply flex h-full min-h-[11rem] w-full flex-col overflow-hidden rounded-none border-2 border-foreground/25 bg-background p-0 text-left transition-colors hover:border-foreground hover:bg-muted/30;
+    @apply h-full min-h-[11rem] w-full;
   }
 
   .favorites-card__thumb {

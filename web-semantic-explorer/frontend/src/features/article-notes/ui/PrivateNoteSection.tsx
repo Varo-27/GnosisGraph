@@ -71,14 +71,14 @@ export function PrivateNoteSection({
             onChange={(event) => setNoteDraft(event.target.value)}
             placeholder="Apuntes de investigación, hipótesis, enlaces…"
             rows={4}
-            className="rounded-none border-2 border-foreground text-sm"
+            className="eom-brutal-border text-sm"
           />
           <div className="flex items-center gap-3">
             <Button
               type="submit"
               size="sm"
               disabled={isPending}
-              className="rounded-none border-2 border-foreground uppercase tracking-widest text-[10px]"
+              className="eom-btn-micro"
             >
               Guardar nota
             </Button>

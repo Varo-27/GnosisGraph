@@ -9,7 +9,7 @@ type GraphNodePaletteProps = {
 }
 
 const paletteItemClass =
-  "graph-palette__draggable flex items-center gap-2 rounded-none border-2 border-foreground font-mono text-xs uppercase tracking-wider shadow-[2px_2px_0_0_var(--color-foreground)] transition-opacity disabled:pointer-events-none disabled:opacity-50"
+  "eom-draggable flex items-center gap-2 font-mono text-xs uppercase tracking-wider"
 
 export function GraphNodePalette({ isLoading }: GraphNodePaletteProps) {
   const disabled = isLoading === true

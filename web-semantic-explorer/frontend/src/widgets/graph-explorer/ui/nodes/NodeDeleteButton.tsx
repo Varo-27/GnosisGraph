@@ -54,7 +54,7 @@ export function NodeDeleteButton({
         side="top"
         className={cn(
           "graph-node__delete-menu",
-          "eom-brutal-border eom-shadow-xs eom-surface-flat",
+          "eom-surface-brutal",
           "rounded-none border-foreground bg-background p-2 shadow-none",
         )}
         onClick={stopGraphPointer}
