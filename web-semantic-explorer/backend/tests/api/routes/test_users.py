@@ -33,6 +33,8 @@ def test_get_users_normal_user_me(
     assert current_user["is_active"] is True
     assert current_user["is_superuser"] is False
     assert current_user["email"] == settings.EMAIL_TEST_USER
+    assert current_user["color_theme"] == "eom"
+    assert current_user["appearance_mode"] == "system"
 
 
 def test_create_user_new_email(
@@ -220,6 +222,49 @@ def test_update_user_me(
     assert user_db
     assert user_db.email == email
     assert user_db.full_name == full_name
+
+
+def test_update_user_me_appearance_preferences(
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+) -> None:
+    data = {"color_theme": "eom", "appearance_mode": "dark"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    updated_user = r.json()
+    assert updated_user["color_theme"] == "eom"
+    assert updated_user["appearance_mode"] == "dark"
+
+    user_query = select(User).where(User.email == settings.EMAIL_TEST_USER)
+    user_db = db.exec(user_query).first()
+    assert user_db
+    assert user_db.color_theme == "eom"
+    assert user_db.appearance_mode == "dark"
+
+
+def test_update_user_me_invalid_color_theme(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json={"color_theme": "invalid-theme"},
+    )
+    assert r.status_code == 422
+
+
+def test_update_user_me_invalid_appearance_mode(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json={"appearance_mode": "neon"},
+    )
+    assert r.status_code == 422
 
 
 def test_update_password_me(

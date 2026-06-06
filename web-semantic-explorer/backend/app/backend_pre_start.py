@@ -4,6 +4,7 @@ from sqlalchemy import Engine, text
 from sqlmodel import Session, SQLModel, func, select
 from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
 
+from app.core.appearance import DEFAULT_APPEARANCE_MODE, DEFAULT_COLOR_THEME
 from app import models  # noqa: F401 — registra modelos antes de create_all
 from app.core.db import engine
 from app.models.engagement import Rating
@@ -43,6 +44,36 @@ def _ensure_rating_value_constraint(session: Session) -> None:
     )
 
 
+def _ensure_user_appearance_columns(session: Session) -> None:
+    """Añade preferencias de apariencia a usuarios existentes."""
+    conn = session.connection()
+    conn.execute(
+        text(
+            f'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS color_theme '
+            f"VARCHAR(32) NOT NULL DEFAULT '{DEFAULT_COLOR_THEME}'"
+        )
+    )
+    conn.execute(
+        text(
+            f'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS appearance_mode '
+            f"VARCHAR(16) NOT NULL DEFAULT '{DEFAULT_APPEARANCE_MODE}'"
+        )
+    )
+    conn.execute(
+        text(
+            f"UPDATE \"user\" SET color_theme = '{DEFAULT_COLOR_THEME}' "
+            f"WHERE color_theme IS NULL OR color_theme = ''"
+        )
+    )
+    conn.execute(
+        text(
+            f"UPDATE \"user\" SET appearance_mode = '{DEFAULT_APPEARANCE_MODE}' "
+            f"WHERE appearance_mode IS NULL OR appearance_mode = ''"
+        )
+    )
+    session.commit()
+
+
 def migrate_ratings_to_half_units(session: Session) -> None:
     _ensure_rating_value_constraint(session)
 
@@ -66,6 +97,7 @@ def main() -> None:
     SQLModel.metadata.create_all(engine)
     logger.info("Tables created or verified")
     with Session(engine) as session:
+        _ensure_user_appearance_columns(session)
         migrate_ratings_to_half_units(session)
 
 
