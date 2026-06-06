@@ -1,10 +1,21 @@
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
 import type { LucideIcon } from "lucide-react"
-import { LogIn, LogOut, Monitor, Moon, Settings, Sun, User, UserPlus } from "lucide-react"
-
-import { Logo } from "@/shared/ui/logo/Logo"
-import { getNavItems, type NavItem } from "../config/navConfig"
+import {
+  LogIn,
+  LogOut,
+  Monitor,
+  Moon,
+  Settings,
+  Sun,
+  User,
+  UserPlus,
+} from "lucide-react"
+import useAuth from "@/features/auth"
+import { useUpdateAppearancePreferences } from "@/features/appearance"
+import { isLoggedIn } from "@/shared/auth"
+import { getInitials } from "@/shared/lib/string"
 import { type Theme, useTheme } from "@/shared/lib/theme/ThemeProvider"
+import { cn } from "@/shared/lib/utils"
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar"
 import {
   DropdownMenu,
@@ -14,9 +25,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
-import useAuth from "@/features/auth"
-import { cn } from "@/shared/lib/utils"
-import { getInitials } from "@/shared/lib/string"
+import { Logo } from "@/shared/ui/logo/Logo"
+import { getNavItems, type NavItem } from "../config/navConfig"
 
 const THEME_ICONS: Record<Theme, LucideIcon> = {
   system: Monitor,
@@ -46,7 +56,16 @@ function NavLink({ item }: { item: NavItem }) {
 
 function NavAppearance() {
   const { setTheme, theme } = useTheme()
+  const { updateAppearanceMode } = useUpdateAppearancePreferences()
   const Icon = THEME_ICONS[theme]
+
+  const handleModeChange = (mode: Theme) => {
+    if (isLoggedIn()) {
+      updateAppearanceMode(mode)
+      return
+    }
+    setTheme(mode)
+  }
 
   return (
     <DropdownMenu modal={false}>
@@ -61,7 +80,7 @@ function NavAppearance() {
         <DropdownMenuItem
           data-testid="light-mode"
           className="eom-dropdown-item"
-          onClick={() => setTheme("light")}
+          onClick={() => handleModeChange("light")}
         >
           <Sun className="size-4" />
           Claro
@@ -69,14 +88,14 @@ function NavAppearance() {
         <DropdownMenuItem
           data-testid="dark-mode"
           className="eom-dropdown-item"
-          onClick={() => setTheme("dark")}
+          onClick={() => handleModeChange("dark")}
         >
           <Moon className="size-4" />
           Oscuro
         </DropdownMenuItem>
         <DropdownMenuItem
           className="eom-dropdown-item"
-          onClick={() => setTheme("system")}
+          onClick={() => handleModeChange("system")}
         >
           <Monitor className="size-4" />
           Sistema
@@ -109,10 +128,7 @@ function NavGuestAccount() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="rounded-none">
-          <RouterLink
-            to="/login"
-            className="text-xs uppercase tracking-widest"
-          >
+          <RouterLink to="/login" className="text-xs uppercase tracking-widest">
             <LogIn className="size-4" />
             Iniciar sesión
           </RouterLink>

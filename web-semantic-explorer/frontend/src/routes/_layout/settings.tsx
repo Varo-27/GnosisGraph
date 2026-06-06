@@ -1,13 +1,18 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
-
-import { ChangePassword, DeleteAccount, UserInformation } from "@/pages/settings"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import useAuth from "@/features/auth"
+import {
+  AppearanceSettings,
+  ChangePassword,
+  DeleteAccount,
+  UserInformation,
+} from "@/pages/settings"
 import { isLoggedIn } from "@/shared/auth"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 
 const tabsConfig = [
   { value: "my-profile", title: "Mi perfil", component: UserInformation },
   { value: "password", title: "Contraseña", component: ChangePassword },
+  { value: "appearance", title: "Apariencia", component: AppearanceSettings },
   { value: "danger-zone", title: "Zona de peligro", component: DeleteAccount },
 ]
 
@@ -30,7 +35,7 @@ export const Route = createFileRoute("/_layout/settings")({
 function UserSettings() {
   const { user: currentUser } = useAuth()
   const finalTabs = currentUser?.is_superuser
-    ? tabsConfig.slice(0, 3)
+    ? tabsConfig.filter((tab) => tab.value !== "danger-zone")
     : tabsConfig
 
   if (!currentUser) {

@@ -8,9 +8,10 @@ import { createRouter, RouterProvider } from "@tanstack/react-router"
 
 import { ApiError } from "@/client"
 import { configureOpenAPI } from "@/client/setup"
+import { useThemePreferencesSync } from "@/features/appearance"
+import { routeTree } from "@/routeTree.gen"
 import { ThemeProvider } from "@/shared/lib/theme/ThemeProvider"
 import { Toaster } from "@/shared/ui/sonner"
-import { routeTree } from "@/routeTree.gen"
 
 configureOpenAPI(import.meta.env.VITE_API_URL)
 
@@ -38,10 +39,20 @@ declare module "@tanstack/react-router" {
   }
 }
 
+function ThemePreferencesSync() {
+  useThemePreferencesSync()
+  return null
+}
+
 export function AppProviders() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider
+      defaultTheme="dark"
+      defaultColorTheme="eom"
+      storageKey="vite-ui-theme"
+    >
       <QueryClientProvider client={queryClient}>
+        <ThemePreferencesSync />
         <RouterProvider router={router} />
         <Toaster richColors closeButton />
       </QueryClientProvider>
