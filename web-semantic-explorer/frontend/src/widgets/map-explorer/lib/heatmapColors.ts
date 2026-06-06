@@ -234,13 +234,50 @@ export const EOM_GREEN = {
   950: "#203705",
 } as const
 
+/** Escala rosa–violeta para el tema Bloom. */
+export const BLOOM_HEAT = {
+  50: "#fdf2f8",
+  100: "#fce7f3",
+  200: "#f5d0fe",
+  300: "#e9d5ff",
+  400: "#d8b4fe",
+  500: "#c084fc",
+  600: "#a855f7",
+  700: "#9333ea",
+  800: "#7e22ce",
+  900: "#6b21a8",
+  950: "#581c87",
+} as const
+
+export type HeatmapPalette = typeof EOM_GREEN | typeof BLOOM_HEAT
+
+export type HeatmapPaletteKey = keyof typeof EOM_GREEN
+
+export function getActiveColorThemeId(): "bloom" | "eom" {
+  if (typeof document === "undefined") return "eom"
+  return document.documentElement.dataset.theme === "bloom" ? "bloom" : "eom"
+}
+
+export function getActiveHeatmapPalette(): typeof EOM_GREEN | typeof BLOOM_HEAT {
+  return getActiveColorThemeId() === "bloom" ? BLOOM_HEAT : EOM_GREEN
+}
+
+export function getHeatmapPaletteLabel(): string {
+  return getActiveColorThemeId() === "bloom" ? "Bloom" : "EOM"
+}
+
 /** @deprecated Usa EOM_GREEN */
 export const HARLEQUIN = EOM_GREEN
 
-/** Mar y fondo del contenedor (gris del tema). */
+/** Mar y fondo del contenedor (token --map-ocean del tema activo). */
 export const HEATMAP_SEA_FILL = "var(--map-ocean)"
 
-/** Países sin artículos en EOM: siempre el verde más pálido de la escala. */
+/** Países sin artículos: tono más pálido de la escala del tema activo. */
+export function getHeatmapEmptyCountryFill(): string {
+  return getActiveHeatmapPalette()[50]
+}
+
+/** @deprecated Usa getHeatmapEmptyCountryFill() */
 export const HEATMAP_EMPTY_COUNTRY_FILL = EOM_GREEN[50]
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -252,15 +289,20 @@ function hexToRgb(hex: string): [number, number, number] {
   ]
 }
 
-const EOM_GREEN_SCALE_KEYS = [
+const HEATMAP_SCALE_KEYS = [
   100, 200, 300, 400, 500, 600, 700, 800, 900, 950,
 ] as const
 
-const HEATMAP_COLOR_STOPS: { at: number; rgb: [number, number, number] }[] =
-  EOM_GREEN_SCALE_KEYS.map((key, index) => ({
-    at: (index + 1) / EOM_GREEN_SCALE_KEYS.length,
-    rgb: hexToRgb(EOM_GREEN[key]),
+function buildHeatmapColorStops(palette: typeof EOM_GREEN | typeof BLOOM_HEAT) {
+  return HEATMAP_SCALE_KEYS.map((key, index) => ({
+    at: (index + 1) / HEATMAP_SCALE_KEYS.length,
+    rgb: hexToRgb(palette[key]),
   }))
+}
+
+function getHeatmapColorStops() {
+  return buildHeatmapColorStops(getActiveHeatmapPalette())
+}
 
 /** Más contraste en bajos, poco entre los máximos. */
 export function countToColorIntensity(count: number, maxCount: number) {
@@ -270,19 +312,20 @@ export function countToColorIntensity(count: number, maxCount: number) {
 
 function colorFromIntensity(intensity: number) {
   const t = Math.max(0, Math.min(1, intensity))
+  const stops = getHeatmapColorStops()
 
-  for (let i = 0; i < HEATMAP_COLOR_STOPS.length; i++) {
-    const upper = HEATMAP_COLOR_STOPS[i]
+  for (let i = 0; i < stops.length; i++) {
+    const upper = stops[i]
     if (t <= upper.at) {
       if (i === 0) return mixRgb(upper.rgb, upper.rgb, 0)
-      const lower = HEATMAP_COLOR_STOPS[i - 1]
+      const lower = stops[i - 1]
       const span = upper.at - lower.at
       const local = span > 0 ? (t - lower.at) / span : 0
       return mixRgb(lower.rgb, upper.rgb, local)
     }
   }
 
-  const last = HEATMAP_COLOR_STOPS[HEATMAP_COLOR_STOPS.length - 1]
+  const last = stops[stops.length - 1]
   return mixRgb(last.rgb, last.rgb, 0)
 }
 
@@ -334,7 +377,7 @@ export function getCountryBaseFill(
   if (!isoCode) return HEATMAP_SEA_FILL
 
   const count = counts.get(isoCode) ?? 0
-  if (count === 0) return HEATMAP_EMPTY_COUNTRY_FILL
+  if (count === 0) return getHeatmapEmptyCountryFill()
 
   const intensity = countToColorIntensity(count, maxCount)
   return colorFromIntensity(intensity)
@@ -358,9 +401,19 @@ export function isCountryEmphasized(
 
 /** Color EOM para un conteo (lista lateral, leyenda). */
 export function getHeatmapColorForCount(count: number, maxCount: number) {
-  if (count <= 0 || maxCount <= 0) return HEATMAP_EMPTY_COUNTRY_FILL
+  if (count <= 0 || maxCount <= 0) return getHeatmapEmptyCountryFill()
   return colorFromIntensity(countToColorIntensity(count, maxCount))
 }
+
+export const HEATMAP_COVERAGE_LEGEND: {
+  key: HeatmapPaletteKey
+  label: string
+}[] = [
+  { key: 100, label: "Muy bajo" },
+  { key: 300, label: "Bajo" },
+  { key: 700, label: "Alto" },
+  { key: 950, label: "Máximo" },
+]
 
 export type EomGreenLegendKey = keyof typeof EOM_GREEN | "ocean" | "empty"
 
@@ -377,16 +430,8 @@ export const EOM_GREEN_LEGEND_STEPS: {
   { key: 950, label: "Máximo" },
 ]
 
-/** Leyenda reducida del panel: intensidad de cobertura (4 niveles). */
-export const EOM_GREEN_COVERAGE_LEGEND: {
-  key: keyof typeof EOM_GREEN
-  label: string
-}[] = [
-  { key: 100, label: "Muy bajo" },
-  { key: 300, label: "Bajo" },
-  { key: 700, label: "Alto" },
-  { key: 950, label: "Máximo" },
-]
+/** @deprecated Usa HEATMAP_COVERAGE_LEGEND */
+export const EOM_GREEN_COVERAGE_LEGEND = HEATMAP_COVERAGE_LEGEND
 
 /** @deprecated Usa EOM_GREEN_LEGEND_STEPS */
 export const HARLEQUIN_LEGEND_STEPS = EOM_GREEN_LEGEND_STEPS

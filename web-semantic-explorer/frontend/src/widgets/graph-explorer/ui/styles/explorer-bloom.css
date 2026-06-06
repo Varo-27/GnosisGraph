@@ -1,0 +1,68 @@
+/**
+ * Barra lateral del explorador — variante Bloom (investigaciones, favoritos, layout).
+ */
+@layer components {
+  [data-theme="bloom"] .graph-explorer__sidebar {
+    @apply border-t border-border/60 bg-background/95 lg:border-t-0 lg:border-l;
+  }
+
+  [data-theme="bloom"] .graph-explorer__canvas {
+    @apply border-b border-border/60 lg:border-r lg:border-b-0;
+  }
+
+  [data-theme="bloom"] .graph-explorer__canvas--drag-over {
+    @apply rounded-xl outline-primary/30;
+  }
+
+  [data-theme="bloom"] .graph-workspace,
+  [data-theme="bloom"] .graph-favorites {
+    @apply border-b border-border/60 bg-background;
+  }
+
+  [data-theme="bloom"] .graph-workspace__select,
+  [data-theme="bloom"] .graph-workspace__input,
+  [data-theme="bloom"] .graph-workspace__btn {
+    @apply w-full rounded-lg border border-border/70 font-sans text-sm normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-workspace__btn {
+    @apply border-primary/25;
+  }
+
+  [data-theme="bloom"] .graph-workspace .eom-surface-flat {
+    @apply rounded-lg border border-border/60 bg-card;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-favorites input,
+  [data-theme="bloom"] .graph-favorites .graph-favorites__list .eom-draggable {
+    @apply rounded-xl;
+  }
+
+  [data-theme="bloom"] .graph-favorites .graph-favorites__list .eom-draggable span {
+    @apply font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-favorites a {
+    @apply font-sans text-xs normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-palette .eom-draggable {
+    @apply rounded-xl font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] [data-slot="select-trigger"] {
+    @apply rounded-lg border-border/70;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] [data-slot="select-content"] {
+    @apply overflow-hidden rounded-xl border border-border/70;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] [data-slot="select-item"] {
+    @apply rounded-lg;
+  }
+}

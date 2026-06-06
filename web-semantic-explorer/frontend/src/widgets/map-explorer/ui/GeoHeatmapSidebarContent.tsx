@@ -5,36 +5,50 @@ import type { HeatmapEntry } from "@/shared/api/stats"
 import { cn } from "@/shared/lib/utils"
 import { Badge } from "@/shared/ui/badge"
 import {
-  EOM_GREEN,
-  EOM_GREEN_COVERAGE_LEGEND,
+  getActiveHeatmapPalette,
+  getHeatmapPaletteLabel,
+  HEATMAP_COVERAGE_LEGEND,
   getHeatmapColorForCount,
 } from "@/widgets/map-explorer/lib/heatmapColors"
+import { useTheme } from "@/shared/lib/theme/ThemeProvider"
 
 import { MapCountryAddMenu } from "./MapCountryAddMenu"
 import type { HeatmapPlaceGroups } from "./types"
 
 const GeoHeatmapSidebarLegend = memo(function GeoHeatmapSidebarLegend() {
+  const { colorTheme } = useTheme()
+  const palette = getActiveHeatmapPalette()
+  const paletteLabel = getHeatmapPaletteLabel()
+  const hoverNote =
+    colorTheme === "bloom"
+      ? "Lila claro: hover en mapa o lista."
+      : "Ámbar claro: hover en mapa o lista."
+  const selectedNote =
+    colorTheme === "bloom"
+      ? "Violeta: país o macro-región seleccionada."
+      : "Dorado: país o macro-región seleccionada."
+
   return (
     <section className="map-sidebar__legend" aria-label="Leyenda del mapa">
       <div className="map-sidebar__legend-heading">
         <Globe2 className="h-4 w-4 shrink-0" aria-hidden />
-        Leyenda · EOM
+        Leyenda · {paletteLabel}
       </div>
 
       <div
         className="map-sidebar__legend-gradient"
         style={{
-          background: `linear-gradient(90deg, ${EOM_GREEN[100]} 0%, ${EOM_GREEN[300]} 33%, ${EOM_GREEN[700]} 66%, ${EOM_GREEN[950]} 100%)`,
+          background: `linear-gradient(90deg, ${palette[100]} 0%, ${palette[300]} 33%, ${palette[700]} 66%, ${palette[950]} 100%)`,
         }}
         aria-hidden
       />
 
       <ul className="map-sidebar__legend-steps map-sidebar__legend-steps--four">
-        {EOM_GREEN_COVERAGE_LEGEND.map((step) => (
+        {HEATMAP_COVERAGE_LEGEND.map((step) => (
           <li key={String(step.key)} className="map-sidebar__legend-step">
             <span
               className="map-sidebar__legend-swatch"
-              style={{ backgroundColor: EOM_GREEN[step.key] }}
+              style={{ backgroundColor: palette[step.key] }}
               aria-hidden
             />
             <span className="map-sidebar__legend-step-label">{step.label}</span>
@@ -43,8 +57,8 @@ const GeoHeatmapSidebarLegend = memo(function GeoHeatmapSidebarLegend() {
       </ul>
 
       <ul className="map-sidebar__legend-notes">
-        <li>Ámbar claro: hover en mapa o lista.</li>
-        <li>Dorado: país o macro-región seleccionada.</li>
+        <li>{hoverNote}</li>
+        <li>{selectedNote}</li>
         <li>Botón + junto al conteo para añadir al explorador.</li>
       </ul>
     </section>
@@ -78,9 +92,20 @@ const GeoHeatmapCountryList = memo(function GeoHeatmapCountryList({
   onAddCountryToNew,
   onCountryListHover,
 }: GeoHeatmapCountryListProps) {
+  const { colorTheme } = useTheme()
   const sortedPlaces = useMemo(
     () => [...countryPlaces].sort((a, b) => b.article_count - a.article_count),
     [countryPlaces],
+  )
+  const swatchColors = useMemo(
+    () =>
+      new Map(
+        sortedPlaces.map((entry) => [
+          entry.place_id,
+          getHeatmapColorForCount(entry.article_count, maxCount),
+        ]),
+      ),
+    [sortedPlaces, maxCount, colorTheme],
   )
 
   return (
@@ -90,10 +115,7 @@ const GeoHeatmapCountryList = memo(function GeoHeatmapCountryList({
       </p>
       <ul className="space-y-0.5">
         {sortedPlaces.map((entry) => {
-          const swatchColor = getHeatmapColorForCount(
-            entry.article_count,
-            maxCount,
-          )
+          const swatchColor = swatchColors.get(entry.place_id)!
           const isoCode =
             entry.map_country_codes?.[0] ?? entry.country_code ?? null
           const isHovered = Boolean(isoCode && hoveredCode === isoCode)

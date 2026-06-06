@@ -1,7 +1,10 @@
 @layer base {
-  *,
-  *::before,
-  *::after {
+  [data-theme="eom"] *,
+  [data-theme="eom"] *::before,
+  [data-theme="eom"] *::after,
+  :root:not([data-theme]) *,
+  :root:not([data-theme]) *::before,
+  :root:not([data-theme]) *::after {
     border-radius: 0;
   }
 

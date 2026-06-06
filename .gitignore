@@ -64,3 +64,4 @@ desktop.ini
 *.swp
 *.swo
 backups/
+db-dumps/

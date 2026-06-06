@@ -1,0 +1,108 @@
+/**
+ * Modal de artículo — variante Bloom (redondeado, sombras suaves).
+ */
+@layer components {
+  [data-theme="bloom"] .graph-article-modal {
+    @apply overflow-hidden rounded-2xl border border-border/70;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .graph-article-modal [data-slot="dialog-close"] {
+    @apply rounded-full border border-border/70 bg-card;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__hero {
+    @apply border-b border-border/60;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__hero-media {
+    @apply rounded-none;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__header {
+    @apply border-b border-border/50;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__kicker,
+  [data-theme="bloom"] .graph-article-modal__taxonomy-label,
+  [data-theme="bloom"] .graph-article-modal__section-label,
+  [data-theme="bloom"] .graph-article-modal__panel-label,
+  [data-theme="bloom"] .graph-article-modal__comments-toggle {
+    @apply font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__meta-sep {
+    @apply rounded-full;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__original-link {
+    @apply rounded-xl border border-primary/30 bg-card font-sans normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__original-link:hover {
+    transform: none;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__taxonomy {
+    @apply border-t border-border/50;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__taxon-chip {
+    @apply rounded-full border border-border/60 bg-card;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__taxon-chip--following {
+    @apply border-primary/35 bg-primary/10;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__badge {
+    @apply rounded-full border-border/60 font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__panel {
+    @apply rounded-2xl border border-border/60 bg-muted/30;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__favorite {
+    @apply rounded-full border border-border/70 font-sans normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__comments {
+    @apply overflow-hidden rounded-2xl border border-border/60;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__comments-toggle {
+    @apply bg-muted/40;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__comments-body {
+    @apply border-t border-border/50;
+  }
+
+  [data-theme="bloom"] .graph-article-modal__comment {
+    @apply rounded-r-lg border-l-2 border-primary/30 pl-3.5;
+  }
+
+  [data-theme="bloom"] .graph-article-modal .eom-brutal-border,
+  [data-theme="bloom"] .graph-article-modal textarea,
+  [data-theme="bloom"] .graph-article-modal .rounded-none {
+    @apply rounded-xl border border-border/70;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal .eom-btn-micro,
+  [data-theme="bloom"] .graph-article-modal button[class*="uppercase"] {
+    @apply rounded-full font-sans normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-article-modal__rating-row .font-mono {
+    @apply font-sans;
+  }
+}

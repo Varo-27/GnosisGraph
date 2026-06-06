@@ -7,6 +7,11 @@ export const COLOR_THEMES = [
     label: "El Orden Mundial",
     description: "Verde EOM, tipografía Expose, estilo brutalista.",
   },
+  {
+    id: "bloom",
+    label: "Bloom",
+    description: "Rosa y violeta, bordes redondeados y sombras suaves.",
+  },
 ] as const
 
 export type ColorThemeId = (typeof COLOR_THEMES)[number]["id"] | (string & {})

@@ -276,4 +276,16 @@
       transparent 50%
     );
   }
+
+  .graph-search-node {
+    @apply relative flex w-max max-w-full items-center gap-4 rounded-none border-2 border-primary bg-foreground px-8 py-5 text-background;
+  }
+
+  .graph-search-node__icon {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-none bg-primary/20;
+  }
+
+  .graph-search-node__label {
+    @apply whitespace-nowrap font-mono text-md uppercase tracking-widest text-primary/80;
+  }
 }

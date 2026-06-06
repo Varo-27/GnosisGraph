@@ -14,5 +14,7 @@
 @import "./base/global.css";
 @import "./base/motion.css";
 @import "./shapes/brutalist.css";
+@import "./shapes/bloom.css";
 @import "./typography/eom.css";
+@import "./typography/bloom.css";
 @import "./widgets/index.css";

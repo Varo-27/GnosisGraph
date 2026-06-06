@@ -5,3 +5,4 @@
 @custom-variant dark (&:is(.dark *));
 
 @import "./app/styles/globals.css";
+@import "./app/styles/themes/bloom/overrides.css";

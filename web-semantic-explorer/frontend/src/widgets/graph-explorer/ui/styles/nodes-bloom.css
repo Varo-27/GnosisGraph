@@ -1,0 +1,139 @@
+/**
+ * Nodos del grafo — variante Bloom (redondeado, sombras suaves).
+ */
+@layer components {
+  [data-theme="bloom"] .graph-node::before {
+    display: none;
+  }
+
+  [data-theme="bloom"] .graph-node__surface {
+    @apply overflow-hidden rounded-2xl border border-border/70 bg-card;
+    box-shadow: var(--shadow-brutal-sm);
+    transition:
+      box-shadow var(--graph-node-duration, 300ms) var(--graph-node-ease, ease),
+      transform var(--graph-node-duration, 300ms) var(--graph-node-ease, ease);
+  }
+
+  [data-theme="bloom"] .graph-node:hover .graph-node__surface,
+  [data-theme="bloom"] .graph-node.graph-node-active .graph-node__surface {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .graph-search-node {
+    transition:
+      transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      box-shadow 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  [data-theme="bloom"] .graph-search-node:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .graph-node--query .graph-node__surface,
+  [data-theme="bloom"] .graph-node--input .graph-node__surface {
+    @apply border-primary/35;
+  }
+
+  [data-theme="bloom"] .graph-node__header {
+    @apply border-b border-border/60 bg-muted/80;
+  }
+
+  [data-theme="bloom"] .graph-node__filter-header {
+    @apply border-b border-border/50;
+  }
+
+  [data-theme="bloom"] .graph-node__icon-badge {
+    @apply rounded-xl;
+  }
+
+  [data-theme="bloom"] .graph-node__image {
+    @apply border-b border-border/60;
+  }
+
+  [data-theme="bloom"] .graph-node__footer {
+    @apply border-t border-border/60 bg-muted/40;
+  }
+
+  [data-theme="bloom"] .graph-node__btn-primary,
+  [data-theme="bloom"] .graph-node__btn-filter {
+    @apply rounded-lg border border-border/70 font-sans normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-node__expand-filter {
+    @apply rounded-lg border border-border/60;
+  }
+
+  [data-theme="bloom"] .graph-node__expand-filter-label,
+  [data-theme="bloom"] .graph-node__expand-filter-value {
+    @apply font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-node__expand-filter-remove,
+  [data-theme="bloom"] .graph-node__icon-btn,
+  [data-theme="bloom"] .graph-node__filter-row-remove,
+  [data-theme="bloom"] .graph-node__delete-close {
+    @apply rounded-lg border-border/50;
+  }
+
+  [data-theme="bloom"] .graph-node__filter-option,
+  [data-theme="bloom"] .graph-node__delete-confirm {
+    @apply rounded-xl border font-sans normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-node__filter-option {
+    @apply border-border/70;
+  }
+
+  [data-theme="bloom"] .graph-node__filter-menu-title,
+  [data-theme="bloom"] .graph-node__delete-prompt,
+  [data-theme="bloom"] .graph-node__btn-link {
+    @apply font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .graph-node__input,
+  [data-theme="bloom"] .graph-node__submit,
+  [data-theme="bloom"] .graph-node__filter-input {
+    @apply rounded-lg border border-border/70 font-sans normal-case;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .graph-node__submit {
+    @apply border-primary/30;
+  }
+
+  [data-theme="bloom"] .graph-node__author-menu {
+    @apply overflow-hidden rounded-xl border border-border/70;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .graph-node__author-option {
+    @apply rounded-lg;
+  }
+
+  [data-theme="bloom"] .graph-node .rf-handle {
+    @apply rounded-full! border-primary/40!;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  /* Nodo semilla de búsqueda (sin .graph-node) */
+  [data-theme="bloom"] .graph-search-node {
+    @apply rounded-2xl border border-primary/35 bg-card px-8 py-5 text-foreground;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .graph-search-node__icon {
+    @apply rounded-xl bg-primary/15;
+  }
+
+  [data-theme="bloom"] .graph-search-node__label {
+    @apply font-sans text-xs font-medium normal-case tracking-normal text-primary;
+  }
+
+  [data-theme="bloom"] .graph-node-enter .graph-search-node + .react-flow__handle {
+    @apply rounded-full border-primary/40;
+  }
+}

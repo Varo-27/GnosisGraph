@@ -5,6 +5,9 @@
 @import "./eom/brand.css";
 @import "./eom/light.css";
 @import "./eom/dark.css";
+@import "./bloom/brand.css";
+@import "./bloom/light.css";
+@import "./bloom/dark.css";
 
 /* Descomenta al crear un tema propio desde custom/_template.css */
 /* @import "./custom/mi-tema/brand.css"; */

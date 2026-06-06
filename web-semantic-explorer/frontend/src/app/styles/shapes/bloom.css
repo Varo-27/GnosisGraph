@@ -1,0 +1,120 @@
+/**
+ * Bloom — formas redondeadas y sombras suaves (sobreescribe utilidades EOM brutalistas).
+ */
+@layer components {
+  [data-theme="bloom"] .eom-brutal-border {
+    @apply rounded-xl border border-primary/25;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-brutal-border-primary {
+    @apply rounded-xl border border-primary/40;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-brutal-border-soft {
+    @apply rounded-lg border border-border/80;
+  }
+
+  [data-theme="bloom"] .eom-surface-flat {
+    @apply rounded-xl;
+  }
+
+  [data-theme="bloom"] .eom-surface-brutal {
+    @apply rounded-2xl border border-border/70 bg-card;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .eom-draggable {
+    @apply cursor-grab select-none rounded-xl border border-primary/20 bg-card transition-[box-shadow,transform,opacity] disabled:pointer-events-none disabled:opacity-50;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-draggable:hover {
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .eom-btn-icon,
+  [data-theme="bloom"] .eom-dialog-close {
+    @apply rounded-full border border-border/80 bg-card text-muted-foreground transition-[box-shadow,background-color,color];
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-btn-icon:hover,
+  [data-theme="bloom"] .eom-dialog-close:hover {
+    @apply bg-muted text-foreground;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .eom-tile-card {
+    @apply rounded-2xl border border-border/60 bg-card transition-[box-shadow,border-color,background-color];
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-tile-card:hover {
+    @apply border-primary/35 bg-card;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .eom-control {
+    @apply h-9 rounded-full border border-border/80 font-sans text-sm normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-control-soft {
+    @apply h-9 rounded-lg border-border/60 font-sans text-sm normal-case;
+  }
+
+  [data-theme="bloom"] .eom-btn-micro {
+    @apply rounded-full border border-primary/30 font-sans text-xs normal-case tracking-normal;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-modal-shell {
+    @apply overflow-hidden rounded-2xl border border-border/70 bg-card p-0;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .eom-lift-active {
+    @apply translate-x-0 translate-y-0 border-primary/40 bg-card text-foreground;
+    box-shadow: var(--shadow-brutal-accent-md);
+  }
+
+  [data-theme="bloom"] .eom-nav-link {
+    @apply rounded-full border border-transparent px-4 py-2 font-sans text-sm normal-case tracking-normal transition-all;
+  }
+
+  [data-theme="bloom"] .eom-nav-link--active {
+    @apply translate-x-0 translate-y-0 border-primary/30 bg-primary/10 text-primary;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-nav-link--idle:hover {
+    @apply border-primary/20 bg-muted/80 text-foreground;
+  }
+
+  [data-theme="bloom"] .eom-nav-icon-btn {
+    @apply rounded-full border border-border/70 bg-card;
+    box-shadow: var(--shadow-brutal-xs);
+  }
+
+  [data-theme="bloom"] .eom-nav-icon-btn:hover {
+    @apply translate-x-0 translate-y-0 bg-muted;
+    box-shadow: var(--shadow-brutal-sm);
+  }
+
+  [data-theme="bloom"] .eom-nav-bar,
+  [data-theme="bloom"] .eom-nav-header {
+    @apply border-b border-border/60 bg-background/95 backdrop-blur-sm;
+    box-shadow: var(--shadow-brutal-nav-under);
+  }
+
+  [data-theme="bloom"] .eom-dropdown-brutal {
+    @apply min-w-40 rounded-xl border border-border/70 bg-popover;
+    box-shadow: var(--shadow-brutal-md);
+  }
+
+  [data-theme="bloom"] .eom-dropdown-item {
+    @apply rounded-lg;
+  }
+}

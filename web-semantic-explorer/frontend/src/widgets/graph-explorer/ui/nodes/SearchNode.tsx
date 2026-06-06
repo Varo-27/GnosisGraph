@@ -16,12 +16,12 @@ export function SearchNode({ data }: NodeProps<AppNode>) {
         animationDelay: data.appearDelay ? `${data.appearDelay}ms` : undefined,
       }}
     >
-      <div className="relative flex w-max max-w-full items-center gap-4 rounded-none border-2 border-primary bg-foreground px-8 py-5 text-background">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-none bg-primary/20">
+      <div className="graph-search-node relative flex w-max max-w-full items-center gap-4">
+        <div className="graph-search-node__icon flex h-12 w-12 shrink-0 items-center justify-center">
           <Search className="h-6 w-6 text-primary" />
         </div>
         <div className="flex shrink-0 flex-col gap-0.5">
-          <span className="whitespace-nowrap font-mono text-md uppercase tracking-widest text-primary/80">
+          <span className="graph-search-node__label whitespace-nowrap text-md">
             Semilla de búsqueda
           </span>
           <span
@@ -35,7 +35,7 @@ export function SearchNode({ data }: NodeProps<AppNode>) {
       <Handle
         type="source"
         position={Position.Bottom}
-        className="w-4 h-4 bg-primary border-2 border-foreground"
+        className="h-4 w-4 rounded-full border-2 border-foreground bg-primary"
       />
     </div>
   )

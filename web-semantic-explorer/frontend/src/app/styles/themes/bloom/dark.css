@@ -1,0 +1,50 @@
+/**
+ * Tema Bloom — modo oscuro (morado profundo, acentos lilas).
+ */
+[data-theme="bloom"].dark {
+  --background: var(--brand-plum-deep);
+  --foreground: #f5e6ff;
+  --card: #1f1230;
+  --card-foreground: #f5e6ff;
+  --popover: #241438;
+  --popover-foreground: #f5e6ff;
+  --primary: #a78bfa;
+  --primary-foreground: #140c1f;
+  --secondary: #2d1f45;
+  --secondary-foreground: #e9d5ff;
+  --muted: #2a1f3d;
+  --muted-foreground: #c4b5d8;
+  --accent: #7c3aed;
+  --accent-foreground: #f5e6ff;
+  --destructive: #fb7185;
+  --border: rgb(196 181 216 / 18%);
+  --input: rgb(196 181 216 / 12%);
+  --ring: #c084fc;
+  --chart-1: #c084fc;
+  --chart-2: #a78bfa;
+  --chart-3: #e879f9;
+  --chart-4: #f0abfc;
+  --chart-5: #8b5cf6;
+  --sidebar: #1a1028;
+  --sidebar-foreground: #f5e6ff;
+  --sidebar-primary: #a78bfa;
+  --sidebar-primary-foreground: #140c1f;
+  --sidebar-accent: #2d1f45;
+  --sidebar-accent-foreground: #e9d5ff;
+  --sidebar-border: rgb(196 181 216 / 18%);
+  --sidebar-ring: #c084fc;
+  --map-ocean: #0c4a6e;
+  --map-panel: var(--card);
+  --map-stroke: rgb(196 181 216 / 28%);
+  --map-region-hover: #c084fc;
+  --map-region-selected: #a78bfa;
+  --graph-grid-color: color-mix(in srgb, var(--primary) 22%, transparent);
+
+  --shadow-brutal-color: rgb(88 28 135 / 0.45);
+  --shadow-brutal-accent: rgb(167 139 250 / 0.35);
+  --shadow-brutal-xs: 0 2px 12px rgb(0 0 0 / 0.35);
+  --shadow-brutal-sm: 0 4px 20px rgb(0 0 0 / 0.4);
+  --shadow-brutal-md: 0 10px 32px rgb(0 0 0 / 0.45);
+  --shadow-brutal-lift: 0 8px 24px rgb(167 139 250 / 0.25);
+  --shadow-brutal-nav-under: 0 4px 28px rgb(0 0 0 / 0.35);
+}

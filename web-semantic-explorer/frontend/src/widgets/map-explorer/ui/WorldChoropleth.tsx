@@ -1,5 +1,6 @@
 import type { FeatureCollection } from "geojson"
 import { memo, useEffect, useMemo, useState } from "react"
+import { useTheme } from "@/shared/lib/theme/ThemeProvider"
 import {
   buildChoroplethScene,
   CHOROPLETH_OCEAN_RECT,
@@ -93,6 +94,7 @@ export const WorldChoropleth = memo(function WorldChoropleth({
   onHoverCountry,
   onSelectCountry,
 }: WorldChoroplethProps) {
+  const { colorTheme, resolvedTheme } = useTheme()
   const [countries, setCountries] = useState<FeatureCollection | null>(null)
   const [loadError, setLoadError] = useState(false)
 
@@ -125,6 +127,41 @@ export const WorldChoropleth = memo(function WorldChoropleth({
     [countries, projectionId],
   )
 
+  const countryFills = useMemo(() => {
+    if (!mapScene) return null
+    return mapScene.items.map((country) => ({
+      key: country.key,
+      fill: getCountryFill(
+        country.isoCode,
+        countryCounts,
+        maxCount,
+        selectedCode,
+        hoveredCode,
+        highlightedCodes,
+        hoveredRegionCodes,
+      ),
+      emphasized: isCountryEmphasized(
+        country.isoCode,
+        selectedCode,
+        hoveredCode,
+        highlightedCodes,
+        hoveredRegionCodes,
+      ),
+      isInteractive: Boolean(country.isoCode),
+      country,
+    }))
+  }, [
+    mapScene,
+    countryCounts,
+    maxCount,
+    selectedCode,
+    hoveredCode,
+    highlightedCodes,
+    hoveredRegionCodes,
+    colorTheme,
+    resolvedTheme,
+  ])
+
   useEffect(() => {
     if (!focusCountryCode || !mapScene) return
 
@@ -144,7 +181,7 @@ export const WorldChoropleth = memo(function WorldChoropleth({
     )
   }
 
-  if (!countries || !mapScene) {
+  if (!countries || !mapScene || !countryFills) {
     return (
       <div className="flex h-full items-center justify-center bg-map-ocean text-sm text-muted-foreground">
         Preparando mapa…
@@ -152,7 +189,7 @@ export const WorldChoropleth = memo(function WorldChoropleth({
     )
   }
 
-  const { items, viewBox } = mapScene
+  const { viewBox } = mapScene
   const viewBoxStr = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
   const baseStroke = 0.45 / transform.k
   const emphasisStroke = 0.9 / transform.k
@@ -183,30 +220,14 @@ export const WorldChoropleth = memo(function WorldChoropleth({
             fill={HEATMAP_SEA_FILL}
             className="pointer-events-none"
           />
-          {items.map((country) => {
-            const fill = getCountryFill(
-              country.isoCode,
-              countryCounts,
-              maxCount,
-              selectedCode,
-              hoveredCode,
-              highlightedCodes,
-              hoveredRegionCodes,
-            )
-            const emphasized = isCountryEmphasized(
-              country.isoCode,
-              selectedCode,
-              hoveredCode,
-              highlightedCodes,
-              hoveredRegionCodes,
-            )
+          {countryFills.map(
+            ({ key, fill, emphasized, isInteractive, country }) => {
             const strokeWidth = emphasized ? emphasisStroke : baseStroke
-            const isInteractive = Boolean(country.isoCode)
 
             if (!isInteractive) {
               return (
                 <CountryPath
-                  key={country.key}
+                  key={key}
                   country={country}
                   fill={fill}
                   strokeWidth={strokeWidth}
@@ -217,7 +238,7 @@ export const WorldChoropleth = memo(function WorldChoropleth({
 
             return (
               <InteractiveCountry
-                key={country.key}
+                key={key}
                 country={country}
                 fill={fill}
                 strokeWidth={strokeWidth}
@@ -225,7 +246,8 @@ export const WorldChoropleth = memo(function WorldChoropleth({
                 onSelectCountry={onSelectCountry}
               />
             )
-          })}
+          },
+          )}
         </g>
       </svg>
     </div>

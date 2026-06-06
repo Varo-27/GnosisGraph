@@ -9,7 +9,10 @@
 @import "../../widgets/graph-explorer/ui/styles/react-flow.css";
 @import "../../widgets/graph-explorer/ui/styles/edges.css";
 @import "../../widgets/graph-explorer/ui/styles/nodes.css";
+@import "../../widgets/graph-explorer/ui/styles/nodes-bloom.css";
 @import "../../widgets/graph-explorer/ui/styles/explorer.css";
+@import "../../widgets/graph-explorer/ui/styles/explorer-bloom.css";
 @import "../../widgets/map-explorer/ui/styles/panel.css";
 @import "../../widgets/map-explorer/ui/styles/choropleth.css";
 @import "../../widgets/article-modal/ui/article-modal.css";
+@import "../../widgets/article-modal/ui/article-modal-bloom.css";

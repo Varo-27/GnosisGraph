@@ -1,0 +1,22 @@
+@layer components {
+  [data-theme="bloom"] .eom-heading-section {
+    @apply font-sans text-sm font-semibold normal-case tracking-normal text-primary;
+  }
+
+  [data-theme="bloom"] .eom-label,
+  [data-theme="bloom"] .eom-label-primary,
+  [data-theme="bloom"] .eom-label-status,
+  [data-theme="bloom"] .eom-caption {
+    @apply font-sans normal-case tracking-normal;
+  }
+
+  [data-theme="bloom"] .eom-label-primary {
+    @apply font-medium text-primary;
+  }
+
+  [data-theme="bloom"] body {
+    font-family:
+      ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
+  }
+}
