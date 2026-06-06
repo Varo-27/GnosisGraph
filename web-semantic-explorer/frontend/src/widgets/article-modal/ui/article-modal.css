@@ -62,7 +62,7 @@
   }
 
   .graph-article-modal__meta-sep {
-    @apply hidden h-1 w-1 rounded-full bg-foreground/30 sm:inline-block;
+    @apply hidden h-1 w-1 rounded-none bg-foreground/30 sm:inline-block;
   }
 
   /* Entradilla: en EOM va en Expose cursiva, no en Bitter */

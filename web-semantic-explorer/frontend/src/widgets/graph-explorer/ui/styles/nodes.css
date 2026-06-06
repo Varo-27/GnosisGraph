@@ -108,7 +108,7 @@
   }
 
   .graph-node__icon-badge {
-    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15;
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-primary/15;
   }
 
   .graph-node__body {

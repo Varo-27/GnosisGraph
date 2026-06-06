@@ -50,7 +50,7 @@
   }
 
   .map-sidebar__legend-gradient {
-    @apply h-5 w-full overflow-hidden rounded-sm border border-foreground/40;
+    @apply h-5 w-full overflow-hidden rounded-none border border-foreground/40;
   }
 
   .map-sidebar__legend-steps {

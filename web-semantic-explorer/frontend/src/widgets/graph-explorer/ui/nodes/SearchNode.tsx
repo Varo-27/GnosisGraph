@@ -16,8 +16,8 @@ export function SearchNode({ data }: NodeProps<AppNode>) {
         animationDelay: data.appearDelay ? `${data.appearDelay}ms` : undefined,
       }}
     >
-      <div className="relative flex w-max max-w-full items-center gap-4 rounded-full border-2 border-primary bg-foreground px-8 py-5 text-background">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/20">
+      <div className="relative flex w-max max-w-full items-center gap-4 rounded-none border-2 border-primary bg-foreground px-8 py-5 text-background">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-none bg-primary/20">
           <Search className="h-6 w-6 text-primary" />
         </div>
         <div className="flex shrink-0 flex-col gap-0.5">
