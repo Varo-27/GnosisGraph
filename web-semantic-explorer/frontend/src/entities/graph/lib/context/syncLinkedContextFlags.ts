@@ -2,10 +2,10 @@ import type { Edge } from "@xyflow/react"
 
 import type { AppNode } from "@/entities/graph/model/types"
 
-import { isFilterNodeType, isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
+import { isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
 
 /**
- * Marca en data de cada artículo si tiene input/filtro cableado downstream.
+ * Marca en data de cada artículo si tiene consulta cableada downstream.
  * Solo debe llamarse cuando cambia la topología (aristas/nodos), no al arrastrar.
  */
 export function syncLinkedContextFlags(
@@ -13,11 +13,7 @@ export function syncLinkedContextFlags(
   edges: Edge[],
 ): AppNode[] {
   const contextTargetIds = new Set(
-    nodes
-      .filter(
-        (node) => isInputNodeType(node.type) || isFilterNodeType(node.type),
-      )
-      .map((node) => node.id),
+    nodes.filter((node) => isInputNodeType(node.type)).map((node) => node.id),
   )
 
   let changed = false

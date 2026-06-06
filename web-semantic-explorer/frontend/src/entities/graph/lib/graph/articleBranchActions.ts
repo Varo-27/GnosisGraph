@@ -6,13 +6,16 @@ import type { AppNode, AppNodeData } from "@/entities/graph/model/types"
 
 import { createDefaultQueryNode } from "@/entities/graph/model/createDefaultInputNode"
 import { buildEdge } from "@/entities/graph/lib/edges/isValidGraphConnection"
-import { createFilterNodeId, createInputNodeId } from "@/entities/graph/model/graphNodeIds"
+import { createInputNodeId } from "@/entities/graph/model/graphNodeIds"
+import {
+  createInputFilterRow,
+  type InputFilterRow,
+} from "@/entities/graph/model/inputFilters"
 import {
   FILTER_NODE_DIMENSIONS,
   type FilterNodeKind,
   GRAPH_NODE_TYPE,
 } from "@/entities/graph/model/graphNodeTypes"
-import { createFilterNodeAtPosition } from "@/entities/graph/model/createPaletteNode"
 
 type ArticleMetadata = {
   authors?: string[]
@@ -117,25 +120,23 @@ export function createFilterFromArticleByKind(
   articleNode: AppNode,
   metadata: ArticleMetadata,
   kind: ArticleExpandFilterKind,
-  offsetIndex = 0,
+  _offsetIndex = 0,
 ): { node: AppNode; edge: Edge } | null {
   const value = pickFilterValueForKind(metadata, kind)
   if (!value) {
     return null
   }
 
-  const position: XYPosition = {
-    x: articleNode.position.x - 40 + offsetIndex * 48,
-    y: articleNode.position.y - 220,
-  }
-
-  const node = createFilterNodeAtPosition(kind, position)
-  node.data.filterValue = value
-  node.data.title = `${FILTER_NODE_DIMENSIONS[kind]}: ${value}`
+  const queryNode = createQueryNodeWithFilterRow(
+    articleNode,
+    kind,
+    value,
+    _offsetIndex,
+  )
 
   return {
-    node,
-    edge: buildEdge(node.id, articleNode.id),
+    node: queryNode,
+    edge: buildEdge(queryNode.id, articleNode.id),
   }
 }
 
@@ -171,18 +172,43 @@ export function createFilterFromArticleAtPosition(
     return null
   }
 
-  const position: XYPosition = {
-    x: articleNode.position.x - 40 + offsetIndex * 48,
-    y: articleNode.position.y - 220,
-  }
-
-  const node = createFilterNodeAtPosition(picked.key, position)
-  node.data.filterValue = picked.value
-  node.data.title = `${FILTER_NODE_DIMENSIONS[picked.key]}: ${picked.value}`
+  const queryNode = createQueryNodeWithFilterRow(
+    articleNode,
+    picked.key,
+    picked.value,
+    offsetIndex,
+  )
 
   return {
-    node,
-    edge: buildEdge(node.id, articleNode.id),
+    node: queryNode,
+    edge: buildEdge(queryNode.id, articleNode.id),
+  }
+}
+
+function createQueryNodeWithFilterRow(
+  articleNode: AppNode,
+  kind: FilterNodeKind,
+  value: string,
+  offsetIndex: number,
+): AppNode {
+  const filterRow: InputFilterRow = {
+    ...createInputFilterRow(kind),
+    value,
+  }
+
+  return {
+    ...createDefaultQueryNode(),
+    id: createInputNodeId(),
+    position: {
+      x: articleNode.position.x - 40 + offsetIndex * 48,
+      y: articleNode.position.y - 220,
+    },
+    data: {
+      title: "Nueva búsqueda",
+      query: "",
+      inputFilters: [filterRow],
+      appearDelay: 0,
+    },
   }
 }
 
@@ -210,25 +236,13 @@ export function createQueryBranchFromArticle(
   const edges: Edge[] = []
 
   if (picked) {
-    const filterNode: AppNode = {
-      ...createFilterNodeAtPosition(picked.key, {
-        x: articleNode.position.x - 40,
-        y: articleNode.position.y - 180,
-      }),
-      id: createFilterNodeId(picked.key),
-      data: {
-        title: `${FILTER_NODE_DIMENSIONS[picked.key]}: ${picked.value}`,
-        filterKey: picked.key,
-        filterValue: picked.value,
-        appearDelay: 0,
-      },
-    }
-    nodes.push(filterNode)
-    edges.push(buildEdge(queryNode.id, filterNode.id))
-    edges.push(buildEdge(filterNode.id, articleNode.id))
-  } else {
-    edges.push(buildEdge(queryNode.id, articleNode.id))
+    queryNode.data.inputFilters = [
+      { ...createInputFilterRow(picked.key), value: picked.value },
+    ]
+    queryNode.data.title = `${FILTER_NODE_DIMENSIONS[picked.key]}: ${picked.value}`
   }
+
+  edges.push(buildEdge(queryNode.id, articleNode.id))
 
   return { nodes, edges }
 }

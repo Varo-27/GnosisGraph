@@ -3,9 +3,8 @@ import { useEffect, useRef } from "react"
 import type { GraphSearchParams } from "@/shared/lib/filters"
 import { searchParamsToFilters } from "@/shared/lib/filters"
 import {
-  buildEdge,
   centerPaletteDropPosition,
-  createFilterNodeAtPosition,
+  createInputFilterRow,
   createQueryNodeAtPosition,
   GRAPH_NODE_TYPE,
 } from "@/entities/graph"
@@ -18,7 +17,7 @@ type UseMapSearchBootstrapOptions = {
 }
 
 /**
- * Al llegar desde el mapa con ?place=&q=, crea tubería query→filtro lugar y lanza búsqueda.
+ * Al llegar desde el mapa con ?place=&q=, crea consulta con filtro lugar inline y lanza búsqueda.
  */
 export function useMapSearchBootstrap({
   searchParams,
@@ -52,6 +51,10 @@ export function useMapSearchBootstrap({
         centerPaletteDropPosition({ x: 480, y: 280 }, "query"),
       )
 
+    const filterRows = place
+      ? [{ ...createInputFilterRow("place"), value: place }]
+      : undefined
+
     let nextNodes = existingQuery
       ? nodes.map((node) =>
           node.id === queryNode.id
@@ -60,31 +63,26 @@ export function useMapSearchBootstrap({
                 data: {
                   ...node.data,
                   query: queryText ?? node.data.query ?? "",
+                  inputFilters: filterRows ?? node.data.inputFilters,
                 },
               }
             : node,
         )
-      : [...nodes, queryNode]
+      : [
+          ...nodes,
+          {
+            ...queryNode,
+            data: {
+              ...queryNode.data,
+              query: queryText ?? "",
+              inputFilters: filterRows,
+            },
+          },
+        ]
 
-    let nextEdges = [...edges]
+    const nextEdges = [...edges]
     const searchNodeId = queryNode.id
     let searchQuery = queryText ?? place ?? ""
-
-    if (place) {
-      const filterNode = createFilterNodeAtPosition("place", {
-        x: queryNode.position.x,
-        y: queryNode.position.y + 180,
-      })
-      filterNode.data.filterValue = place
-      filterNode.data.title = `Lugar: ${place}`
-
-      nextNodes = [...nextNodes, filterNode]
-      nextEdges = [...nextEdges, buildEdge(queryNode.id, filterNode.id)]
-
-      if (!searchQuery) {
-        searchQuery = place
-      }
-    }
 
     useGraphStore.getState().setNodes(nextNodes)
     useGraphStore.getState().setEdges(nextEdges)

@@ -9,6 +9,7 @@ import type { AppNode } from "@/entities/graph"
 import { useGraphStore } from "@/entities/graph"
 
 import { NodeDeleteButton } from "./NodeDeleteButton"
+import { QueryNodeFilterRows } from "./QueryNodeFilterRows"
 
 function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
   const isLoading = useGraphStore((state) => state.isLoading)
@@ -78,6 +79,8 @@ function QueryNodeComponent({ id, data }: NodeProps<AppNode>) {
             {isLoading ? "Buscando..." : "Explorar"}
           </Button>
         </form>
+
+        <QueryNodeFilterRows nodeId={id} data={data} disabled={isSearched} />
       </div>
       <Handle
         type="source"

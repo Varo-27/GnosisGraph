@@ -211,6 +211,30 @@
     @apply h-9 rounded-none border-2 border-foreground bg-primary text-primary-foreground hover:bg-primary/90;
   }
 
+  .graph-node__filter-rows {
+    @apply flex flex-col gap-2 border-t border-foreground/20 pt-3;
+  }
+
+  .graph-node__filter-rows-header {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  .graph-node__filter-rows-empty {
+    @apply text-xs leading-relaxed text-muted-foreground;
+  }
+
+  .graph-node__filter-rows-list {
+    @apply flex flex-col gap-2;
+  }
+
+  .graph-node__filter-row {
+    @apply flex min-w-0 items-center gap-1.5;
+  }
+
+  .graph-node__filter-row-remove {
+    @apply inline-flex shrink-0 items-center justify-center border border-transparent p-1 text-muted-foreground transition-colors hover:border-foreground hover:text-foreground;
+  }
+
   .graph-node__filter-input {
     @apply h-8 rounded-none border-foreground/40 text-sm;
   }

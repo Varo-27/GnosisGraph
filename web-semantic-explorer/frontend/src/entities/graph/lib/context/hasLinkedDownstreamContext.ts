@@ -2,9 +2,9 @@ import type { Edge } from "@xyflow/react"
 
 import type { AppNode } from "@/entities/graph/model/types"
 
-import { isFilterNodeType, isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
+import { isInputNodeType } from "@/entities/graph/model/graphNodeTypes"
 
-/** True si bajo el artículo hay un input o filtro cableado (modo expansión enlazada). */
+/** True si bajo el artículo hay un nodo consulta cableado (modo expansión enlazada). */
 export function hasLinkedDownstreamContext(
   articleNodeId: string,
   nodes: AppNode[],
@@ -22,6 +22,6 @@ export function hasLinkedDownstreamContext(
       return false
     }
 
-    return isInputNodeType(child.type) || isFilterNodeType(child.type)
+    return isInputNodeType(child.type)
   })
 }

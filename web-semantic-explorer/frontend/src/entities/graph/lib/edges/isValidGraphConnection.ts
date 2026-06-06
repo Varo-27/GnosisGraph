@@ -5,7 +5,6 @@ import type { AppNode } from "@/entities/graph/model/types"
 import {
   GRAPH_NODE_TYPE,
   isArticleNodeType,
-  isFilterNodeType,
   isQueryNodeType,
 } from "@/entities/graph/model/graphNodeTypes"
 
@@ -20,7 +19,7 @@ function nodeTypeOf(
 }
 
 /**
- * Valida conexiones del pipeline: query → filter → article.
+ * Valida conexiones del pipeline: query → article.
  * Los artículos pueden encadenarse entre sí.
  */
 export function isValidGraphConnection(
@@ -43,11 +42,7 @@ export function isValidGraphConnection(
   }
 
   if (isQueryNodeType(sourceType)) {
-    return isFilterNodeType(targetType) || isArticleNodeType(targetType)
-  }
-
-  if (isFilterNodeType(sourceType)) {
-    return isFilterNodeType(targetType) || isArticleNodeType(targetType)
+    return isArticleNodeType(targetType)
   }
 
   if (isArticleNodeType(sourceType)) {
@@ -55,7 +50,7 @@ export function isValidGraphConnection(
   }
 
   if (sourceType === GRAPH_NODE_TYPE.searchCenter) {
-    return isFilterNodeType(targetType) || isArticleNodeType(targetType)
+    return isArticleNodeType(targetType)
   }
 
   return false
@@ -69,7 +64,7 @@ export function getInvalidConnectionMessage(
     return null
   }
 
-  return "Conexión no permitida: usa query → filtro → artículo"
+  return "Conexión no permitida: usa consulta → artículo"
 }
 
 export function createEdgeId(source: string, target: string): string {

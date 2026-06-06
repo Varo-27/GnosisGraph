@@ -6,7 +6,6 @@ import { useShallow } from "zustand/react/shallow"
 
 import {
   centerPaletteDropPosition,
-  createFilterNodeAtPosition,
   createQueryNodeAtPosition,
   GRAPH_NODE_TYPE,
   isValidGraphConnection,
@@ -26,7 +25,6 @@ import { scheduleCenterViewportOnNode } from "./centerViewportOnNode"
 import { GraphFlowCanvas } from "./GraphFlowCanvas"
 import { QueryNode } from "./nodes/InputNode"
 import { ArticleNode } from "./nodes/ArticleNode"
-import { FilterNode } from "./nodes/FilterNode"
 import { SearchNode } from "./nodes/SearchNode"
 import { GraphNodePalette } from "./palette/GraphNodePalette"
 import { isPaletteDragEvent, readPaletteDragData } from "./palette/paletteDrag"
@@ -37,7 +35,6 @@ const nodeTypes: NodeTypes = {
   article: ArticleNode,
   query: QueryNode,
   input: QueryNode,
-  filter: FilterNode,
   searchCenter: SearchNode,
 }
 
@@ -222,7 +219,11 @@ export function GraphExplorer() {
 
       const payload = readPaletteDragData(event)
       const flow = reactFlowRef.current
-      if (!payload || !flow) {
+      if (
+        !payload ||
+        !flow ||
+        (payload.type !== "query" && payload.type !== "input")
+      ) {
         return
       }
 
@@ -232,15 +233,9 @@ export function GraphExplorer() {
       })
 
       const currentNodes = useGraphStore.getState().nodes
-      const newNode =
-        payload.type === "query" || payload.type === "input"
-          ? createQueryNodeAtPosition(
-              centerPaletteDropPosition(dropPosition, "query"),
-            )
-          : createFilterNodeAtPosition(
-              payload.filterKey,
-              centerPaletteDropPosition(dropPosition, payload.filterKey),
-            )
+      const newNode = createQueryNodeAtPosition(
+        centerPaletteDropPosition(dropPosition, "query"),
+      )
 
       const mergedNodes = [...currentNodes, newNode]
       setNodes(mergedNodes)
@@ -254,8 +249,7 @@ export function GraphExplorer() {
 
       if (
         node.type === GRAPH_NODE_TYPE.query ||
-        node.type === GRAPH_NODE_TYPE.input ||
-        node.type === GRAPH_NODE_TYPE.filter
+        node.type === GRAPH_NODE_TYPE.input
       ) {
         return
       }

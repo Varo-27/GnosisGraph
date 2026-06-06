@@ -4,12 +4,20 @@ import type { AppNode } from "@/entities/graph/model/types"
 
 import { resolveSearchContext } from "./resolveSearchContext"
 
-function inputNode(id: string, query: string): AppNode {
+function inputNode(
+  id: string,
+  query: string,
+  inputFilters?: AppNode["data"]["inputFilters"],
+): AppNode {
   return {
     id,
     type: "input",
     position: { x: 0, y: 0 },
-    data: { title: `Búsqueda: ${query}`, query },
+    data: {
+      title: `Búsqueda: ${query}`,
+      query,
+      inputFilters,
+    },
   }
 }
 
@@ -36,16 +44,16 @@ function articleNode(id: string): AppNode {
 }
 
 describe("resolveSearchContext", () => {
-  it("combina filtros downstream, upstream y artículos padre del input", () => {
+  it("combina filtros inline, upstream legacy y artículos padre del input", () => {
     const nodes = [
       articleNode("10"),
-      inputNode("input-1", "política"),
-      filterNode("filter-down", "category", "Economía"),
+      inputNode("input-1", "política", [
+        { id: "row-1", key: "category", value: "Economía" },
+      ]),
       filterNode("filter-up", "place", "España"),
     ]
     const edges = [
       { id: "e0", source: "10", target: "input-1" },
-      { id: "e1", source: "input-1", target: "filter-down" },
       { id: "e2", source: "filter-up", target: "input-1" },
     ]
 

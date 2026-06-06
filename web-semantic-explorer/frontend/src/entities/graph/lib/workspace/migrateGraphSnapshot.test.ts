@@ -50,4 +50,49 @@ describe("migrateGraphSnapshot", () => {
     expect(snapshot.nodes[0].data.layoutOrder).toBeUndefined()
     expect(snapshot.nodes[0].data.searched).toBe(true)
   })
+
+  it("absorbe nodos filtro en inputFilters del nodo consulta", () => {
+    const snapshot = migrateGraphSnapshot({
+      nodes: [
+        {
+          id: "input",
+          type: "query",
+          position: { x: 0, y: 0 },
+          data: { title: "Búsqueda: economía", query: "economía" },
+        },
+        {
+          id: "filter-place",
+          type: "filter",
+          position: { x: 0, y: 100 },
+          data: {
+            title: "Lugar: Madrid",
+            filterKey: "place",
+            filterValue: "Madrid",
+          },
+        },
+        {
+          id: "42",
+          type: "article",
+          position: { x: 0, y: 200 },
+          data: { title: "Artículo" },
+        },
+      ],
+      edges: [
+        { id: "e1", source: "input", target: "filter-place" },
+        { id: "e2", source: "filter-place", target: "42" },
+      ],
+      viewport: null,
+    })
+
+    expect(snapshot.nodes).toHaveLength(2)
+    expect(snapshot.nodes.find((node) => node.type === "filter")).toBeUndefined()
+
+    const queryNode = snapshot.nodes.find((node) => node.id === "input")
+    expect(queryNode?.data.inputFilters).toEqual([
+      expect.objectContaining({ key: "place", value: "Madrid" }),
+    ])
+    expect(snapshot.edges).toEqual([
+      expect.objectContaining({ source: "input", target: "42" }),
+    ])
+  })
 })

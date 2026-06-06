@@ -8,6 +8,8 @@ import type {
 
 import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 
+import type { InputFilterRow } from "./inputFilters"
+
 /** Payload de datos compartido por nodos de artículo y búsqueda en React Flow. */
 export type AppNodeData = {
   title: string
@@ -28,6 +30,8 @@ export type AppNodeData = {
   /** Filtros locales para «Ver más»; no crean nodos en el grafo. */
   expandFilters?: ArticleMetadataFilters
   query?: string
+  /** Filas de filtro inline en el nodo consulta. */
+  inputFilters?: InputFilterRow[]
   filterKey?: string
   filterValue?: string | number
   /** Capa Sugiyama (1-based). Transiente: se elimina al persistir workspace. */

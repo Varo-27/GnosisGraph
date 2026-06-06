@@ -22,6 +22,13 @@ export {
   createFilterNodeAtPosition,
 } from "./model/createPaletteNode"
 export { createInputNodeId, createFilterNodeId, DEFAULT_INPUT_NODE_ID } from "./model/graphNodeIds"
+export {
+  createInputFilterRow,
+  readInputFilterRows,
+  inputFilterRowsToMetadata,
+  type InputFilterRow,
+} from "./model/inputFilters"
+export { absorbFilterNodesIntoInputs } from "./lib/workspace/absorbFilterNodesIntoInputs"
 export { migrateGraphSnapshot } from "./lib/workspace/migrateGraphSnapshot"
 export { syncLinkedContextFlags } from "./lib/context/syncLinkedContextFlags"
 export { resolveContextChain, mergeContextFilters } from "./lib/context/resolveContextChain"

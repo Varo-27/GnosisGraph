@@ -4,6 +4,10 @@ import type { ArticleMetadataFilters } from "@/shared/lib/filters"
 import type { AppNode } from "@/entities/graph/model/types"
 
 import {
+  inputFilterRowsToMetadata,
+  readInputFilterRows,
+} from "@/entities/graph/model/inputFilters"
+import {
   FILTER_NODE_DIMENSIONS,
   isFilterNodeType,
   isInputNodeType,
@@ -94,6 +98,7 @@ function walkUpstream(
     if (query) {
       state.seedQueries.push(query)
     }
+    applyInputFiltersToAccumulated(node, state.upstreamFilters)
   }
 
   if (isFilterNodeType(node.type)) {
@@ -125,6 +130,14 @@ function readInputQuery(node: AppNode): string {
   }
 
   return title.trim()
+}
+
+function applyInputFiltersToAccumulated(
+  node: AppNode,
+  accumulated: ArticleMetadataFilters,
+): void {
+  const fromRows = inputFilterRowsToMetadata(readInputFilterRows(node.data))
+  Object.assign(accumulated, fromRows)
 }
 
 function applyFilterNodeToAccumulated(

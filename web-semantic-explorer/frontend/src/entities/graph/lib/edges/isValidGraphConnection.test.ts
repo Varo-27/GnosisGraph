@@ -18,13 +18,6 @@ const queryNode: AppNode = {
   data: { title: "Consulta", query: "" },
 }
 
-const filterNode: AppNode = {
-  id: "f1",
-  type: "filter",
-  position: { x: 0, y: 100 },
-  data: { title: "Lugar: ES", filterKey: "place", filterValue: "España" },
-}
-
 const articleNode: AppNode = {
   id: "42",
   type: "article",
@@ -33,11 +26,10 @@ const articleNode: AppNode = {
 }
 
 describe("isValidGraphConnection", () => {
-  const nodes = [queryNode, filterNode, articleNode]
+  const nodes = [queryNode, articleNode]
 
-  it("permite query → filter y filter → article", () => {
-    expect(isValidGraphConnection(connection("q1", "f1"), nodes)).toBe(true)
-    expect(isValidGraphConnection(connection("f1", "42"), nodes)).toBe(true)
+  it("permite query → article", () => {
+    expect(isValidGraphConnection(connection("q1", "42"), nodes)).toBe(true)
   })
 
   it("rechaza article → query", () => {

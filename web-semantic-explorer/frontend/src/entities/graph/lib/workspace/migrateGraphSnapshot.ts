@@ -1,6 +1,7 @@
 import type { AppNode } from "@/entities/graph/model/types"
 import type { WorkspaceGraphSnapshot } from "@/entities/workspace"
 
+import { absorbFilterNodesIntoInputs } from "./absorbFilterNodesIntoInputs"
 import { createDefaultQueryNode } from "@/entities/graph/model/createDefaultInputNode"
 import { createInputNodeId } from "@/entities/graph/model/graphNodeIds"
 import { GRAPH_NODE_TYPE } from "@/entities/graph/model/graphNodeTypes"
@@ -9,12 +10,13 @@ import { GRAPH_NODE_TYPE } from "@/entities/graph/model/graphNodeTypes"
  * Normaliza snapshots antiguos:
  * - searchCenter → query
  * - input → query
+ * - nodos filtro → filas en el nodo consulta
  */
 export function migrateGraphSnapshot(
   snapshot: WorkspaceGraphSnapshot,
 ): WorkspaceGraphSnapshot {
   const nodeIdMap = new Map<string, string>()
-  const nodes = snapshot.nodes.map((node) => {
+  const nodesAfterTypeMigration = snapshot.nodes.map((node) => {
     if (node.type === GRAPH_NODE_TYPE.searchCenter) {
       const newId = createInputNodeId()
       nodeIdMap.set(node.id, newId)
@@ -45,7 +47,7 @@ export function migrateGraphSnapshot(
     return node
   })
 
-  const edges =
+  const edgesAfterTypeMigration =
     nodeIdMap.size === 0
       ? snapshot.edges
       : snapshot.edges.map((edge) => ({
@@ -55,10 +57,17 @@ export function migrateGraphSnapshot(
           target: nodeIdMap.get(String(edge.target)) ?? String(edge.target),
         }))
 
+  const absorbed = absorbFilterNodesIntoInputs(
+    nodesAfterTypeMigration,
+    edgesAfterTypeMigration,
+  )
+
   return {
     ...snapshot,
-    nodes: stripTransientLayoutProps(stripAppearDelay(ensureDefaultQuery(nodes))),
-    edges,
+    nodes: stripTransientLayoutProps(
+      stripAppearDelay(ensureDefaultQuery(absorbed.nodes)),
+    ),
+    edges: absorbed.edges,
   }
 }
 
