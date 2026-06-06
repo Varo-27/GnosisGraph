@@ -7,7 +7,8 @@
 @font-face {
   font-family: "Expose";
   src:
-    url("/fonts/expose/Expose-Variable.woff2") format("woff2 supports variations"),
+    url("/fonts/expose/Expose-Variable.woff2")
+    format("woff2 supports variations"),
     url("/fonts/expose/Expose-Variable.woff2") format("woff2-variations");
   font-weight: 400 900;
   font-stretch: 25% 151%;

@@ -1,0 +1,17 @@
+/**
+ * Sombras brutalistas compuestas a partir de tokens semánticos.
+ * Cada tema puede sobreescribir --shadow-brutal-color / --shadow-brutal-accent.
+ */
+:root {
+  --shadow-brutal-color: var(--foreground);
+  --shadow-brutal-accent: var(--primary);
+
+  --shadow-brutal-xs: 2px 2px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-sm: 4px 4px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-md: 6px 6px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-lift: 3px 3px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-nav-under: 0 4px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-footer-top: 0 -2px 0 0 var(--shadow-brutal-color);
+  --shadow-brutal-accent-md: 6px 6px 0 0 var(--shadow-brutal-accent);
+  --shadow-brutal-sheet-left: 6px 0 0 0 var(--shadow-brutal-color);
+}

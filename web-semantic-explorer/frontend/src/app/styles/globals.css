@@ -1,8 +1,18 @@
+/**
+ * Entrada del sistema de estilos (orden de capas):
+ * 1. tokens/foundations + fonts + shadows
+ * 2. themes/* (primitivas + semántica por tema y modo)
+ * 3. tokens/theme-bridge (Tailwind @theme)
+ * 4. base, shapes, typography (agnósticos de marca)
+ * 5. widgets/* (estilos por feature, usan tokens semánticos)
+ */
 @import "./tokens/fonts.css";
-@import "./tokens/colors.css";
-@import "./tokens/theme.css";
+@import "./tokens/foundations.css";
+@import "./tokens/shadows.css";
+@import "./themes/index.css";
+@import "./tokens/theme-bridge.css";
 @import "./base/global.css";
 @import "./base/motion.css";
 @import "./shapes/brutalist.css";
 @import "./typography/eom.css";
-@import "./widgets.css";
+@import "./widgets/index.css";

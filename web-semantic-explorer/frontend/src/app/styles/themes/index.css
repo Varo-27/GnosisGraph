@@ -1,0 +1,12 @@
+/**
+ * Registro de temas de color. Añade aquí cada paquete de tema.
+ * El tema activo se selecciona con data-theme en <html> (ThemeProvider).
+ */
+@import "./eom/brand.css";
+@import "./eom/light.css";
+@import "./eom/dark.css";
+
+/* Descomenta al crear un tema propio desde custom/_template.css */
+/* @import "./custom/mi-tema/brand.css"; */
+/* @import "./custom/mi-tema/light.css"; */
+/* @import "./custom/mi-tema/dark.css"; */

@@ -1,0 +1,7 @@
+/**
+ * Fundamentos agnósticos de tema (radio, transiciones compartidas).
+ * Los temas no deberían redefinir estos valores salvo necesidad explícita.
+ */
+:root {
+  --radius: 0;
+}

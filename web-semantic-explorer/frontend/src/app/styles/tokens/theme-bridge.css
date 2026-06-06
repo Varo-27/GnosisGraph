@@ -1,3 +1,7 @@
+/**
+ * Puente entre tokens semánticos CSS y utilidades Tailwind v4 (@theme).
+ * No define colores: solo expone variables de temas/ sombras a Tailwind.
+ */
 @theme inline {
   --font-sans:
     "Expose", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
@@ -9,10 +13,11 @@
     "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -49,4 +54,5 @@
   --color-map-stroke: var(--map-stroke);
   --color-map-region-hover: var(--map-region-hover);
   --color-map-region-selected: var(--map-region-selected);
+  --color-graph-grid: var(--graph-grid-color);
 }

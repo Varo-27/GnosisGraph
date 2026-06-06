@@ -1,0 +1,43 @@
+/**
+ * Tema EOM — modo oscuro.
+ */
+[data-theme="eom"].dark,
+:root:not([data-theme]).dark {
+  --background: #1b1e21;
+  --foreground: #f8f9fa;
+  --card: #2c2f34;
+  --card-foreground: #f8f9fa;
+  --popover: #2c2f34;
+  --popover-foreground: #f8f9fa;
+  --primary: var(--brand-green-light);
+  --primary-foreground: #ffffff;
+  --secondary: #343a40;
+  --secondary-foreground: #f8f9fa;
+  --muted: #343a40;
+  --muted-foreground: #adb5bd;
+  --accent: var(--brand-green-dark);
+  --accent-foreground: var(--brand-green-pale);
+  --destructive: #f1b0b7;
+  --border: rgb(255 255 255 / 12%);
+  --input: rgb(255 255 255 / 15%);
+  --ring: var(--brand-green-light);
+  --chart-1: #7aab52;
+  --chart-2: var(--brand-green-light);
+  --chart-3: #bfd2aa;
+  --chart-4: #ffe8a1;
+  --chart-5: #adb5bd;
+  --sidebar: #2c2f34;
+  --sidebar-foreground: #f8f9fa;
+  --sidebar-primary: var(--brand-green-light);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #343a40;
+  --sidebar-accent-foreground: #f8f9fa;
+  --sidebar-border: rgb(255 255 255 / 12%);
+  --sidebar-ring: var(--brand-green-light);
+  --map-ocean: #343a40;
+  --map-panel: var(--card);
+  --map-stroke: rgb(255 255 255 / 18%);
+  --map-region-hover: #ffe08a;
+  --map-region-selected: #ffc107;
+  --graph-grid-color: color-mix(in srgb, var(--primary) 25%, transparent);
+}

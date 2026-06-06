@@ -1,0 +1,48 @@
+/**
+ * Plantilla para un tema personalizado.
+ *
+ * 1. Copia esta carpeta a themes/custom/mi-tema/
+ * 2. Define primitivas en brand.css con [data-theme="mi-tema"]
+ * 3. Define light.css y dark.css con tokens semánticos (--background, --primary, …)
+ * 4. Importa los tres archivos en themes/index.css
+ * 5. Registra "mi-tema" en shared/lib/theme/colorThemes.ts
+ * 6. Activa con ThemeProvider defaultColorTheme="mi-tema" o setColorTheme("mi-tema")
+ *
+ * Tokens semánticos mínimos recomendados:
+ * background, foreground, card, card-foreground, popover, popover-foreground,
+ * primary, primary-foreground, secondary, secondary-foreground, muted,
+ * muted-foreground, accent, accent-foreground, destructive, border, input, ring,
+ * map-ocean, map-panel, map-stroke, map-region-hover, map-region-selected,
+ * graph-grid-color
+ *
+ * Opcional: --shadow-brutal-color, --shadow-brutal-accent para sombras distintas.
+ */
+
+[data-theme="custom-template"] {
+  --brand-accent: #0055ff;
+  --brand-ink: #111111;
+  --brand-surface: #f4f4f4;
+}
+
+[data-theme="custom-template"]:not(.dark),
+[data-theme="custom-template"].light {
+  --background: #ffffff;
+  --foreground: var(--brand-ink);
+  --primary: var(--brand-accent);
+  --primary-foreground: #ffffff;
+  --border: #cccccc;
+  --muted: var(--brand-surface);
+  --muted-foreground: #666666;
+  --graph-grid-color: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+[data-theme="custom-template"].dark {
+  --background: #0d0d0d;
+  --foreground: #f5f5f5;
+  --primary: #4488ff;
+  --primary-foreground: #ffffff;
+  --border: rgb(255 255 255 / 14%);
+  --muted: #1a1a1a;
+  --muted-foreground: #aaaaaa;
+  --graph-grid-color: color-mix(in srgb, var(--primary) 20%, transparent);
+}

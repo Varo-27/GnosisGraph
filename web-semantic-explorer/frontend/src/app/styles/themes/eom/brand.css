@@ -1,0 +1,16 @@
+/**
+ * Primitivas de marca EOM (El Orden Mundial).
+ * Compartidas entre modos claro y oscuro del mismo tema.
+ */
+[data-theme="eom"],
+:root:not([data-theme]) {
+  --brand-green: #497d0b;
+  --brand-green-light: #5c9e0e;
+  --brand-green-dark: #264106;
+  --brand-green-pale: #ebf2e3;
+  --brand-gray: #6c757d;
+  --brand-border: #dee2e6;
+  --brand-surface: #f8f9fa;
+  --brand-ink: #212529;
+  --brand-warning: #ffc107;
+}
