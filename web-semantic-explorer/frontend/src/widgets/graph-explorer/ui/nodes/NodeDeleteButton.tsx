@@ -39,7 +39,7 @@ export function NodeDeleteButton({
           aria-label={ariaLabel}
           aria-expanded={open}
           className={cn(
-            "graph-node__icon-btn nodrag nopan",
+            "graph-node__icon-btn graph-node__icon-btn--delete nodrag nopan",
             open && "graph-node__icon-btn--armed",
           )}
           onClick={stopGraphPointer}

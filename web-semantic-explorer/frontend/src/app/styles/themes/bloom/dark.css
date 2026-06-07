@@ -17,6 +17,10 @@
   --accent: #7c3aed;
   --accent-foreground: #f5e6ff;
   --destructive: #fb7185;
+  --favorite: #fb7185;
+  --favorite-foreground: #500724;
+  --icon-delete: #f43f5e;
+  --icon-delete-foreground: #ffffff;
   --border: rgb(196 181 216 / 18%);
   --input: rgb(196 181 216 / 12%);
   --ring: #c084fc;

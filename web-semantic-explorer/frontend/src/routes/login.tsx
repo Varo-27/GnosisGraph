@@ -23,11 +23,11 @@ import { LoadingButton } from "@/shared/ui/loading-button"
 import { PasswordInput } from "@/shared/ui/password-input"
 
 const formSchema = z.object({
-  username: z.email(),
+  username: z.email({ message: "Introduce un correo electrónico válido" }),
   password: z
     .string()
-    .min(1, { message: "Password is required" })
-    .min(8, { message: "Password must be at least 8 characters" }),
+    .min(1, { message: "La contraseña es obligatoria" })
+    .min(8, { message: "La contraseña debe tener al menos 8 caracteres" }),
 }) satisfies z.ZodType<AccessToken>
 
 type FormData = z.infer<typeof formSchema>
@@ -75,7 +75,7 @@ function Login() {
           className="flex flex-col gap-6"
         >
           <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold">Login to your account</h1>
+            <h1 className="text-2xl font-bold">Inicia sesión en tu cuenta</h1>
           </div>
 
           <div className="grid gap-4">
@@ -84,7 +84,7 @@ function Login() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Correo electrónico</FormLabel>
                   <FormControl>
                     <Input
                       data-testid="email-input"
@@ -104,18 +104,18 @@ function Login() {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center">
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Contraseña</FormLabel>
                     <RouterLink
                       to="/recover-password"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
-                      Forgot your password?
+                      ¿Olvidaste tu contraseña?
                     </RouterLink>
                   </div>
                   <FormControl>
                     <PasswordInput
                       data-testid="password-input"
-                      placeholder="Password"
+                      placeholder="Contraseña"
                       {...field}
                     />
                   </FormControl>
@@ -125,14 +125,14 @@ function Login() {
             />
 
             <LoadingButton type="submit" loading={loginMutation.isPending}>
-              Log In
+              Iniciar sesión
             </LoadingButton>
           </div>
 
           <div className="text-center text-sm">
-            Don't have an account yet?{" "}
+            ¿Aún no tienes cuenta?{" "}
             <RouterLink to="/signup" className="underline underline-offset-4">
-              Sign up
+              Crear cuenta
             </RouterLink>
           </div>
         </form>

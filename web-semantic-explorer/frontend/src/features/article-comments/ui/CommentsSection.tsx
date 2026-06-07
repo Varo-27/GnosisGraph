@@ -133,7 +133,7 @@ export function CommentsSection({ articleId, comments }: CommentsSectionProps) {
                         <button
                           type="button"
                           aria-label="Eliminar comentario"
-                          className="p-1 text-muted-foreground hover:text-destructive"
+                          className="p-1 text-muted-foreground transition-colors hover:text-icon-delete"
                           disabled={isDeleting}
                           onClick={() => deleteComment(comment.id)}
                         >

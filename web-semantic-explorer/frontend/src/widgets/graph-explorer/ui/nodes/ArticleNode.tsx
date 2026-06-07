@@ -173,7 +173,7 @@ function ArticleNodeComponent({ id, data }: NodeProps<AppNode>) {
                 aria-pressed={isFavorited}
                 disabled={favoriteMutation.isPending}
                 className={cn(
-                  "graph-node__icon-btn nodrag nopan",
+                  "graph-node__icon-btn graph-node__icon-btn--favorite nodrag nopan",
                   isFavorited && "graph-node__icon-btn--favorited",
                 )}
                 onClick={(event) => {

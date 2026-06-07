@@ -124,7 +124,7 @@ export function WorkspaceBar() {
         <Button
           type="button"
           variant="ghost"
-          className="h-9 eom-surface-flat border border-foreground/30 px-2"
+          className="h-9 eom-surface-flat border border-foreground/30 px-2 transition-colors hover:border-icon-delete hover:bg-icon-delete/10 hover:text-icon-delete"
           disabled={workspaces.length <= 1 || !activeWorkspaceId}
           onClick={() =>
             activeWorkspaceId && deleteWorkspace(activeWorkspaceId)

@@ -33,6 +33,10 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-favorite: var(--favorite);
+  --color-favorite-foreground: var(--favorite-foreground);
+  --color-icon-delete: var(--icon-delete);
+  --color-icon-delete-foreground: var(--icon-delete-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

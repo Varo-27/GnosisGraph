@@ -191,12 +191,23 @@
     @apply inline-flex items-center justify-center border border-foreground/30 p-1 transition-colors hover:border-foreground;
   }
 
-  .graph-node__icon-btn--favorited {
-    @apply bg-primary text-primary-foreground;
+  .graph-node__icon-btn--favorite:hover {
+    border-color: var(--favorite);
+    color: var(--favorite);
+    background-color: color-mix(in srgb, var(--favorite) 14%, transparent);
   }
 
-  .graph-node__icon-btn--armed {
-    @apply border-destructive bg-destructive/15 text-destructive;
+  .graph-node__icon-btn--favorited {
+    border-color: var(--favorite);
+    background-color: var(--favorite);
+    color: var(--favorite-foreground);
+  }
+
+  .graph-node__icon-btn--delete:hover,
+  .graph-node__icon-btn--delete.graph-node__icon-btn--armed {
+    border-color: var(--icon-delete);
+    color: var(--icon-delete);
+    background-color: color-mix(in srgb, var(--icon-delete) 14%, transparent);
   }
 
   .graph-node__icon {
@@ -286,6 +297,6 @@
   }
 
   .graph-search-node__label {
-    @apply whitespace-nowrap font-mono text-md uppercase tracking-widest text-primary/80;
+    @apply whitespace-nowrap font-mono text-base uppercase tracking-widest text-primary/80;
   }
 }

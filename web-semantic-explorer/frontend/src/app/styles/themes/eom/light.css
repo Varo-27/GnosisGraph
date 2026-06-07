@@ -21,6 +21,10 @@
   --accent: var(--brand-green-pale);
   --accent-foreground: var(--brand-green-dark);
   --destructive: #dc3545;
+  --favorite: #e8a0ad;
+  --favorite-foreground: #ffffff;
+  --icon-delete: #c1121f;
+  --icon-delete-foreground: #ffffff;
   --border: var(--brand-border);
   --input: #e9ecef;
   --ring: var(--brand-green);

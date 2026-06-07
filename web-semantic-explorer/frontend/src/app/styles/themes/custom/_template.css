@@ -11,7 +11,8 @@
  * Tokens semánticos mínimos recomendados:
  * background, foreground, card, card-foreground, popover, popover-foreground,
  * primary, primary-foreground, secondary, secondary-foreground, muted,
- * muted-foreground, accent, accent-foreground, destructive, border, input, ring,
+ * muted-foreground, accent, accent-foreground, destructive, favorite, favorite-foreground,
+ * icon-delete, icon-delete-foreground, border, input, ring,
  * map-ocean, map-panel, map-stroke, map-region-hover, map-region-selected,
  * graph-grid-color
  *

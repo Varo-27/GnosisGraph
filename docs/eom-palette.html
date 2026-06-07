@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>El Orden Mundial · Paleta original</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 2rem 1.5rem;
+        background: #ffffff;
+        font-family: "SF Mono", "Cascadia Code", "Fira Code", ui-monospace, monospace;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+        max-width: 90rem;
+      }
+
+      .graph-compare {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 0.65rem;
+        max-width: 90rem;
+        width: 100%;
+      }
+
+      .graph-palette {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        flex: 1 1 22rem;
+        padding: 0.75rem;
+        border-radius: 0.55rem;
+      }
+
+      .graph-palette--light {
+        background: #fefefe;
+        border: 1px solid rgb(33 37 41 / 12%);
+      }
+
+      .graph-palette--dark {
+        background: #141414;
+      }
+
+      .block {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+        width: 100%;
+        padding-top: 1.55rem;
+      }
+
+      .block::before {
+        content: attr(data-name);
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .graph-palette--light .block::before {
+        color: rgb(33 37 41 / 40%);
+      }
+
+      .graph-palette--dark .block::before {
+        color: rgb(248 249 250 / 38%);
+      }
+
+      .swatch {
+        width: 5.5rem;
+        height: 5.5rem;
+        flex: 0 0 5.5rem;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        padding: 0.45rem 0.5rem;
+        border-radius: 0.55rem;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+        text-transform: lowercase;
+        border: 1px solid rgb(0 0 0 / 8%);
+      }
+
+      /* Marca — verdes */
+      .c-497d0b { background: #497d0b; color: #ffffff; }
+      .c-549900 { background: #549900; color: #ffffff; }
+      .c-4c8a00 { background: #4c8a00; color: #ffffff; }
+      .c-729a42 { background: #729a42; color: #ffffff; }
+      .c-345a08 { background: #345a08; color: #ffffff; }
+      .c-5c9e0e { background: #5c9e0e; color: #ffffff; }
+      .c-264106 { background: #264106; color: #f1f4f1; }
+      .c-386107 { background: #386107; color: #ffffff; }
+
+      /* Superficies */
+      .c-ffffff { background: #ffffff; color: #212529; }
+      .c-f1f4f1 { background: #f1f4f1; color: #212529; }
+
+      /* Acentos editoriales */
+      .c-e3ebd9 { background: #e3ebd9; color: #212529; }
+      .c-ebf2e3 { background: #ebf2e3; color: #264106; }
+
+      /* Mapa de calor — EOM_GREEN */
+      .c-e9ecef { background: #e9ecef; color: #212529; }
+      .c-ccdbbb { background: #ccdbbb; color: #264106; }
+      .c-bfd2aa { background: #bfd2aa; color: #264106; }
+      .c-9cbd7a { background: #9cbd7a; color: #264106; }
+      .c-7aad52 { background: #7aad52; color: #ffffff; }
+      .c-203705 { background: #203705; color: #ebf2e3; }
+
+      /* Ámbar — aviso / mapa hover y selección */
+      .c-ffc107 { background: #ffc107; color: #212529; }
+      .c-d39e00 { background: #d39e00; color: #212529; }
+
+      /* Grafo — modo claro */
+      .c-fefefe { background: #fefefe; color: #212529; }
+      .c-d1dec1 { background: #d1dec1; color: #264106; }
+      .c-f8f9fa { background: #f8f9fa; color: #212529; }
+      .c-212529 { background: #212529; color: #ffffff; }
+      .c-6c757d { background: #6c757d; color: #ffffff; }
+      .c-b1b1b7 { background: #b1b1b7; color: #212529; }
+
+      /* Grafo — modo oscuro */
+      .c-141414 { background: #141414; color: #adb5bd; }
+      .c-262513 { background: #262513; color: #ebf2e3; }
+      .c-adb5bd { background: #adb5bd; color: #1b1e21; }
+      .c-3e3e3e { background: #3e3e3e; color: #f8f9fa; }
+      .c-343a40 { background: #343a40; color: #f8f9fa; }
+      .c-2c2f34 { background: #2c2f34; color: #f8f9fa; }
+      .c-1b1e21 { background: #1b1e21; color: #adb5bd; }
+
+      @media (max-width: 640px) {
+        .swatch {
+          width: 4.75rem;
+          height: 4.75rem;
+          flex: 0 0 4.75rem;
+          font-size: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+      <div class="swatch c-ffffff">#ffffff</div>
+      <div class="swatch c-f1f4f1">#f1f4f1</div>
+      <div class="swatch c-ebf2e3">#ebf2e3</div>
+      <div class="swatch c-e3ebd9">#e3ebd9</div>
+      <div class="swatch c-729a42">#729a42</div>
+      <div class="swatch c-5c9e0e">#5c9e0e</div>
+      <div class="swatch c-549900">#549900</div>
+      <div class="swatch c-4c8a00">#4c8a00</div>
+      <div class="swatch c-497d0b">#497d0b</div>
+      <div class="swatch c-386107">#386107</div>
+      <div class="swatch c-345a08">#345a08</div>
+      <div class="swatch c-264106">#264106</div>
+    </div>
+
+    <div class="row">
+      <div class="swatch c-e9ecef">#e9ecef</div>
+      <div class="swatch c-ebf2e3">#ebf2e3</div>
+      <div class="swatch c-ccdbbb">#ccdbbb</div>
+      <div class="swatch c-bfd2aa">#bfd2aa</div>
+      <div class="swatch c-9cbd7a">#9cbd7a</div>
+      <div class="swatch c-7aad52">#7aad52</div>
+      <div class="swatch c-5c9e0e">#5c9e0e</div>
+      <div class="swatch c-4c8a00">#4c8a00</div>
+      <div class="swatch c-497d0b">#497d0b</div>
+      <div class="swatch c-345a08">#345a08</div>
+      <div class="swatch c-264106">#264106</div>
+      <div class="swatch c-203705">#203705</div>
+    </div>
+
+    <div class="row">
+      <div class="swatch c-ffc107">#ffc107</div>
+      <div class="swatch c-d39e00">#d39e00</div>
+    </div>
+
+    <div class="graph-compare">
+      <div class="graph-palette graph-palette--light">
+        <div class="block" data-name="fondo">
+          <div class="swatch c-fefefe">#fefefe</div>
+          <div class="swatch c-d1dec1">#d1dec1</div>
+        </div>
+        <div class="block" data-name="nodos">
+          <div class="swatch c-ffffff">#ffffff</div>
+          <div class="swatch c-f8f9fa">#f8f9fa</div>
+          <div class="swatch c-212529">#212529</div>
+          <div class="swatch c-497d0b">#497d0b</div>
+          <div class="swatch c-ebf2e3">#ebf2e3</div>
+        </div>
+        <div class="block" data-name="conexiones">
+          <div class="swatch c-b1b1b7">#b1b1b7</div>
+          <div class="swatch c-497d0b">#497d0b</div>
+          <div class="swatch c-212529">#212529</div>
+          <div class="swatch c-6c757d">#6c757d</div>
+        </div>
+      </div>
+
+      <div class="graph-palette graph-palette--dark">
+        <div class="block" data-name="fondo">
+          <div class="swatch c-141414">#141414</div>
+          <div class="swatch c-262513">#262513</div>
+        </div>
+        <div class="block" data-name="nodos">
+          <div class="swatch c-2c2f34">#2c2f34</div>
+          <div class="swatch c-1b1e21">#1b1e21</div>
+          <div class="swatch c-343a40">#343a40</div>
+          <div class="swatch c-f8f9fa">#f8f9fa</div>
+          <div class="swatch c-5c9e0e">#5c9e0e</div>
+          <div class="swatch c-ebf2e3">#ebf2e3</div>
+        </div>
+        <div class="block" data-name="conexiones">
+          <div class="swatch c-3e3e3e">#3e3e3e</div>
+          <div class="swatch c-5c9e0e">#5c9e0e</div>
+          <div class="swatch c-f8f9fa">#f8f9fa</div>
+          <div class="swatch c-adb5bd">#adb5bd</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

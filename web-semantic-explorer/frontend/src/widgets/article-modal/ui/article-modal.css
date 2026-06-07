@@ -159,11 +159,19 @@
   }
 
   .graph-article-modal__favorite--active {
-    @apply bg-primary text-primary-foreground;
+    border-color: var(--favorite);
+    background-color: var(--favorite);
+    color: var(--favorite-foreground);
   }
 
   .graph-article-modal__favorite--idle {
-    @apply bg-background hover:bg-muted;
+    @apply bg-background;
+  }
+
+  .graph-article-modal__favorite--idle:hover {
+    border-color: var(--favorite);
+    color: var(--favorite);
+    background-color: color-mix(in srgb, var(--favorite) 12%, var(--background));
   }
 
   .graph-article-modal__comments {

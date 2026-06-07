@@ -18,6 +18,10 @@
   --accent: #f0abfc;
   --accent-foreground: #701a75;
   --destructive: #e11d48;
+  --favorite: #fda4af;
+  --favorite-foreground: #881337;
+  --icon-delete: #dc2626;
+  --icon-delete-foreground: #ffffff;
   --border: #ecd9f0;
   --input: #f3e4f7;
   --ring: #d946ef;

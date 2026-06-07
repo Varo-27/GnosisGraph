@@ -21,7 +21,7 @@ export function SearchNode({ data }: NodeProps<AppNode>) {
           <Search className="h-6 w-6 text-primary" />
         </div>
         <div className="flex shrink-0 flex-col gap-0.5">
-          <span className="graph-search-node__label whitespace-nowrap text-md">
+          <span className="graph-search-node__label whitespace-nowrap">
             Semilla de búsqueda
           </span>
           <span
