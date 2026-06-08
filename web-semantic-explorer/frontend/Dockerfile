@@ -20,6 +20,8 @@ CMD ["pnpm", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]
 
 # -- Builder Stage --
 FROM build-stage AS production-builder
+ARG VITE_API_URL=
+ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm run build
 
 # -- Production Stage --

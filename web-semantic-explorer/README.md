@@ -30,3 +30,7 @@ web-semantic-explorer/
 ```
 
 Ver también la documentación en `docs/` del repositorio raíz.
+
+## Despliegue en AWS EC2
+
+Despliegue automático en cada push a `main` vía GitHub Actions. Guía completa: [`docs/deploy-aws-ec2.md`](../docs/deploy-aws-ec2.md).

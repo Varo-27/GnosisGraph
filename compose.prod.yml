@@ -1,0 +1,59 @@
+# Producción: nginx sirve el frontend y hace proxy de /api al backend.
+# Requiere web-semantic-explorer/.env en el servidor (no commitear).
+services:
+  db:
+    image: pgvector/pgvector:pg16-trixie
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - app-db-data:/var/lib/postgresql/data/pgdata
+    env_file:
+      - web-semantic-explorer/.env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    expose:
+      - "5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: web-semantic-explorer/backend/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - hf-cache:/app/huggingface_cache
+    env_file:
+      - web-semantic-explorer/.env
+    environment:
+      - POSTGRES_SERVER=db
+      - HF_HOME=/app/huggingface_cache
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: web-semantic-explorer/frontend/Dockerfile
+      target: production
+      args:
+        VITE_API_URL: ""
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./web-semantic-explorer/frontend/nginx-backend-proxy.conf:/etc/nginx/extra-conf.d/backend-not-found.conf:ro
+
+volumes:
+  app-db-data:
+    name: web-semantic-explorer_app-db-data
+  hf-cache:
+    name: web-semantic-explorer_hf-cache
