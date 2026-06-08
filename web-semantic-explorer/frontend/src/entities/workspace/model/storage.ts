@@ -1,4 +1,5 @@
 import { createDefaultInputNode, migrateGraphSnapshot } from "@/entities/graph"
+import { randomUUID } from "@/shared/lib/randomUUID"
 
 import type {
   WorkspaceGraphSnapshot,
@@ -25,7 +26,7 @@ export function createWorkspaceRecord(name: string): WorkspaceRecord {
   const now = new Date().toISOString()
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     name,
     createdAt: now,
     updatedAt: now,
