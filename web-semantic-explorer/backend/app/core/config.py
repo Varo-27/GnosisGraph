@@ -1,4 +1,3 @@
-import secrets
 import warnings
 from typing import Annotated, Any, Literal
 
@@ -50,15 +49,53 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
-    POSTGRES_SERVER: str
-    POSTGRES_PORT: int
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_SERVER: str | None = None
+    POSTGRES_PORT: int | None = None
+    POSTGRES_USER: str | None = None
+    POSTGRES_PASSWORD: str | None = None
+    POSTGRES_DB: str | None = None
+    # Optional full DSN (preferred when provided). Example:
+    # postgresql://postgres:password@db.xxx.supabase.co:5432/postgres
+    POSTGRES_DSN: PostgresDsn | None = None
+
+    # Embeddings / cache configuration
+    HF_HOME: str
+    EMBEDDING_MODEL_NAME: str
+    EMBEDDING_DEVICE: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        """Return a SQLAlchemy-compatible database URL.
+
+        Priority:
+        1. If `POSTGRES_DSN` is provided, use it (normalize scheme to use
+           `postgresql+psycopg` driver if needed).
+        2. Otherwise, build the DSN from individual `POSTGRES_*` fields.
+        """
+        # 1) Use explicit DSN if present
+        if self.POSTGRES_DSN:
+            ds = str(self.POSTGRES_DSN)
+            # Normalize common prefixes to use psycopg driver for SQLAlchemy
+            if ds.startswith("postgres://"):
+                ds = ds.replace("postgres://", "postgresql+psycopg://", 1)
+            elif ds.startswith("postgresql://"):
+                ds = ds.replace("postgresql://", "postgresql+psycopg://", 1)
+            return ds
+
+        # 2) Build from individual settings
+        if not all(
+            [
+                self.POSTGRES_SERVER,
+                self.POSTGRES_PORT,
+                self.POSTGRES_USER,
+                self.POSTGRES_PASSWORD,
+                self.POSTGRES_DB,
+            ]
+        ):
+            raise ValueError(
+                "Set either POSTGRES_DSN or all POSTGRES_SERVER/PORT/USER/PASSWORD/DB values"
+            )
         return PostgresDsn.build(
             scheme="postgresql+psycopg",
             username=self.POSTGRES_USER,

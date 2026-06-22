@@ -3,3 +3,6 @@ build/
 dist/
 wheels/
 *.egg-info
+
+# Local environment files
+.env

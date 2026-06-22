@@ -1,22 +1,22 @@
-from sentence_transformers import SentenceTransformer
 from functools import lru_cache
-import os
+
+from sentence_transformers import SentenceTransformer
+
+from app.core.config import settings
 
 class EmbeddingService:
     def __init__(self):
-        # Usamos HF_HOME para mapear el volumen y no descargar el modelo cada vez
-        cache_folder = os.getenv("HF_HOME", "/app/huggingface_cache")
         # Initialize model as None to handle it in lifespan
         self.model = None
-        self.cache_folder = cache_folder
+        self.cache_folder = settings.HF_HOME
 
     def load_model(self):
         if self.model is None:
             print("Cargando modelo SentenceTransformer en memoria...")
             self.model = SentenceTransformer(
-                "mixedbread-ai/mxbai-embed-large-v1",
+                settings.EMBEDDING_MODEL_NAME,
                 cache_folder=self.cache_folder,
-                device="cpu", # Usaremos CPU por defecto en la API para simplificar la imagen Docker
+                device=settings.EMBEDDING_DEVICE,
             )
             print("Modelo cargado correctamente.")
 

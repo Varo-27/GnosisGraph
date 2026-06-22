@@ -1,9 +1,19 @@
-from sqlmodel import SQLModel, create_engine
-from sqlalchemy.exc import OperationalError
-import psycopg2
+import os
 import sys
+from pathlib import Path
 
-DATABASE_URL = "postgresql://admin:changethis@localhost:5432/EOMai"
+from dotenv import load_dotenv
+from sqlalchemy.exc import OperationalError
+from sqlmodel import SQLModel, create_engine
+
+load_dotenv(Path(__file__).with_name(".env"))
+load_dotenv(Path(__file__).resolve().parents[1] / "web-semantic-explorer" / ".env")
+
+DATABASE_URL = os.getenv("POSTGRES_DSN")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "Set POSTGRES_DSN in scrapper/.env or web-semantic-explorer/.env before running the scrapper"
+    )
 
 engine = create_engine(DATABASE_URL, echo=False)
 

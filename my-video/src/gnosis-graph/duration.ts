@@ -1,4 +1,0 @@
-export const INTRO_DURATION = 150;
-export const DEMO_DURATION = 420;
-export const PRESENTATION_DURATION = INTRO_DURATION + DEMO_DURATION;
-export { ORIGIN_SCENE_DURATION } from "./origin/shared";
